@@ -7,7 +7,7 @@
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
 // ============================================================
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const SHELL_CACHE = `shoei451-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `shoei451-runtime-${CACHE_VERSION}`;
 
