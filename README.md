@@ -11,7 +11,7 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 
 - Frontend: Vanilla HTML/CSS/JS
 - Source root: `src/`
-- Build: `npm run build` copies `src/` to `dist/` and minifies JS/CSS
+- Build: `pnpm run build` copies `src/` to `dist/` and minifies JS/CSS
 - Hosting: Netlify
 - Shared category routing: `src/sub-index.html?slug=...` + `src/js/sub-index-init.js`
 - Shared runtimes: `src/quiz/` for quizzes, `src/timeline/` for timelines
@@ -40,10 +40,11 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 - `src/history/list.json` still describes the newer world-history timeline as "旧データ移行中"
 - `src/timeline/admin/wh-admin-legacy.html` is still kept as a legacy admin page
 - `archives/` stores retired scripts/assets that are no longer part of the active runtime
-- `npm run check` currently fails on five local link issues:
+- `pnpm run check` currently fails on six local link issues:
   - `src/history/china/integration/map.html` -> `images/3dynasties_favicon.png`
   - `src/history/index.html` -> `/css/theme-toggle.css`
   - `src/quiz/components/demo.html` -> `/css/theme-toggle.css`
+  - `src/quiz/index.html` -> `/quiz/components/quiz-bundle.css`
   - `src/seikei/print.html` -> `/css/theme-toggle.css`
   - `src/sitemap.html` -> `/learning-links/`
 
@@ -78,20 +79,20 @@ Primary source entry pages:
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Quality checks:
 
 ```bash
-npm run check
+pnpm run check
 ```
 
 Other useful commands:
 
 ```bash
-npm run build
-npm run tree
+pnpm run build
+pnpm run tree
 ```
 
 ---

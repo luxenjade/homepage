@@ -4,19 +4,21 @@
   "version": "1.0.0",
   "description": "Operational checks for the shoei451-website",
   "type": "module",
+  "packageManager": "pnpm@11.1.0",
   "scripts": {
     "check:js": "node scripts/check-js.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check": "pnpm run check:js && pnpm run check:links",
-    "tree": "npx tree-node-cli -L 3 -I \"node_modules,.git,dist,.next\"",
+    "tree": "tree -L 3 -I \"node_modules|.git|dist|.next\"",
     "build": "node scripts/build.js",
     "purge": "purgecss --css dist/css/base.css dist/css/utils.css dist/quiz/components/quiz-shell.css --content 'dist/**/*.html' 'dist/**/*.js' --output dist/css/ --safelist /^qz-/ /^tl-/ /^bi/ show is-correct is-incorrect is-locked hidden is-active is-selected is-fallback is-open is-expanded is-visible dark fade",
-    "dev": "npx serve src"
+    "dev": "serve src"
   },
   "devDependencies": {
     "esbuild": "^0.27.4",
     "html-minifier-terser": "^7.2.0",
     "purgecss": "^8.0.0",
+    "serve": "^14.2.6",
     "shx": "^0.4.0",
     "tree-node-cli": "^1.6.0"
   },
