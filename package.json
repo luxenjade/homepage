@@ -7,7 +7,7 @@
   "scripts": {
     "check:js": "node scripts/check-js.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "check": "npm run check:js && npm run check:links",
+    "check": "pnpm run check:js && pnpm run check:links",
     "tree": "npx tree-node-cli -L 3 -I \"node_modules,.git,dist,.next\"",
     "build": "node scripts/build.js",
     "purge": "purgecss --css dist/css/base.css dist/css/utils.css dist/quiz/components/quiz-shell.css --content 'dist/**/*.html' 'dist/**/*.js' --output dist/css/ --safelist /^qz-/ /^tl-/ /^bi/ show is-correct is-incorrect is-locked hidden is-active is-selected is-fallback is-open is-expanded is-visible dark fade",
@@ -24,7 +24,9 @@
     "glob": "^13.0.6",
     "rimraf": "^6.1.3"
   },
-  "overrides": {
-    "brace-expansion": "^2.0.1"
+  "pnpm": {
+    "overrides": {
+      "brace-expansion": "^2.0.1"
+    }
   }
 }
