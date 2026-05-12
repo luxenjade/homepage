@@ -32,7 +32,6 @@ const SHELL_ASSETS = [
 // ── キャッシュしないドメイン ───────────────────────────────────
 const BYPASS_ORIGINS = [
   "supabase.co", // Supabase API（常に最新データが必要）
-  "raindrop.io", // Raindrop API
   "netlify.app", // Netlify Functions（/api/sw アクセスログ等）
 ];
 
