@@ -1,9 +1,10 @@
 // build.js
 // ビルドパイプライン:
 //   1. dist/ クリーン & src/ コピー
-//   2. quiz-bundle.css 生成（コンポーネントCSS結合）
-//   3. esbuild（JS/CSS minify）
-//   4. purgecss
+//   2. _redirects 生成（カテゴリフォルダ -> sub-index）
+//   3. quiz-bundle.css 生成（コンポーネントCSS結合）
+//   4. esbuild（JS/CSS minify）
+//   5. purgecss
 
 import { execSync } from "child_process";
 import fs from "fs";
@@ -11,12 +12,32 @@ import path from "path";
 
 // ── 1. dist クリーン & コピー ─────────────────────────────
 
-console.log("[1/5] Cleaning dist/ and copying src/...");
+console.log("[1/6] Cleaning dist/ and copying src/...");
 execSync("shx rm -rf dist && shx cp -r src dist", { stdio: "inherit" });
 
-// ── 2. quiz-bundle.css 生成 ───────────────────────────────
+// ── 2. _redirects 生成 ───────────────────────────────────
 
-console.log("[2/5] Bundling quiz component CSS...");
+console.log("[2/6] Generating Netlify redirects...");
+
+const categorySlugs = fs
+  .readdirSync("src", { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .filter((slug) => fs.existsSync(path.join("src", slug, "list.json")))
+  .sort();
+
+const redirectRules = categorySlugs.flatMap((slug) => [
+  `/${slug} /sub-index.html?slug=${slug} 301`,
+  `/${slug}/ /sub-index.html?slug=${slug} 301`,
+]);
+
+const redirectsOut = "dist/_redirects";
+fs.writeFileSync(redirectsOut, `${redirectRules.join("\n")}\n`, "utf8");
+console.log(`  -> ${redirectsOut} (${categorySlugs.length} category redirects)`);
+
+// ── 3. quiz-bundle.css 生成 ───────────────────────────────
+
+console.log("[3/6] Bundling quiz component CSS...");
 
 const QUIZ_CSS_FILES = [
   "dist/quiz/components/quiz-shell.css",
@@ -42,17 +63,17 @@ const bundleOut = "dist/quiz/components/quiz-bundle.css";
 fs.writeFileSync(bundleOut, bundled, "utf8");
 console.log(`  → ${bundleOut} (${(bundled.length / 1024).toFixed(1)} KB)`);
 
-// ── 3. esbuild ────────────────────────────────────────────
+// ── 4. esbuild ────────────────────────────────────────────
 
-console.log("[3/5] Running esbuild (minify JS/CSS)...");
+console.log("[4/6] Running esbuild (minify JS/CSS)...");
 execSync(
   'esbuild "dist/**/*.js" "dist/**/*.css" --minify --outdir=dist --allow-overwrite',
   { stdio: "inherit" },
 );
 
-// ── 4. purgecss ───────────────────────────────────────────
+// ── 5. purgecss ───────────────────────────────────────────
 
-console.log("[4/5] Running purgecss...");
+console.log("[5/6] Running purgecss...");
 execSync(
   [
     "purgecss",
@@ -66,8 +87,8 @@ execSync(
 
 // html minify
 
-// ── 5. HTML minify ────────────────────────────────────────
-console.log("[5/5] Minifying HTML...");
+// ── 6. HTML minify ────────────────────────────────────────
+console.log("[6/6] Minifying HTML...");
 
 import { minify } from "html-minifier-terser";
 
