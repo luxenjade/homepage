@@ -8,12 +8,14 @@
 
 import { execSync } from "child_process";
 import fs from "fs";
+import { cp, glob, rm } from "node:fs/promises";
 import path from "path";
 
 // ── 1. dist クリーン & コピー ─────────────────────────────
 
 console.log("[1/6] Cleaning dist/ and copying src/...");
-execSync("shx rm -rf dist && shx cp -r src dist", { stdio: "inherit" });
+await rm("dist", { recursive: true, force: true });
+await cp("src", "dist", { recursive: true });
 
 // ── 2. _redirects 生成 ───────────────────────────────────
 
@@ -92,10 +94,10 @@ console.log("[6/6] Minifying HTML...");
 
 import { minify } from "html-minifier-terser";
 
-const htmlFiles = fs
-  .readdirSync("dist", { recursive: true })
-  .filter((f) => f.endsWith(".html"))
-  .map((f) => path.join("dist", f));
+const htmlFiles = [];
+for await (const file of glob("dist/**/*.html")) {
+  htmlFiles.push(file);
+}
 
 for (const file of htmlFiles) {
   const input = fs.readFileSync(file, "utf-8");
