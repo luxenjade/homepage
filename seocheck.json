@@ -1,0 +1,536 @@
+{
+  "url": "https://shoei451.netlify.app",
+  "finalUrl": "https://shoei451.netlify.app",
+  "score": 69,
+  "grade": "D",
+  "categories": [
+    {
+      "id": "basics",
+      "name": "SEO Basics",
+      "score": 64,
+      "items": [
+        {
+          "id": "title",
+          "title": "Title tag",
+          "status": "pass",
+          "message": "Title is present.",
+          "weight": 6,
+          "score": 1
+        },
+        {
+          "id": "title_length",
+          "title": "Title length",
+          "status": "warn",
+          "message": "Title is only 15 characters; aim for 30–60.",
+          "weight": 3,
+          "score": 0.5
+        },
+        {
+          "id": "meta_description",
+          "title": "Meta description",
+          "status": "fail",
+          "message": "Missing meta description.",
+          "weight": 5,
+          "score": 0
+        },
+        {
+          "id": "meta_description_length",
+          "title": "Meta description length",
+          "status": "fail",
+          "message": "No description to measure.",
+          "weight": 3,
+          "score": 0
+        },
+        {
+          "id": "canonical",
+          "title": "Canonical URL",
+          "status": "warn",
+          "message": "No <link rel=\"canonical\"> found.",
+          "weight": 4,
+          "score": 0.5
+        },
+        {
+          "id": "viewport",
+          "title": "Mobile viewport",
+          "status": "pass",
+          "message": "width=device-width,initial-scale=1",
+          "weight": 4,
+          "score": 1
+        },
+        {
+          "id": "html_lang",
+          "title": "HTML lang attribute",
+          "status": "pass",
+          "message": "ja",
+          "weight": 3,
+          "score": 1
+        },
+        {
+          "id": "charset",
+          "title": "Charset declaration",
+          "status": "pass",
+          "message": "UTF-8",
+          "weight": 2,
+          "score": 1
+        },
+        {
+          "id": "doctype",
+          "title": "HTML5 doctype",
+          "status": "pass",
+          "message": "Document begins with a doctype.",
+          "weight": 2,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "structure",
+      "name": "Document Structure",
+      "score": 100,
+      "items": [
+        {
+          "id": "single_h1",
+          "title": "Single H1",
+          "status": "pass",
+          "message": "Exactly one <h1>.",
+          "weight": 4,
+          "score": 1
+        },
+        {
+          "id": "heading_hierarchy",
+          "title": "Heading hierarchy",
+          "status": "pass",
+          "message": "Headings descend without gaps.",
+          "weight": 2,
+          "score": 1
+        },
+        {
+          "id": "duplicate_ids",
+          "title": "Duplicate IDs",
+          "status": "pass",
+          "message": "All element IDs are unique.",
+          "weight": 2,
+          "score": 1
+        },
+        {
+          "id": "deprecated_tags",
+          "title": "Deprecated tags",
+          "status": "pass",
+          "message": "No deprecated tags used.",
+          "weight": 2,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "name": "Open Graph & Social",
+      "score": 27,
+      "items": [
+        {
+          "id": "og_basic",
+          "title": "Open Graph basics",
+          "status": "fail",
+          "message": "No Open Graph tags found.",
+          "weight": 4,
+          "score": 0
+        },
+        {
+          "id": "og_image",
+          "title": "Open Graph image",
+          "status": "warn",
+          "message": "No og:image set; social shares will lack a preview.",
+          "weight": 3,
+          "score": 0.5
+        },
+        {
+          "id": "twitter_card",
+          "title": "Twitter Card",
+          "status": "warn",
+          "message": "No twitter:card meta tag.",
+          "weight": 2,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "id": "structured",
+      "name": "Structured Data",
+      "score": 50,
+      "items": [
+        {
+          "id": "structured_data",
+          "title": "Structured data",
+          "status": "warn",
+          "message": "No JSON-LD blocks found.",
+          "weight": 4,
+          "score": 0.5
+        },
+        {
+          "id": "json_ld_valid",
+          "title": "JSON-LD parses",
+          "status": "info",
+          "message": "No JSON-LD blocks to validate.",
+          "weight": 0,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "i18n",
+      "name": "Internationalization",
+      "score": 100,
+      "items": [
+        {
+          "id": "hreflang_x_default",
+          "title": "x-default hreflang",
+          "status": "info",
+          "message": "No hreflang tags declared.",
+          "weight": 0,
+          "score": 1
+        },
+        {
+          "id": "hreflang_syntax",
+          "title": "hreflang values",
+          "status": "info",
+          "message": "No hreflang tags declared.",
+          "weight": 0,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "crawlability",
+      "name": "Crawlability",
+      "score": 69,
+      "items": [
+        {
+          "id": "robots_meta",
+          "title": "Robots meta",
+          "status": "pass",
+          "message": "Page is indexable.",
+          "weight": 5,
+          "score": 1
+        },
+        {
+          "id": "robots_txt",
+          "title": "robots.txt",
+          "status": "warn",
+          "message": "No /robots.txt found.",
+          "weight": 4,
+          "score": 0.5
+        },
+        {
+          "id": "sitemap",
+          "title": "Sitemap",
+          "status": "warn",
+          "message": "No sitemap.xml or sitemap_index.xml at the origin root.",
+          "weight": 4,
+          "score": 0.5
+        },
+        {
+          "id": "sitemap_in_robots",
+          "title": "Sitemap declared in robots.txt",
+          "status": "info",
+          "message": "robots.txt not found.",
+          "weight": 0,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "images",
+      "name": "Images",
+      "score": 100,
+      "items": [
+        {
+          "id": "image_alts",
+          "title": "Image alt coverage",
+          "status": "info",
+          "message": "No <img> elements on page.",
+          "weight": 0,
+          "score": 1
+        },
+        {
+          "id": "image_dimensions",
+          "title": "Image dimensions",
+          "status": "info",
+          "message": "No <img> elements on page.",
+          "weight": 0,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "links",
+      "name": "Links",
+      "score": 100,
+      "items": [
+        {
+          "id": "links_overview",
+          "title": "Link overview",
+          "status": "info",
+          "message": "0 total — 0 internal, 0 external, 0 nofollow.",
+          "weight": 0,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "name": "Performance Hints",
+      "score": 100,
+      "items": [
+        {
+          "id": "render_blocking",
+          "title": "Render-blocking scripts in head",
+          "status": "pass",
+          "message": "No render-blocking <script> in <head>.",
+          "weight": 3,
+          "score": 1
+        },
+        {
+          "id": "inline_styles",
+          "title": "Inline <style> blocks",
+          "status": "pass",
+          "message": "Minimal inline styles.",
+          "weight": 1,
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security Headers",
+      "score": 80,
+      "items": [
+        {
+          "id": "https",
+          "title": "HTTPS",
+          "status": "pass",
+          "message": "Served over HTTPS.",
+          "weight": 5,
+          "score": 1
+        },
+        {
+          "id": "hsts",
+          "title": "HSTS",
+          "status": "pass",
+          "message": "max-age=31536000; includeSubDomains; preload",
+          "weight": 3,
+          "score": 1
+        },
+        {
+          "id": "csp",
+          "title": "Content-Security-Policy",
+          "status": "warn",
+          "message": "No Content-Security-Policy header.",
+          "weight": 3,
+          "score": 0.5
+        },
+        {
+          "id": "x_content_type",
+          "title": "X-Content-Type-Options",
+          "status": "warn",
+          "message": "Header missing.",
+          "weight": 1,
+          "score": 0.5
+        },
+        {
+          "id": "referrer_policy",
+          "title": "Referrer-Policy",
+          "status": "warn",
+          "message": "Header missing.",
+          "weight": 1,
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "id": "discovery",
+      "name": "Discovery Files",
+      "score": 100,
+      "items": [
+        {
+          "id": "llms_txt",
+          "title": "llms.txt",
+          "status": "info",
+          "message": "Optional: helps LLMs understand your site.",
+          "weight": 0,
+          "score": 1
+        },
+        {
+          "id": "humans_txt",
+          "title": "humans.txt",
+          "status": "info",
+          "message": "/humans.txt not found (optional).",
+          "weight": 1,
+          "score": 0.5
+        },
+        {
+          "id": "ads_txt",
+          "title": "ads.txt",
+          "status": "info",
+          "message": "/ads.txt not found (optional).",
+          "weight": 1,
+          "score": 0.5
+        },
+        {
+          "id": "security_txt",
+          "title": "security.txt",
+          "status": "info",
+          "message": "Optional: declares security contact (RFC 9116).",
+          "weight": 0,
+          "score": 1
+        },
+        {
+          "id": "manifest",
+          "title": "Web app manifest",
+          "status": "pass",
+          "message": "Manifest declared in <head>.",
+          "weight": 1,
+          "score": 1
+        },
+        {
+          "id": "favicon",
+          "title": "Favicon",
+          "status": "pass",
+          "message": "Favicon found.",
+          "weight": 1,
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "siblingFiles": [
+    {
+      "path": "/robots.txt",
+      "url": "https://shoei451.netlify.app/robots.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Crawler directives"
+    },
+    {
+      "path": "/sitemap.xml",
+      "url": "https://shoei451.netlify.app/sitemap.xml",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Primary sitemap"
+    },
+    {
+      "path": "/sitemap_index.xml",
+      "url": "https://shoei451.netlify.app/sitemap_index.xml",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Sitemap index"
+    },
+    {
+      "path": "/llms.txt",
+      "url": "https://shoei451.netlify.app/llms.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "LLM guidance file"
+    },
+    {
+      "path": "/llms-full.txt",
+      "url": "https://shoei451.netlify.app/llms-full.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Extended LLM guidance"
+    },
+    {
+      "path": "/humans.txt",
+      "url": "https://shoei451.netlify.app/humans.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Humans behind the site"
+    },
+    {
+      "path": "/ads.txt",
+      "url": "https://shoei451.netlify.app/ads.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Authorized digital sellers"
+    },
+    {
+      "path": "/security.txt",
+      "url": "https://shoei451.netlify.app/security.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Security disclosure"
+    },
+    {
+      "path": "/.well-known/security.txt",
+      "url": "https://shoei451.netlify.app/.well-known/security.txt",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Security disclosure (RFC 9116)"
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "url": "https://shoei451.netlify.app/manifest.webmanifest",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Web app manifest"
+    },
+    {
+      "path": "/manifest.json",
+      "url": "https://shoei451.netlify.app/manifest.json",
+      "found": true,
+      "status": 200,
+      "size": 1619,
+      "contentType": "application/json",
+      "note": "Web app manifest"
+    },
+    {
+      "path": "/favicon.ico",
+      "url": "https://shoei451.netlify.app/favicon.ico",
+      "found": false,
+      "status": 404,
+      "contentType": "text/html",
+      "note": "Favicon"
+    }
+  ],
+  "syntax": {},
+  "headers": {
+    "accept-ranges": "bytes",
+    "age": "1",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Tue, 19 May 2026 06:15:30 GMT",
+    "etag": "\"2c0445366cecc61ec9e9a7e841c730df-ssl-df\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01KRZE01D128JYCHV1VVWK49CG"
+  },
+  "serverInfo": {
+    "server": "Netlify",
+    "httpVersion": "HTTP/1.1",
+    "httpCode": 200,
+    "method": "GET",
+    "scheme": "https"
+  },
+  "metrics": {
+    "totalTime": 1.181946043,
+    "dnsLookup": 0,
+    "tcpConnection": 0.016968639,
+    "tlsHandshake": 0.012934365,
+    "serverWait": 1.151668289,
+    "contentTransfer": 0.000256621
+  },
+  "fetchedAt": "2026-05-19T06:15:30.98792292Z",
+  "cacheHit": false,
+  "executionTime": 1593
+}
