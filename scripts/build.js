@@ -35,7 +35,9 @@ const redirectRules = categorySlugs.flatMap((slug) => [
 
 const redirectsOut = "dist/_redirects";
 fs.writeFileSync(redirectsOut, `${redirectRules.join("\n")}\n`, "utf8");
-console.log(`  -> ${redirectsOut} (${categorySlugs.length} category redirects)`);
+console.log(
+  `  -> ${redirectsOut} (${categorySlugs.length} category redirects)`,
+);
 
 // ── 3. quiz-bundle.css 生成 ───────────────────────────────
 
@@ -103,7 +105,7 @@ for (const file of htmlFiles) {
   const input = fs.readFileSync(file, "utf-8");
   const output = await minify(input, {
     collapseWhitespace: true,
-    conservativeCollapse: false,   // 追加: 連続空白を1つに
+    conservativeCollapse: false, // 追加: 連続空白を1つに
     removeComments: true,
     removeRedundantAttributes: true,
     removeEmptyAttributes: false, // alt="" を守る

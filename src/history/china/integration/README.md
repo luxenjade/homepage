@@ -22,12 +22,12 @@
 
 このリポジトリ内の実装は、現在は Supabase 直結ではなくローカル静的データ中心で動いている。
 
-| ファイル | 役割 |
-| --- | --- |
-| `js/common/dynasties.js` | 王朝マスターデータ |
-| `js/common/events.js` | 年表イベントの静的配列 |
-| `js/common/quizdata.js` | 文化人物データ |
-| `notes/*.md` | 王朝ノート本文 |
+| ファイル                 | 役割                   |
+| ------------------------ | ---------------------- |
+| `js/common/dynasties.js` | 王朝マスターデータ     |
+| `js/common/events.js`    | 年表イベントの静的配列 |
+| `js/common/quizdata.js`  | 文化人物データ         |
+| `notes/*.md`             | 王朝ノート本文         |
 
 `events.js` には BC を含む中国史イベントがまとまっており、`dynasty.html` と `timeline.html` はここを参照する。
 

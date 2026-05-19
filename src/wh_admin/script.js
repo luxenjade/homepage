@@ -169,10 +169,7 @@ function buildRegionGrid(selected) {
 
   regionGrid.querySelectorAll(".region-chip").forEach((chip) => {
     chip.addEventListener("change", () => {
-      chip.classList.toggle(
-        "checked",
-        chip.querySelector("input").checked,
-      );
+      chip.classList.toggle("checked", chip.querySelector("input").checked);
     });
     // clicking the label itself
     chip.querySelector("input").addEventListener("change", (e) => {
@@ -182,9 +179,9 @@ function buildRegionGrid(selected) {
 }
 
 function getSelectedRegions() {
-  return [
-    ...regionGrid.querySelectorAll("input[type=checkbox]:checked"),
-  ].map((cb) => cb.value);
+  return [...regionGrid.querySelectorAll("input[type=checkbox]:checked")].map(
+    (cb) => cb.value,
+  );
 }
 
 // ── Table load & filter ───────────────────────────────────────
@@ -228,10 +225,8 @@ function applyFilters() {
   filtered.sort((a, b) => {
     let av = a[sortCol],
       bv = b[sortCol];
-    if (av === null || av === undefined)
-      av = sortAsc ? Infinity : -Infinity;
-    if (bv === null || bv === undefined)
-      bv = sortAsc ? Infinity : -Infinity;
+    if (av === null || av === undefined) av = sortAsc ? Infinity : -Infinity;
+    if (bv === null || bv === undefined) bv = sortAsc ? Infinity : -Infinity;
     if (av < bv) return sortAsc ? -1 : 1;
     if (av > bv) return sortAsc ? 1 : -1;
     return 0;
@@ -245,14 +240,12 @@ function applyFilters() {
 }
 
 function updateSortIcons() {
-  ["year", "record_type", "event", "field", "wiki_score"].forEach(
-    (col) => {
-      const el = document.getElementById("sort-" + col);
-      if (!el) return;
-      if (col === sortCol) el.textContent = sortAsc ? "↑" : "↓";
-      else el.textContent = "";
-    },
-  );
+  ["year", "record_type", "event", "field", "wiki_score"].forEach((col) => {
+    const el = document.getElementById("sort-" + col);
+    if (!el) return;
+    if (col === sortCol) el.textContent = sortAsc ? "↑" : "↓";
+    else el.textContent = "";
+  });
 }
 
 function renderTable() {
@@ -290,9 +283,7 @@ function renderTable() {
     .join("");
 
   tableBody.querySelectorAll("tr[data-id]").forEach((tr) => {
-    tr.addEventListener("click", () =>
-      openEditModal(Number(tr.dataset.id)),
-    );
+    tr.addEventListener("click", () => openEditModal(Number(tr.dataset.id)));
   });
 }
 
@@ -305,12 +296,7 @@ function renderPagination() {
 
   let html = `<button class="page-btn" ${currentPage === 1 ? "disabled" : ""} data-p="${currentPage - 1}">‹</button>`;
   for (let p = 1; p <= total; p++) {
-    if (
-      total > 10 &&
-      Math.abs(p - currentPage) > 3 &&
-      p !== 1 &&
-      p !== total
-    ) {
+    if (total > 10 && Math.abs(p - currentPage) > 3 && p !== 1 && p !== total) {
       if (p === 2 || p === total - 1)
         html += `<span style="padding:0 4px;color:var(--color-text-secondary)">…</span>`;
       continue;
@@ -319,15 +305,13 @@ function renderPagination() {
   }
   html += `<button class="page-btn" ${currentPage === total ? "disabled" : ""} data-p="${currentPage + 1}">›</button>`;
   paginationEl.innerHTML = html;
-  paginationEl
-    .querySelectorAll(".page-btn:not([disabled])")
-    .forEach((btn) => {
-      btn.addEventListener("click", () => {
-        currentPage = Number(btn.dataset.p);
-        renderTable();
-        renderPagination();
-      });
+  paginationEl.querySelectorAll(".page-btn:not([disabled])").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      currentPage = Number(btn.dataset.p);
+      renderTable();
+      renderPagination();
     });
+  });
 }
 
 // ── Sort ──────────────────────────────────────────────────────
@@ -356,8 +340,7 @@ filterRecord.addEventListener("change", applyFilters);
 function renderStepIndicator() {
   stepIndicator.innerHTML = STEP_LABELS.map((label, i) => {
     const n = i + 1;
-    const cls =
-      n < currentStep ? "done" : n === currentStep ? "active" : "";
+    const cls = n < currentStep ? "done" : n === currentStep ? "active" : "";
     const wrapCls = n === currentStep ? "active" : "";
     return `
             ${i > 0 ? `<div class="step-line ${n <= currentStep ? "done" : ""}"></div>` : ""}
@@ -372,9 +355,7 @@ function renderStepIndicator() {
 function goToStep(n) {
   currentStep = n;
   for (let i = 1; i <= TOTAL_STEPS; i++) {
-    document
-      .getElementById("step-" + i)
-      .classList.toggle("active", i === n);
+    document.getElementById("step-" + i).classList.toggle("active", i === n);
   }
   // Footer buttons
   stepBackBtn.classList.toggle("hidden", n === 1);
@@ -385,11 +366,7 @@ function goToStep(n) {
   renderStepIndicator();
 
   // Auto-search wiki when arriving at step 3 and URL is empty
-  if (
-    n === TOTAL_STEPS &&
-    !fWikiUrl.value.trim() &&
-    fEvent.value.trim()
-  ) {
+  if (n === TOTAL_STEPS && !fWikiUrl.value.trim() && fEvent.value.trim()) {
     searchWikiUrl(fEvent.value.trim());
   }
 }
@@ -483,9 +460,7 @@ async function searchWikiUrl(query) {
       format: "json",
       origin: "*",
     });
-    const res = await fetch(
-      `https://ja.wikipedia.org/w/api.php?${params}`,
-    );
+    const res = await fetch(`https://ja.wikipedia.org/w/api.php?${params}`);
     const data = await res.json();
     const hit = data?.query?.search?.[0];
 
@@ -515,9 +490,7 @@ function buildPayload() {
     date_type: fDateType.value,
     record_type: fRecordType.value,
     full_date:
-      fDateType.value === "full" && fFullDate.value
-        ? fFullDate.value
-        : null,
+      fDateType.value === "full" && fFullDate.value ? fFullDate.value : null,
     field: fField.value || null,
     event: fEvent.value.trim(),
     description: fDesc.value.trim() || null,
@@ -542,10 +515,7 @@ saveBtn.addEventListener("click", async () => {
 
   let error;
   if (editingId) {
-    ({ error } = await db
-      .from(TABLE)
-      .update(payload)
-      .eq("id", editingId));
+    ({ error } = await db.from(TABLE).update(payload).eq("id", editingId));
   } else {
     const insert = { ...payload };
     delete insert.updated_at;
@@ -594,9 +564,7 @@ confirmOk.addEventListener("click", async () => {
   el.addEventListener("click", () => editModal.classList.remove("open")),
 );
 [confirmClose, confirmCancel].forEach((el) =>
-  el.addEventListener("click", () =>
-    confirmModal.classList.remove("open"),
-  ),
+  el.addEventListener("click", () => confirmModal.classList.remove("open")),
 );
 editModal.addEventListener("click", (e) => {
   if (e.target === editModal) editModal.classList.remove("open");
@@ -641,10 +609,10 @@ function filterMemoList() {
   const q = memoSearchEl.value.trim().toLowerCase();
   memoFiltered = q
     ? memoRows.filter(
-      (r) =>
-        r.event?.toLowerCase().includes(q) ||
-        r.memo?.toLowerCase().includes(q),
-    )
+        (r) =>
+          r.event?.toLowerCase().includes(q) ||
+          r.memo?.toLowerCase().includes(q),
+      )
     : [...memoRows];
   memoCountEl.textContent = `${memoFiltered.length} 件`;
   renderMemoList();
@@ -667,9 +635,7 @@ function renderMemoList() {
     )
     .join("");
   memoListEl.querySelectorAll(".memo-item").forEach((el) => {
-    el.addEventListener("click", () =>
-      openMemoEditor(Number(el.dataset.id)),
-    );
+    el.addEventListener("click", () => openMemoEditor(Number(el.dataset.id)));
   });
 }
 
@@ -679,8 +645,7 @@ function openMemoEditor(id) {
   selectedMemoId = id;
   renderMemoList();
   const row =
-    memoFiltered.find((r) => r.id === id) ||
-    allRows.find((r) => r.id === id);
+    memoFiltered.find((r) => r.id === id) || allRows.find((r) => r.id === id);
   if (!row) return;
   const yearStr = formatYear(row.year, row.year_end);
 
@@ -782,8 +747,7 @@ function formatYear(year, year_end) {
   if (year === null || year === undefined) return "不明";
   const s = year < 0 ? `前${Math.abs(year)}年` : `${year}年`;
   if (year_end !== null && year_end !== undefined) {
-    const e =
-      year_end < 0 ? `前${Math.abs(year_end)}年` : `${year_end}年`;
+    const e = year_end < 0 ? `前${Math.abs(year_end)}年` : `${year_end}年`;
     return `${s}〜${e}`;
   }
   return s;

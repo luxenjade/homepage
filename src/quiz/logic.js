@@ -273,7 +273,8 @@ function _renderTable(row, i) {
         // 表示用に mistake を積む（表単位）
         const qData = _cfg.formatQuestion(row);
         _mistakes.push({
-          questionText: qData.text ?? _cfg.formatCell(_cfg.headerKey ?? "name", row),
+          questionText:
+            qData.text ?? _cfg.formatCell(_cfg.headerKey ?? "name", row),
           category: qData.category ?? null,
           userAnswer: "（表埋め）",
           correctAnswer: "（表埋め）",

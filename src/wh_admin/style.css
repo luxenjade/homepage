@@ -242,7 +242,10 @@ body.dark .tab-btn.active {
   margin-bottom: 1rem;
   flex-wrap: wrap;
 }
-.toolbar input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="hidden"]),
+.toolbar
+  input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not(
+    [type="submit"]
+  ):not([type="reset"]):not([type="hidden"]),
 .toolbar select {
   flex: 1;
   min-width: 140px;
@@ -255,7 +258,9 @@ body.dark .tab-btn.active {
 }
 
 /* ===== Input styles ===== */
-input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="hidden"]),
+input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not(
+    [type="submit"]
+  ):not([type="reset"]):not([type="hidden"]),
 select,
 textarea {
   width: 100%;
