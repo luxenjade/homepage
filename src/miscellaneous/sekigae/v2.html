@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>席替えシャッフル</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  .cell-seat {
+    @apply rounded-md border border-gray-200 bg-white cursor-pointer select-none transition-all duration-100 hover:border-blue-400 hover:bg-blue-50;
+  }
+  .cell-empty {
+    @apply rounded-md border border-dashed border-gray-150 bg-transparent cursor-pointer select-none transition-all duration-100 hover:bg-gray-50 hover:border-gray-300;
+  }
+  .rcell-base {
+    @apply rounded-md border border-gray-200 bg-white flex items-center justify-center transition-all duration-150;
+  }
+  .rcell-settled {
+    @apply bg-green-50 border-green-300;
+  }
+  .tab-btn {
+    @apply px-5 py-2.5 text-sm font-medium text-gray-400 border-b-2 border-transparent cursor-pointer bg-transparent transition-colors duration-150 hover:text-gray-600;
+  }
+  .tab-btn.active {
+    @apply text-gray-900 border-gray-900;
+  }
+  .toolbar-btn {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 cursor-pointer transition-colors duration-100 hover:bg-gray-50;
+  }
+  .toolbar-btn-danger {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 rounded-lg bg-white text-red-600 cursor-pointer transition-colors duration-100 hover:bg-red-50;
+  }
+  .toolbar-btn-primary {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-900 rounded-lg bg-gray-900 text-white cursor-pointer transition-colors duration-100 hover:bg-gray-700;
+  }
+</style>
+</head>
+<!-- Full viewport, no scroll -->
+<body class="bg-gray-50 text-gray-900 overflow-hidden" style="height:100dvh;display:flex;flex-direction:column">
+
+<canvas id="confetti-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+<!-- outer shell: fills 100dvh, flex col -->
+<div style="flex:1;display:flex;flex-direction:column;padding:20px 24px 16px;min-height:0">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-4 shrink-0">
+    <div class="w-6 h-6 text-gray-600">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="10" width="7" height="7" rx="1"/>
+        <rect x="14" y="10" width="7" height="7" rx="1"/>
+        <rect x="8.5" y="3" width="7" height="7" rx="1"/>
+        <path d="M6.5 10V7.5M17.5 10V7.5M12 10V7.5" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <h1 class="text-base font-semibold tracking-tight">席替えシャッフル</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-0 border-b border-gray-200 mb-4 shrink-0">
+    <button class="tab-btn active" id="tab-0" onclick="switchTab(0)">
+      <span class="text-xs text-gray-400 mr-1">01</span> 座席レイアウト
+    </button>
+    <button class="tab-btn" id="tab-1" onclick="switchTab(1)">
+      <span class="text-xs text-gray-400 mr-1">02</span> シャッフル
+    </button>
+  </div>
+
+  <!-- TAB 1: レイアウト — fills remaining height -->
+  <div id="section-0" style="flex:1;display:flex;flex-direction:column;min-height:0">
+    <!-- Controls row -->
+    <div class="flex flex-wrap items-center gap-2 mb-3 shrink-0">
+      <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5">
+        <span class="text-xs text-gray-400">列</span>
+        <input type="number" id="cols-input" value="6" min="1" max="12"
+          class="w-10 text-sm font-semibold text-center border-0 outline-none bg-transparent text-gray-800">
+        <span class="text-gray-200">|</span>
+        <span class="text-xs text-gray-400">行</span>
+        <input type="number" id="rows-input" value="7" min="1" max="10"
+          class="w-10 text-sm font-semibold text-center border-0 outline-none bg-transparent text-gray-800">
+      </div>
+      <button class="toolbar-btn" onclick="resizeGrid()">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m4 4V7"/></svg>
+        グリッド更新
+      </button>
+      <button class="toolbar-btn" onclick="fillAll()">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+        全選択
+      </button>
+      <button class="toolbar-btn-danger" onclick="clearAll()">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        全消去
+      </button>
+      <div class="ml-auto flex items-center gap-3">
+        <span class="text-xs text-gray-400" id="seat-count-badge">席数: 0</span>
+        <button class="toolbar-btn-primary" onclick="switchTab(1)">
+          次へ
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-400 mb-3 shrink-0">クリックで席のオン/オフを切り替えます。黒板側（上）が前列です。</p>
+
+    <!-- Grid area: flex:1, children fill height -->
+    <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div id="layout-bboard" class="text-center text-xs font-medium py-1.5 rounded-md mb-2 tracking-wider shrink-0" style="background:#2d5016;color:#c8e6a0;">黒板（前）</div>
+      <!-- seat-grid fills remaining height -->
+      <div id="seat-grid" class="grid w-full" style="flex:1;min-height:0;gap:5px;align-content:stretch"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: シャッフル -->
+  <div id="section-1" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0">
+
+    <!-- Controls bar -->
+    <div class="flex flex-wrap items-center gap-4 bg-white border border-gray-200 rounded-xl px-5 py-3 mb-4 shrink-0">
+      <div class="flex items-center gap-3">
+        <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        <label class="text-sm text-gray-600 font-medium">出席者数</label>
+        <input type="number" id="student-count" value="35" min="1" max="50"
+          class="w-16 text-center text-xl font-bold border border-gray-200 rounded-lg py-0.5 outline-none focus:border-blue-400 bg-gray-50 text-gray-900">
+        <span class="text-xs text-gray-400">名</span>
+        <span class="text-xs text-red-500 font-medium" id="seat-warn"></span>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <button id="shuffle-btn" onclick="startShuffle()"
+          class="inline-flex items-center gap-2 px-5 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg cursor-pointer transition-all duration-100 hover:bg-gray-700 active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+          </svg>
+          シャッフル開始
+        </button>
+        <span class="text-sm text-gray-400" id="shuffle-status"></span>
+      </div>
+    </div>
+
+    <!-- Result grid area -->
+    <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div id="result-bboard" class="text-center text-xs font-medium py-1.5 rounded-md mb-2 tracking-wider shrink-0" style="background:#2d5016;color:#c8e6a0;">黒板（前）</div>
+      <div id="result-grid" class="grid w-full" style="flex:1;min-height:0;gap:5px;align-content:stretch"></div>
+    </div>
+
+  </div>
+</div><!-- /outer -->
+
+<script>
+let COLS=6,ROWS=7;
+let seats=[];
+let assignment={};
+let isSpinning=false;
+let spinTimer=null;
+
+function seatList(){return seats.filter(s=>s.on).sort((a,b)=>a.r-b.r||a.c-b.c);}
+
+function initGrid(){
+  seats=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)seats.push({r,c,on:true});
+  renderGrid();
+}
+
+// Compute row height so ROWS rows fit exactly in the grid container height
+function cellHeight(gridEl){
+  const gap=5;
+  const totalH=gridEl.clientHeight;
+  return Math.max(24,(totalH-(ROWS-1)*gap)/ROWS);
+}
+
+function renderGrid(){
+  const grid=document.getElementById('seat-grid');
+  grid.style.gridTemplateColumns=`repeat(${COLS},1fr)`;
+  // Explicit row height so rows fill container exactly
+  const rh=cellHeight(grid);
+  grid.style.gridTemplateRows=`repeat(${ROWS},${rh}px)`;
+  grid.innerHTML='';
+
+  const sl=seatList();
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const s=seats.find(x=>x.r===r&&x.c===c);
+      const div=document.createElement('div');
+      if(!s){
+        div.className='cell-empty';
+        div.innerHTML=`<svg style="width:30%;height:30%;opacity:0.25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;
+        div.title='クリックで席を追加';
+        div.onclick=(()=>{const rr=r,cc=c;return()=>{seats.push({r:rr,c:cc,on:true});seats.sort((a,b)=>a.r-b.r||a.c-b.c);renderGrid();}})();
+      } else if(s.on){
+        div.className='cell-seat';
+        div.title='クリックで席を削除';
+        div.onclick=((_s)=>()=>{_s.on=false;renderGrid();})(s);
+      } else {
+        div.className='cell-empty';
+        div.innerHTML=`<svg style="width:30%;height:30%;opacity:0.25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;
+        div.title='クリックで席を追加';
+        div.onclick=((_s)=>()=>{_s.on=true;renderGrid();})(s);
+      }
+      grid.appendChild(div);
+    }
+  }
+
+  document.getElementById('seat-count-badge').textContent='席数: '+sl.length;
+  updateSeatWarn();
+  renderResultGrid(false);
+}
+
+function resizeGrid(){
+  const nc=Math.max(1,Math.min(12,parseInt(document.getElementById('cols-input').value)||6));
+  const nr=Math.max(1,Math.min(10,parseInt(document.getElementById('rows-input').value)||7));
+  COLS=nc;ROWS=nr;
+  const existing=seats.filter(s=>s.r<ROWS&&s.c<COLS);
+  seats=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const ex=existing.find(x=>x.r===r&&x.c===c);
+    seats.push({r,c,on:ex?ex.on:false});
+  }
+  renderGrid();
+}
+
+function clearAll(){seats.forEach(s=>s.on=false);renderGrid();}
+function fillAll(){seats.forEach(s=>s.on=true);renderGrid();}
+
+function updateSeatWarn(){
+  const sc=parseInt(document.getElementById('student-count').value)||0;
+  const sl=seatList();
+  const warn=document.getElementById('seat-warn');
+  if(!warn)return;
+  if(sc>sl.length) warn.textContent=`席数(${sl.length})より多いです`;
+  else if(sc<sl.length) warn.textContent=`空席 ${sl.length-sc} 席`;
+  else warn.textContent='';
+}
+
+function renderResultGrid(withSpinner){
+  const grid=document.getElementById('result-grid');
+  if(!grid)return;
+  grid.style.gridTemplateColumns=`repeat(${COLS},1fr)`;
+  const rh=cellHeight(grid);
+  grid.style.gridTemplateRows=`repeat(${ROWS},${rh}px)`;
+  grid.innerHTML='';
+
+  const sc=parseInt(document.getElementById('student-count').value)||0;
+  const sl=seatList();
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const s=sl.find(x=>x.r===r&&x.c===c);
+      const div=document.createElement('div');
+      if(!s){
+        div.style.visibility='hidden';
+      } else {
+        const val=assignment[r+'_'+c];
+        const settled=(val!=null&&!withSpinner);
+        div.className='rcell-base'+(settled?' rcell-settled':'');
+        div.dataset.key=r+'_'+c;
+        const vEl=document.createElement('div');
+        // font size relative to cell height
+        const fs=Math.max(12,Math.min(28,Math.floor(rh*0.45)));
+        vEl.style.cssText=`font-size:${fs}px;font-weight:700;line-height:1;color:`+(settled?'#166534':'#d1d5db');
+        vEl.textContent=(val!=null)?val:'—';
+        div.appendChild(vEl);
+      }
+      grid.appendChild(div);
+    }
+  }
+}
+
+function startShuffle(){
+  if(isSpinning)return;
+  const sc=parseInt(document.getElementById('student-count').value)||0;
+  const sl=seatList();
+  if(sl.length===0){document.getElementById('shuffle-status').textContent='座席が登録されていません';return;}
+  if(sc<1){document.getElementById('shuffle-status').textContent='出席者数を入力してください';return;}
+
+  const useCount=Math.min(sc,sl.length);
+  const nums=[];for(let i=1;i<=sc;i++)nums.push(i);
+  for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]];}
+  const finalAssign={};
+  sl.forEach((s,i)=>{finalAssign[s.r+'_'+s.c]=i<useCount?nums[i]:null;});
+
+  isSpinning=true;
+  assignment={};
+  document.getElementById('shuffle-btn').disabled=true;
+  document.getElementById('shuffle-status').textContent='シャッフル中...';
+  renderResultGrid(true);
+
+  const totalDuration=3200,startInterval=45,endInterval=380;
+  let elapsed=0;
+  function getInterval(t){const p=Math.min(t/totalDuration,1);return Math.round(startInterval+(endInterval-startInterval)*p*p);}
+
+  function spinTick(){
+    document.querySelectorAll('.rcell-base[data-key]').forEach(cell=>{
+      if(cell.classList.contains('rcell-settled'))return;
+      const vEl=cell.querySelector('div');
+      if(vEl)vEl.textContent=Math.ceil(Math.random()*sc);
+    });
+    const interval=getInterval(elapsed);
+    elapsed+=interval;
+    if(elapsed>=totalDuration){
+      Object.assign(assignment,finalAssign);
+      isSpinning=false;
+      document.getElementById('shuffle-btn').disabled=false;
+      renderResultGrid(false);
+      document.getElementById('shuffle-status').textContent=useCount+'名の席が決まりました';
+      launchConfetti();
+      return;
+    }
+    spinTimer=setTimeout(spinTick,interval);
+  }
+  spinTick();
+}
+
+function launchConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const colors=['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
+  const pieces=Array.from({length:200},()=>({
+    x:Math.random()*canvas.width,y:-10-Math.random()*300,
+    w:5+Math.random()*8,h:8+Math.random()*10,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    vx:(Math.random()-0.5)*5,vy:1.5+Math.random()*4,
+    rot:Math.random()*360,vrot:(Math.random()-0.5)*10,opacity:1
+  }));
+  const start=performance.now(),duration=4000;
+  (function draw(now){
+    const t=now-start,p=t/duration;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive=false;
+    pieces.forEach(q=>{
+      q.x+=q.vx;q.y+=q.vy;q.vy+=0.06;q.rot+=q.vrot;
+      if(p>0.55)q.opacity=Math.max(0,1-(p-0.55)/0.45);
+      if(q.y<canvas.height+20)alive=true;
+      ctx.save();ctx.globalAlpha=q.opacity;
+      ctx.translate(q.x,q.y);ctx.rotate(q.rot*Math.PI/180);
+      ctx.fillStyle=q.color;ctx.fillRect(-q.w/2,-q.h/2,q.w,q.h);
+      ctx.restore();
+    });
+    if(t<duration&&alive)requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  })(start);
+}
+
+function switchTab(i){
+  [0,1].forEach(ti=>{
+    document.getElementById('tab-'+ti).classList.toggle('active',ti===i);
+    const sec=document.getElementById('section-'+ti);
+    if(ti===i){sec.classList.remove('hidden');sec.style.flex='1';sec.style.display='flex';sec.style.flexDirection='column';sec.style.minHeight='0';}
+    else{sec.classList.add('hidden');sec.style.display='none';}
+  });
+  if(i===1){updateSeatWarn();renderResultGrid(false);}
+  if(i===0){renderGrid();}
+}
+
+// Re-render on resize so row heights stay fitted
+window.addEventListener('resize',()=>{
+  if(!document.getElementById('section-0').classList.contains('hidden'))renderGrid();
+  else renderResultGrid(false);
+});
+
+document.getElementById('student-count').addEventListener('input',updateSeatWarn);
+
+initGrid();
+</script>
+</body>
+</html>

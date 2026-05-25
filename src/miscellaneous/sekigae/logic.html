@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>シャッフルロジック解説</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      .step-num {
+        @apply w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center shrink-0;
+      }
+      .code-block {
+        @apply bg-gray-950 text-green-300 rounded-xl p-5 font-mono text-sm leading-relaxed overflow-x-auto;
+      }
+      .tag {
+        @apply inline-block px-2 py-0.5 rounded text-xs font-medium;
+      }
+      .section-card {
+        @apply bg-white border border-gray-100 rounded-2xl p-8 mb-6 shadow-sm;
+      }
+      .demo-cell {
+        @apply w-10 h-10 rounded-lg border flex items-center justify-center text-sm font-bold select-none;
+      }
+      .kw {
+        color: #93c5fd;
+      }
+      .fn {
+        color: #fde68a;
+      }
+      .cm {
+        color: #6b7280;
+      }
+      .st {
+        color: #86efac;
+      }
+      .nm {
+        color: #f9a8d4;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="max-w-3xl mx-auto px-6 py-12">
+      <!-- Header -->
+      <div class="mb-10">
+        <p
+          class="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2"
+        >
+          Technical Breakdown
+        </p>
+        <h1 class="text-3xl font-bold tracking-tight mb-3">
+          シャッフルロジック解説
+        </h1>
+        <p class="text-gray-500 text-sm leading-relaxed">
+          席替えシャッフルツールが内部でどのようにデータを持ち、どのアルゴリズムで席を決定し、どのように演出を実現しているかを解説します。
+        </p>
+      </div>
+
+      <!-- 1. データ構造 -->
+      <div class="section-card">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="step-num">1</div>
+          <div>
+            <h2 class="text-lg font-semibold mb-1">データ構造</h2>
+            <p class="text-sm text-gray-500">
+              座席情報をどのように表現しているか
+            </p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+          教室の座席は
+          <strong>行（row）・列（col）・有効フラグ（on）</strong>
+          の3つの値を持つオブジェクトの配列として管理されています。
+          グリッドの最大サイズは
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >ROWS × COLS</code
+          >
+          ですが、
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >on: false</code
+          >
+          にすることで通路や存在しない席を表現できます。
+        </p>
+
+        <div class="code-block mb-5">
+          <span class="cm">// 座席データの例（6列×7行グリッドの1行分）</span>
+          <span class="kw">const</span> seats = [ { r:
+          <span class="nm">0</span>, c: <span class="nm">0</span>, on:
+          <span class="kw">true</span> }, <span class="cm">// 席あり</span> { r:
+          <span class="nm">0</span>, c: <span class="nm">1</span>, on:
+          <span class="kw">true</span> }, { r: <span class="nm">0</span>, c:
+          <span class="nm">2</span>, on: <span class="kw">false</span> },
+          <span class="cm">// 通路・空きスペース</span> { r:
+          <span class="nm">0</span>, c: <span class="nm">3</span>, on:
+          <span class="kw">true</span> },
+          <span class="cm">// ... 最大 ROWS×COLS 個</span>
+          ];
+
+          <span class="cm">// 有効席のみ取り出す（行→列の順にソート済み）</span>
+          <span class="kw">const</span> <span class="fn">seatList</span> = () =>
+          seats.<span class="fn">filter</span>(s => s.on).<span class="fn"
+            >sort</span
+          >((a, b) => a.r - b.r || a.c - b.c);
+        </div>
+
+        <!-- visual -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p
+            class="text-xs text-gray-400 font-medium mb-3 uppercase tracking-wide"
+          >
+            イメージ（4列×3行）
+          </p>
+          <div id="demo-grid-1" class="grid gap-1.5 w-fit"></div>
+          <p class="text-xs text-gray-400 mt-3">
+            白 = <code>on:true</code>　点線 = <code>on:false</code>
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. Fisher-Yates -->
+      <div class="section-card">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="step-num">2</div>
+          <div>
+            <h2 class="text-lg font-semibold mb-1">Fisher-Yates シャッフル</h2>
+            <p class="text-sm text-gray-500">
+              偏りのない完全ランダムな並び替えアルゴリズム
+            </p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+          出席番号の配列
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >[1, 2, 3, … n]</code
+          >
+          を
+          <strong>Fisher-Yates（Knuth）シャッフル</strong>
+          でランダムに並び替えます。
+          末尾から先頭に向けて走査し、各要素を「それ以前のランダムな位置」と交換するだけのシンプルなアルゴリズムですが、
+          すべての順列が等確率で出現することが数学的に証明されています。
+        </p>
+
+        <div class="code-block mb-5">
+          <span class="cm"
+            >// Fisher-Yates シャッフル — O(n) で完全ランダム</span
+          >
+          <span class="kw">const</span> nums = [<span class="nm">1</span>,
+          <span class="nm">2</span>, <span class="nm">3</span>,
+          <span class="nm">4</span>, <span class="nm">5</span>];
+          <span class="cm">// 出席番号配列</span>
+
+          <span class="kw">for</span> (<span class="kw">let</span> i =
+          nums.length - <span class="nm">1</span>; i >
+          <span class="nm">0</span>; i--) {
+          <span class="cm">// 0 以上 i 以下のランダムな整数</span>
+          <span class="kw">const</span> j = Math.<span class="fn">floor</span
+          >(Math.<span class="fn">random</span>() * (i +
+          <span class="nm">1</span>));
+          <span class="cm">// i 番目と j 番目を交換</span>
+          [nums[i], nums[j]] = [nums[j], nums[i]]; }
+          <span class="cm">// 結果例: [3, 1, 5, 2, 4]</span>
+        </div>
+
+        <!-- interactive demo -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p
+            class="text-xs text-gray-400 font-medium mb-3 uppercase tracking-wide"
+          >
+            インタラクティブデモ
+          </p>
+          <div
+            class="flex items-center gap-2 flex-wrap mb-4"
+            id="fy-array"
+          ></div>
+          <button
+            onclick="runFY()"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg cursor-pointer hover:bg-gray-700 transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+            </svg>
+            シャッフル実行
+          </button>
+          <p class="text-xs text-gray-400 mt-3" id="fy-log"></p>
+        </div>
+      </div>
+
+      <!-- 3. 席への割り当て -->
+      <div class="section-card">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="step-num">3</div>
+          <div>
+            <h2 class="text-lg font-semibold mb-1">席への割り当て</h2>
+            <p class="text-sm text-gray-500">
+              シャッフル済みの番号を有効席に前から順に対応させる
+            </p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+          Fisher-Yates
+          でランダム化した出席番号の配列を、有効席リスト（行→列順）に先頭から順に対応させます。
+          結果は
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >assignment</code
+          >
+          オブジェクトで
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >"行_列" → 出席番号</code
+          >
+          のマップとして保持します。 出席者数が席数より少ない場合は余った席に
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">null</code>
+          が入り空席になります。
+        </p>
+
+        <div class="code-block">
+          <span class="cm">// シャッフル済み番号を席に割り当て</span>
+          <span class="kw">const</span> shuffled = [<span class="nm">3</span>,
+          <span class="nm">1</span>, <span class="nm">5</span>,
+          <span class="nm">2</span>, <span class="nm">4</span>];
+          <span class="kw">const</span> finalAssign = {}; seatList.<span
+            class="fn"
+            >forEach</span
+          >((seat, i) => {
+          <span class="cm">// キーは "行_列" の文字列</span>
+          <span class="kw">const</span> key =
+          <span class="st">`${seat.r}_${seat.c}`</span>; finalAssign[key] = i <
+          useCount ? shuffled[i] : <span class="kw">null</span>; });
+
+          <span class="cm"
+            >// 例: { "0_0": 3, "0_1": 1, "0_3": 5, "1_0": 2, "1_1": 4 }</span
+          >
+        </div>
+      </div>
+
+      <!-- 4. ルーレット演出 -->
+      <div class="section-card">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="step-num">4</div>
+          <div>
+            <h2 class="text-lg font-semibold mb-1">
+              ルーレット演出（イーズアウト）
+            </h2>
+            <p class="text-sm text-gray-500">
+              速度を徐々に落として最後に確定するアニメーション
+            </p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+          確定した
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >finalAssign</code
+          >
+          はユーザーには見せず、 まず全席にランダムな数字を高速で点滅させます。
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >setTimeout</code
+          >
+          の間隔を
+          <strong>二次関数（イーズアウト）</strong>
+          で徐々に延ばすことで、速度が落ちていく演出を実現しています。
+          合計経過時間が閾値を超えた時点で
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >finalAssign</code
+          >
+          を適用し確定します。
+        </p>
+
+        <div class="code-block mb-5">
+          <span class="cm"
+            >// イーズアウト: 経過時間に応じてtick間隔を伸ばす</span
+          >
+          <span class="kw">const</span> totalDuration =
+          <span class="nm">3200</span>; <span class="cm">// ms</span>
+          <span class="kw">const</span> startInterval =
+          <span class="nm">45</span>; <span class="cm">// 最速 (ms)</span>
+          <span class="kw">const</span> endInterval =
+          <span class="nm">380</span>; <span class="cm">// 最遅 (ms)</span>
+
+          <span class="kw">function</span>
+          <span class="fn">getInterval</span>(elapsed) {
+          <span class="kw">const</span> p = Math.<span class="fn">min</span
+          >(elapsed / totalDuration, <span class="nm">1</span>);
+          <span class="cm">// 0→1</span>
+          <span class="cm">// p² で二次イーズアウト</span>
+          <span class="kw">return</span> Math.<span class="fn">round</span
+          >(startInterval + (endInterval - startInterval) * p * p); }
+
+          <span class="kw">function</span> <span class="fn">spinTick</span>() {
+          <span class="cm">// 全セルにランダム値を表示</span>
+          cells.<span class="fn">forEach</span>(cell => cell.textContent =
+          Math.<span class="fn">ceil</span>(Math.<span class="fn">random</span
+          >() * n)); elapsed += <span class="fn">getInterval</span>(elapsed);
+
+          <span class="kw">if</span> (elapsed >= totalDuration) {
+          <span class="fn">settle</span>();
+          <span class="cm">// finalAssign を描画して確定</span>
+          <span class="kw">return</span>; }
+          <span class="fn">setTimeout</span>(spinTick,
+          <span class="fn">getInterval</span>(elapsed)); }
+        </div>
+
+        <!-- ease curve visual -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p
+            class="text-xs text-gray-400 font-medium mb-3 uppercase tracking-wide"
+          >
+            tick間隔の変化（二次イーズアウト）
+          </p>
+          <svg
+            viewBox="0 0 400 120"
+            class="w-full max-w-md"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- axes -->
+            <line
+              x1="40"
+              y1="10"
+              x2="40"
+              y2="95"
+              stroke="#e5e7eb"
+              stroke-width="1"
+            />
+            <line
+              x1="40"
+              y1="95"
+              x2="390"
+              y2="95"
+              stroke="#e5e7eb"
+              stroke-width="1"
+            />
+            <!-- labels -->
+            <text x="36" y="98" text-anchor="end" font-size="9" fill="#9ca3af">
+              45ms
+            </text>
+            <text x="36" y="14" text-anchor="end" font-size="9" fill="#9ca3af">
+              380ms
+            </text>
+            <text x="40" y="108" font-size="9" fill="#9ca3af">開始</text>
+            <text x="340" y="108" font-size="9" fill="#9ca3af">
+              3.2秒後（確定）
+            </text>
+            <!-- curve: quadratic ease out — interval = 45 + 335*p^2 mapped to svg coords -->
+            <!-- y = 95 - 81*(interval-45)/335 = 95 - 81*p^2, x = 40 + 350*p -->
+            <path
+              d="M40,93 Q215,93 390,12"
+              fill="none"
+              stroke="#111827"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <!-- dots at key points -->
+            <circle cx="40" cy="93" r="3.5" fill="#3b82f6" />
+            <circle cx="215" cy="73" r="3.5" fill="#8b5cf6" />
+            <circle cx="390" cy="12" r="3.5" fill="#22c55e" />
+            <text x="44" y="90" font-size="8" fill="#3b82f6">速い</text>
+            <text x="219" y="70" font-size="8" fill="#8b5cf6">中速</text>
+            <text x="370" y="10" font-size="8" fill="#22c55e">遅い→確定</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 5. 紙吹雪 -->
+      <div class="section-card">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="step-num">5</div>
+          <div>
+            <h2 class="text-lg font-semibold mb-1">
+              紙吹雪（Canvas アニメーション）
+            </h2>
+            <p class="text-sm text-gray-500">
+              requestAnimationFrame による物理シミュレーション
+            </p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+          確定と同時に
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">canvas</code>
+          上に200個のパーティクルを生成します。 各フレームで
+          <strong>重力加速度</strong> を加算し、経過時間が60%を超えると
+          <strong>不透明度をフェードアウト</strong> させます。
+          <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs"
+            >requestAnimationFrame</code
+          >
+          でディスプレイのリフレッシュレートに同期させることで 60fps
+          の滑らかなアニメーションを実現しています。
+        </p>
+
+        <div class="code-block">
+          <span class="cm">// パーティクル初期化</span>
+          <span class="kw">const</span> pieces = Array.<span class="fn"
+            >from</span
+          >({ length: <span class="nm">200</span> }, () => ({ x: Math.<span
+            class="fn"
+            >random</span
+          >() * canvas.width,
+          <span class="cm">// X 初期位置（画面幅内ランダム）</span> y: -<span
+            class="nm"
+            >10</span
+          >
+          - Math.<span class="fn">random</span>() * <span class="nm">300</span>,
+          <span class="cm">// Y 初期位置（画面上方 off-screen）</span> vx:
+          (Math.<span class="fn">random</span>() - <span class="nm">0.5</span>)
+          * <span class="nm">5</span>, <span class="cm">// 水平速度</span> vy:
+          <span class="nm">1.5</span> + Math.<span class="fn">random</span>() *
+          <span class="nm">4</span>,
+          <span class="cm">// 垂直速度（下向き）</span> rot: Math.<span
+            class="fn"
+            >random</span
+          >() * <span class="nm">360</span>,
+          <span class="cm">// 初期回転角</span> vrot: (Math.<span class="fn"
+            >random</span
+          >() - <span class="nm">0.5</span>) * <span class="nm">10</span>,
+          <span class="cm">// 回転速度</span> opacity:
+          <span class="nm">1</span>, }));
+
+          <span class="cm">// 毎フレーム更新</span>
+          <span class="kw">function</span> <span class="fn">draw</span>(now) {
+          pieces.<span class="fn">forEach</span>(p => { p.x += p.vx; p.y +=
+          p.vy; p.vy += <span class="nm">0.06</span>;
+          <span class="cm">// 重力加速度</span>
+          p.rot += p.vrot;
+          <span class="kw">if</span> (progress > <span class="nm">0.55</span>)
+          <span class="cm">// 後半でフェードアウト</span> p.opacity = Math.<span
+            class="fn"
+            >max</span
+          >(<span class="nm">0</span>, <span class="nm">1</span> - (progress -
+          <span class="nm">0.55</span>) / <span class="nm">0.45</span>); });
+          <span class="fn">requestAnimationFrame</span>(draw); }
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="bg-gray-900 text-white rounded-2xl p-8">
+        <h2 class="text-base font-semibold mb-4">まとめ</h2>
+        <div class="grid grid-cols-1 gap-3 text-sm">
+          <div class="flex items-start gap-3">
+            <div
+              class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"
+            ></div>
+            <div>
+              <span class="font-medium text-white">データ</span
+              ><span class="text-gray-400">
+                — 座席を {row, col, on} の配列で管理。on
+                フラグで通路を表現</span
+              >
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div
+              class="w-1.5 h-1.5 rounded-full bg-yellow-400 mt-1.5 shrink-0"
+            ></div>
+            <div>
+              <span class="font-medium text-white">シャッフル</span
+              ><span class="text-gray-400">
+                — Fisher-Yates アルゴリズムで O(n) かつ完全ランダム</span
+              >
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div
+              class="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"
+            ></div>
+            <div>
+              <span class="font-medium text-white">割り当て</span
+              ><span class="text-gray-400">
+                — シャッフル済み番号を有効席リストに順番に対応させる</span
+              >
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div
+              class="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0"
+            ></div>
+            <div>
+              <span class="font-medium text-white">演出</span
+              ><span class="text-gray-400">
+                — 二次イーズアウトで加速→減速し確定。Canvas + rAF で紙吹雪</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /container -->
+
+    <script>
+      // Demo grid 1
+      const demoData = [
+        [1, 1, 0, 1],
+        [1, 0, 1, 1],
+        [0, 1, 1, 1],
+      ];
+      const dg = document.getElementById("demo-grid-1");
+      dg.style.gridTemplateColumns = "repeat(4,40px)";
+      dg.style.gap = "6px";
+      demoData.forEach((row) =>
+        row.forEach((v) => {
+          const d = document.createElement("div");
+          d.className =
+            "demo-cell " +
+            (v
+              ? "bg-white border-gray-200 text-gray-800"
+              : "bg-transparent border-dashed border-gray-300 text-gray-300");
+          d.style.border = v ? "1px solid #d1d5db" : "1px dashed #d1d5db";
+          d.innerHTML = v
+            ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg>`
+            : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.4"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
+          dg.appendChild(d);
+        }),
+      );
+
+      // Fisher-Yates demo
+      let fyArr = [1, 2, 3, 4, 5, 6, 7];
+      function renderFY() {
+        const c = document.getElementById("fy-array");
+        c.innerHTML = "";
+        fyArr.forEach((v, i) => {
+          const d = document.createElement("div");
+          d.className = "demo-cell bg-white text-gray-800 transition-all";
+          d.style.cssText =
+            "border:1px solid #d1d5db;transition:background 0.3s";
+          d.textContent = v;
+          c.appendChild(d);
+        });
+      }
+      function runFY() {
+        const arr = [...fyArr];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        const steps = [];
+        // replay animation
+        const orig = [1, 2, 3, 4, 5, 6, 7];
+        const work = [...orig];
+        const seq = [];
+        for (let i = work.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          seq.push([i, j]);
+          [work[i], work[j]] = [work[j], work[i]];
+        }
+        fyArr = [...work];
+        document.getElementById("fy-log").textContent =
+          `結果: [${work.join(", ")}]`;
+        renderFY();
+      }
+      renderFY();
+    </script>
+  </body>
+</html>
