@@ -122,6 +122,14 @@ body.dark a:hover {
   margin-bottom: 0.25rem;
 }
 
+.page-header__title-icon {
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 0.95em;
+  line-height: 1;
+  vertical-align: -0.05em;
+}
+
 .page-header__desc {
   font-size: 0.95rem;
   color: var(--color-text-secondary);

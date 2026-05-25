@@ -240,6 +240,7 @@
     <script src="/js/icons.js"></script>
     <script src="/js/nav.js"></script>
     <script src="/js/theme-toggle.js"></script>
+    <script src="/js/inner-links-data.js"></script>
 
     <script>
       if (document.documentElement.classList.contains("dark")) {
@@ -268,13 +269,9 @@
 
       const grid = document.getElementById("sitemap-grid");
 
-      async function loadCategory([slug, icon, label]) {
-        let data;
-        try {
-          const res = await fetch(`/${slug}/list.json`);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          data = await res.json();
-        } catch (e) {
+      function loadCategory([slug, icon, label]) {
+        const data = window.INNER_LINKS_DATA?.[slug];
+        if (!data) {
           return null; // silently skip missing
         }
 
@@ -332,8 +329,8 @@
         `;
       }
 
-      async function buildSitemap() {
-        const results = await Promise.all(CATEGORIES.map(loadCategory));
+      function buildSitemap() {
+        const results = CATEGORIES.map(loadCategory);
         const html = results.filter(Boolean).join("");
         grid.innerHTML =
           html ||

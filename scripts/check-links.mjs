@@ -64,7 +64,7 @@ function existsAsGeneratedInnerLinkPath(targetPath) {
     return true;
   }
 
-  const match = relativeTarget.match(/^([^/]+)\/(?:index\.html|list\.json)$/);
+  const match = relativeTarget.match(/^([^/]+)\/index\.html$/);
   if (!match) return false;
   return existsSync(join(INNER_LINKS_ROOT, `${match[1]}.json`));
 }

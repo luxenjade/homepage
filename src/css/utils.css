@@ -381,7 +381,7 @@
 /* ===== Card grid (replaces .row-cols-N pattern) ===== */
 /*
   Bootstrap の .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-3 を
-  1クラスで代替する。sub-index-init.js など動的生成箇所に適用。
+  1クラスで代替する。カテゴリページなどカード一覧箇所に適用。
 */
 .card-grid {
   display: grid;

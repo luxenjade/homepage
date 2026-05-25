@@ -12,7 +12,7 @@
     "tree": "node scripts/tree.mjs",
     "build": "node scripts/build.js",
     "purge": "purgecss --css dist/css/base.css dist/css/utils.css dist/quiz/components/quiz-shell.css --content 'dist/**/*.html' 'dist/**/*.js' --output dist/css/ --safelist /^qz-/ /^tl-/ /^bi/ show is-correct is-incorrect is-locked hidden is-active is-selected is-fallback is-open is-expanded is-visible dark fade",
-    "dev": "serve src"
+    "dev": "serve dist"
   },
   "devDependencies": {
     "esbuild": "^0.27.4",

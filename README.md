@@ -11,9 +11,9 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 
 - Frontend: Vanilla HTML/CSS/JS
 - Source root: `src/`
-- Build: `pnpm run build` copies `src/` to `dist/` and minifies JS/CSS
+- Build: `pnpm run build` copies `src/` to `dist/`, generates category pages from `inner_links/`, and minifies JS/CSS/HTML
 - Hosting: Netlify
-- Shared category routing: `src/sub-index.html?slug=...` + `src/js/sub-index-init.js`
+- Category pages and the top-page category sections are generated at build time from `inner_links/*.json` and `sub-index.html`
 - Shared runtimes: `src/quiz/` for quizzes, `src/timeline/` for timelines
 - PWA support: `src/service-worker.js`, `src/manifest.json`, `netlify.toml`
 - Data-backed pages: `src/js/supabase_config.js`
@@ -21,42 +21,37 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 
 ---
 
-## Current Status (2026-04-03)
+## Current Status (2026-05-25)
 
 ### Working now
 
 - Active site source lives under `src/`, with Netlify publishing the built `dist/`
 - Shared quiz runtime is under `src/quiz/` with configs in `src/quiz/config/`
 - Shared timeline runtime is under `src/timeline/` with configs in `src/timeline/config/`
-- Category landing pages are driven by `src/sub-index.html?slug=...` + `src/js/sub-index-init.js`
+- Category landing pages are generated into `dist/{slug}/index.html` from `inner_links/*.json`; the top page also gets its category headers from the same data. The built site does not fetch category `list.json` files.
 - Shared navigation/footer injection and service worker registration live in `src/js/nav.js`
 - PWA assets and install metadata are now wired through `src/service-worker.js`, `src/manifest.json`, `appstore-images/`, and `netlify.toml`
 - The external links area is now `src/links/`, backed by `src/links/config/*.json` and the local converter `scripts/raindrop-to-json.js`
-- Active category/content roots are `src/history/`, `src/geography/`, `src/seikei/`, `src/miscellaneous/`, `src/projects/`, `src/playground/`, plus site pages such as `src/about/`, `src/privacy-policy.html`, `src/sitemap.html`, and `src/404.html`
+- Active category/content roots are `src/history/`, `src/geography/`, `src/seikei/`, `src/miscellaneous/`, `src/projects/`, plus site pages such as `src/about/`, `src/privacy-policy.html`, `src/sitemap.html`, and `src/404.html`
+- Internal category link data lives in `inner_links/`. Build output embeds this data into HTML/JS instead of publishing JSON endpoints.
 
 ### Known legacy / issues
 
-- `src/history/index.html` remains the legacy world-history timeline alongside `src/timeline/?slug=world-history`
-- `src/history/list.json` still describes the newer world-history timeline as "旧データ移行中"
 - `src/timeline/admin/wh-admin-legacy.html` is still kept as a legacy admin page
 - `archives/` stores retired scripts/assets that are no longer part of the active runtime
-- `pnpm run check` currently fails on six local link issues:
-  - `src/history/china/integration/map.html` -> `images/3dynasties_favicon.png`
-  - `src/history/index.html` -> `/css/theme-toggle.css`
-  - `src/quiz/components/demo.html` -> `/css/theme-toggle.css`
-  - `src/quiz/index.html` -> `/quiz/components/quiz-bundle.css`
 
 ---
 
 ## Repository Layout
 
 - `src/about/` - profile page, structured bio data, and styles
-- `src/history/`, `src/geography/`, `src/seikei/`, `src/miscellaneous/` - category content and `list.json` data
+- `inner_links/` - source JSON for internal category links; used only at build time
+- `src/history/`, `src/geography/`, `src/seikei/`, `src/miscellaneous/` - category content pages and tools
 - `src/quiz/` - reusable quiz runtime and configs
 - `src/timeline/` - shared timeline runtime and admin pages
 - `src/links/` - curated external learning links
 - `src/playground/` - standalone experiments and mini-apps
-- `src/projects/` - external project listing data
+- `src/projects/` - generated category route target for external project links
 - `src/js/`, `src/css/` - shared site assets
 - `netlify/` - Edge Functions and Netlify config surface
 - `scripts/` - local repository checks and conversion scripts
@@ -65,7 +60,7 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 Primary source entry pages:
 
 - `src/index.html`
-- `src/sub-index.html`
+- `sub-index.html` - category page template used by the build
 - `src/404.html`
 - `src/privacy-policy.html`
 - `src/sitemap.html`

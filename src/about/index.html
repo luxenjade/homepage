@@ -164,9 +164,23 @@
       <!-- PROJECTS -->
       <section class="mb-5">
         <p class="section-label">Projects</p>
-        <div id="projects-list" class="d-flex flex-column gap-3">
-          <div class="load-placeholder">Loading...</div>
-        </div>
+        <a href="/projects/" class="project-item">
+          <i
+            class="bi bi-box-arrow-up-right"
+            style="font-size:1.1rem;color:var(--color-text-secondary);flex-shrink:0;margin-top:0.1rem;"
+          ></i>
+          <div style="flex:1;min-width:0;">
+            <div class="project-item__name">Other Websites</div>
+            <div class="project-item__en">Projects</div>
+            <p class="project-item__desc">
+              外部サイトや関連プロジェクトの一覧
+            </p>
+          </div>
+          <i
+            class="bi bi-chevron-right"
+            style="font-size:0.85rem;color:var(--color-text-secondary);opacity:0.5;flex-shrink:0;margin-top:0.25rem;"
+          ></i>
+        </a>
       </section>
     </main>
 
@@ -407,53 +421,10 @@
         mdToggle.refresh();
       }
 
-      // ── Load projects/list.json ────────────────────────────────
-      async function loadProjects() {
-        const el = document.getElementById("projects-list");
-        let data;
-        try {
-          const res = await fetch("/projects/list.json");
-          if (!res.ok) throw new Error(res.status);
-          data = await res.json();
-        } catch (e) {
-          el.innerHTML = `<p style="color:var(--color-text-secondary);font-size:0.875rem;">プロジェクトデータを読み込めませんでした。</p>`;
-          return;
-        }
-
-        const items = (data.sections ?? []).flatMap((s) => s.items ?? []);
-        if (!items.length) {
-          el.innerHTML = `<p style="color:var(--color-text-secondary);font-size:0.875rem;">プロジェクトなし</p>`;
-          return;
-        }
-
-        el.innerHTML = items
-          .map(
-            (item) => `
-          <a href="${esc(item.link)}" target="_blank" rel="noopener" class="project-item">
-            ${
-              item.icon
-                ? `<img src="${esc(item.icon)}" alt=""
-                      style="width:28px;height:28px;object-fit:contain;border-radius:4px;flex-shrink:0;">`
-                : `<i class="bi bi-box-arrow-up-right" style="font-size:1.1rem;color:var(--color-text-secondary);flex-shrink:0;margin-top:0.1rem;"></i>`
-            }
-            <div style="flex:1;min-width:0;">
-              <div class="project-item__name">${esc(item.title)}</div>
-              ${item.titleEN ? `<div class="project-item__en">${esc(item.titleEN)}</div>` : ""}
-              ${item.description ? `<p class="project-item__desc">${esc(item.description)}</p>` : ""}
-            </div>
-            <i class="bi bi-box-arrow-up-right"
-               style="font-size:0.72rem;color:var(--color-text-secondary);opacity:0.4;flex-shrink:0;margin-top:0.25rem;"></i>
-          </a>
-        `,
-          )
-          .join("");
-      }
-
       // ── Boot ──────────────────────────────────────────────────
       initHeroAvatar();
       loadShoeiJSON();
       loadBioMD();
-      loadProjects();
     </script>
   </body>
 </html>

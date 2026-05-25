@@ -200,37 +200,7 @@
         </div>
       </div>
 
-      <!-- 歴史 -->
-      <div class="index-section-header">
-        <h2 class="index-section-header__title">歴史</h2>
-        <span class="index-section-header__desc"
-          >世界史・中国史の年代クイズ・年表</span
-        >
-      </div>
-      <div class="index-card-grid" id="cards-history"></div>
-
-      <!-- 政治・経済 -->
-      <div class="index-section-header">
-        <h2 class="index-section-header__title">政治・経済</h2>
-        <span class="index-section-header__desc"
-          >政経年代クイズ・憲法クイズ</span
-        >
-      </div>
-      <div class="index-card-grid" id="cards-seikei"></div>
-
-      <!-- 地理 -->
-      <div class="index-section-header">
-        <h2 class="index-section-header__title">地理</h2>
-        <span class="index-section-header__desc">地図・首都クイズ</span>
-      </div>
-      <div class="index-card-grid" id="cards-geography"></div>
-
-      <!-- その他 -->
-      <div class="index-section-header">
-        <h2 class="index-section-header__title">その他</h2>
-        <span class="index-section-header__desc">英語・情報・古典など</span>
-      </div>
-      <div class="index-card-grid" id="cards-others"></div>
+      <div id="index-categories"><!-- build:index-categories --></div>
     </div>
 
     <footer id="site-footer"></footer>
@@ -295,7 +265,7 @@
       })();
 
       // ── カード描画 ─────────────────────────────────────────
-      // sub-index-init.js の _cardHTML と同じパターン。
+      // カテゴリページ生成と同じカード構造に揃える。
       // アイコン・タイトル・説明の構造を統一。
       function renderCards(sectionId, items) {
         const container = document.getElementById(sectionId);
@@ -325,10 +295,11 @@
 
       function tryRenderAll() {
         if (typeof CARDS_DATA === "undefined") return;
-        renderCards("cards-history", CARDS_DATA.history);
-        renderCards("cards-seikei", CARDS_DATA.seikei);
-        renderCards("cards-geography", CARDS_DATA.geography);
-        renderCards("cards-others", CARDS_DATA.miscellaneous);
+        (window.INDEX_CATEGORY_SLUGS || Object.keys(CARDS_DATA)).forEach(
+          (slug) => {
+            renderCards(`cards-${slug}`, CARDS_DATA[slug]);
+          },
+        );
       }
 
       tryRenderAll();
@@ -337,6 +308,10 @@
       window.tryRenderAll = tryRenderAll;
     </script>
 
+    <script
+      src="/js/inner-links-data.js"
+      onerror="console.info('inner-links-data.js not found')"
+    ></script>
     <script
       src="/js/lists-loader.js"
       onerror="console.info('lists-loader.js not found')"
