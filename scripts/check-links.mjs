@@ -1,8 +1,9 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { dirname, extname, join, resolve, relative } from "node:path";
+import { basename, dirname, extname, join, resolve, relative } from "node:path";
 
 const ROOT = process.cwd();
 const SITE_ROOT = resolve(ROOT, "src");
+const INNER_LINKS_ROOT = resolve(ROOT, "inner_links");
 const IGNORE_DIRS = new Set([".git", "node_modules", "archives"]);
 const ATTR_PATTERN = /(href|src)\s*=\s*["']([^"']+)["']/gi;
 
@@ -54,7 +55,18 @@ function isDynamicSlugLink(link) {
 }
 
 function existsAsPath(targetPath) {
-  return existsSync(targetPath);
+  return existsSync(targetPath) || existsAsGeneratedInnerLinkPath(targetPath);
+}
+
+function existsAsGeneratedInnerLinkPath(targetPath) {
+  const relativeTarget = relative(SITE_ROOT, targetPath).replaceAll("\\", "/");
+  if (relativeTarget === "quiz/components/quiz-bundle.css") {
+    return true;
+  }
+
+  const match = relativeTarget.match(/^([^/]+)\/(?:index\.html|list\.json)$/);
+  if (!match) return false;
+  return existsSync(join(INNER_LINKS_ROOT, `${match[1]}.json`));
 }
 
 function resolveCandidates(baseDir, rawLink) {
@@ -103,15 +115,21 @@ function checkHtmlFiles(errors) {
   }
 }
 
-// ── list.json チェック ────────────────────────────────────────
+// ── inner_links チェック ──────────────────────────────────────
 
-function checkListJsonFiles(errors) {
-  const jsonFiles = collectFiles(SITE_ROOT, [".json"]).filter((f) =>
-    f.endsWith("list.json"),
-  );
+function collectInnerLinkFiles() {
+  if (!existsSync(INNER_LINKS_ROOT)) return [];
+  return readdirSync(INNER_LINKS_ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .map((entry) => join(INNER_LINKS_ROOT, entry.name));
+}
 
+function checkInnerLinkJsonFiles(errors) {
+  const jsonFiles = collectInnerLinkFiles();
   for (const jsonFile of jsonFiles) {
     const relativeFile = relative(ROOT, jsonFile).replaceAll("\\", "/");
+    const slug = basename(jsonFile, ".json");
+    const generatedBaseDir = join(SITE_ROOT, slug);
     let cfg;
 
     try {
@@ -130,7 +148,7 @@ function checkListJsonFiles(errors) {
         if (isSkippableLink(link)) continue;
         if (isDynamicSlugLink(link)) continue;
 
-        const candidates = resolveCandidates(dirname(jsonFile), link);
+        const candidates = resolveCandidates(generatedBaseDir, link);
         if (!candidates.some(existsAsPath)) {
           errors.push({ source: relativeFile, link });
         }
@@ -143,7 +161,7 @@ function checkListJsonFiles(errors) {
       !isSkippableLink(cfg.backLink) &&
       !isDynamicSlugLink(cfg.backLink)
     ) {
-      const candidates = resolveCandidates(dirname(jsonFile), cfg.backLink);
+      const candidates = resolveCandidates(generatedBaseDir, cfg.backLink);
       if (!candidates.some(existsAsPath)) {
         errors.push({ source: relativeFile, link: cfg.backLink });
       }
@@ -155,7 +173,7 @@ function checkListJsonFiles(errors) {
 
 const errors = [];
 checkHtmlFiles(errors);
-checkListJsonFiles(errors);
+checkInnerLinkJsonFiles(errors);
 
 if (errors.length) {
   console.error("Broken local links found:");
@@ -164,10 +182,8 @@ if (errors.length) {
 }
 
 const htmlCount = collectFiles(SITE_ROOT, [".html"]).length;
-const jsonCount = collectFiles(SITE_ROOT, [".json"]).filter((f) =>
-  f.endsWith("list.json"),
-).length;
+const jsonCount = collectInnerLinkFiles().length;
 
 console.log(
-  `Local link check passed — ${htmlCount} HTML files, ${jsonCount} list.json files.`,
+  `Local link check passed — ${htmlCount} HTML files, ${jsonCount} inner_links files.`,
 );

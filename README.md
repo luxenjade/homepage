@@ -45,8 +45,6 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
   - `src/history/index.html` -> `/css/theme-toggle.css`
   - `src/quiz/components/demo.html` -> `/css/theme-toggle.css`
   - `src/quiz/index.html` -> `/quiz/components/quiz-bundle.css`
-  - `src/seikei/print.html` -> `/css/theme-toggle.css`
-  - `src/sitemap.html` -> `/learning-links/`
 
 ---
 

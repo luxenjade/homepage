@@ -1,7 +1,7 @@
 // build.js
 // ビルドパイプライン:
 //   1. dist/ クリーン & src/ コピー
-//   2. カテゴリ index.html 生成
+//   2. inner_links からカテゴリ index.html/list.json 生成
 //   3. quiz-bundle.css 生成（コンポーネントCSS結合）
 //   4. esbuild（JS/CSS minify）
 //   5. purgecss
@@ -17,25 +17,151 @@ console.log("[1/6] Cleaning dist/ and copying src/...");
 await rm("dist", { recursive: true, force: true });
 await cp("src", "dist", { recursive: true });
 
-// ── 2. カテゴリ index.html 生成 ───────────────────────────
+// ── 2. inner_links からカテゴリ index.html/list.json 生成 ───
 
 console.log("[2/6] Generating category index pages...");
 
-const categorySlugs = fs
-  .readdirSync("src", { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .filter((slug) => fs.existsSync(path.join("src", slug, "list.json")))
-  .sort();
+const SITE_URL = "https://shoei451.netlify.app";
+const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
+const innerLinksDir = "inner_links";
+
+const categoryFiles = fs
+  .readdirSync(innerLinksDir, { withFileTypes: true })
+  .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+  .map((entry) => ({
+    slug: path.basename(entry.name, ".json"),
+    path: path.join(innerLinksDir, entry.name),
+  }))
+  .sort((a, b) => a.slug.localeCompare(b.slug));
 
 const subIndexTemplate = fs.readFileSync("sub-index.html", "utf8");
 
-for (const slug of categorySlugs) {
-  const out = path.join("dist", slug, "index.html");
-  fs.writeFileSync(out, subIndexTemplate, "utf8");
+for (const { slug, path: configPath } of categoryFiles) {
+  const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  const outDir = path.join("dist", slug);
+
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(outDir, "list.json"),
+    `${JSON.stringify(config, null, 2)}\n`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(outDir, "index.html"),
+    renderSubIndex(subIndexTemplate, config, slug),
+    "utf8",
+  );
 }
 
-console.log(`  -> ${categorySlugs.length} category index pages generated`);
+console.log(`  -> ${categoryFiles.length} category index pages generated`);
+
+function renderSubIndex(template, config, slug) {
+  const url = `${SITE_URL}/${slug}/`;
+  const title = config.title || `${plainText(config.h1 || slug)} — Shoei451`;
+  const description =
+    config.description ||
+    config.headerDesc ||
+    `${plainText(config.h1 || slug)} の学習ツール一覧です。`;
+  const image = config.ogImage || config.image || DEFAULT_IMAGE;
+  const structuredData = config.structuredData || buildStructuredData(config, {
+    slug,
+    title,
+    description,
+    url,
+    image,
+  });
+
+  return template
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
+    .replace(
+      /<meta\s+name="description"\s+content="[^"]*"\s*\/>/,
+      `<meta name="description" content="${escapeHtml(description)}" />`,
+    )
+    .replace(
+      /<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/,
+      `<link rel="canonical" href="${escapeHtml(url)}" />`,
+    )
+    .replace(
+      /<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:title" content="${escapeHtml(title)}" />`,
+    )
+    .replace(
+      /<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:description" content="${escapeHtml(description)}" />`,
+    )
+    .replace(
+      /<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:url" content="${escapeHtml(url)}" />`,
+    )
+    .replace(
+      /<meta\s+property="og:image"\s+content="[^"]*"\s*\/>/,
+      `<meta property="og:image" content="${escapeHtml(image)}" />`,
+    )
+    .replace(
+      /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/,
+      `<meta name="twitter:title" content="${escapeHtml(title)}" />`,
+    )
+    .replace(
+      /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/,
+      `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
+    )
+    .replace(
+      /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/>/,
+      `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
+    )
+    .replace(
+      /<script\s+type="application\/ld\+json">[\s\S]*?<\/script>/,
+      `<script type="application/ld+json">\n${JSON.stringify(structuredData, null, 2)}\n    </script>`,
+    );
+}
+
+function buildStructuredData(config, { title, description, url, image }) {
+  const items = (config.sections || [])
+    .flatMap((section) => section.items || [])
+    .map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: plainText(item.title || item.titleEN || ""),
+      url: toAbsoluteUrl(item.link || url),
+    }));
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: plainText(title),
+    description: plainText(description),
+    url,
+    image,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items,
+    },
+  };
+}
+
+function toAbsoluteUrl(value) {
+  if (!value) return SITE_URL;
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+  if (value.startsWith("/")) return `${SITE_URL}${value}`;
+  return `${SITE_URL}/${value}`;
+}
+
+function plainText(value) {
+  return String(value ?? "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 // ── 3. quiz-bundle.css 生成 ───────────────────────────────
 
