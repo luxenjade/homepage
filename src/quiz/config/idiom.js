@@ -5,7 +5,7 @@ window.QUIZ_CONFIG = {
   title: "Vintage イディオムクイズ",
   subtitle: "Fill-in-the-blank idiom questions",
   tutorialMd: "../quiz/tutorial/idiom.md",
-  backLink: "/sub-index.html?slug=miscellaneous",
+  backLink: "/miscellaneous/",
   backLabel: "Miscellaneous",
   answerType: "choice",
   supabaseTable: "english_idioms",

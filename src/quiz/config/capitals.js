@@ -4,7 +4,7 @@
 window.QUIZ_CONFIG = {
   title: "World Capitals Quiz",
   subtitle: "Test your knowledge of world capitals",
-  backLink: "/sub-index.html?slug=geography",
+  backLink: "/geography/",
   backLabel: "Geography",
   answerType: "choice",
   startLabel: "START",

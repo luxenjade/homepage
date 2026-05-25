@@ -5,7 +5,7 @@ import { formatJapaneseYear, fetchWhDates } from "./common.js";
 
 const timelineConfig = {
   title: "世界史年表",
-  backLink: "../sub-index.html?slug=history",
+  backLink: "/history/",
   backLabel: "歴史ホーム",
   accentColor: "#1a2b3c",
   accentColorRgb: "26, 43, 60",

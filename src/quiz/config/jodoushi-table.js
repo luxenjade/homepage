@@ -5,7 +5,7 @@
 window.QUIZ_CONFIG = {
   title: "古典 助動詞クイズ",
   subtitle: "表埋めモード",
-  backLink: "/sub-index.html?slug=miscellaneous",
+  backLink: "/miscellaneous/",
   accentColor: "#c0392b",
   image: "/images/ougi.svg",
   backLabel: "Miscellaneous",

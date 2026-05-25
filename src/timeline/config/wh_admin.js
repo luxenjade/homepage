@@ -2,7 +2,7 @@ import { initWorldHistoryAdminApp } from "../../wh_admin/app.js";
 
 const timelineConfig = {
   title: "世界史年表 管理",
-  backLink: "../sub-index.html?slug=history",
+  backLink: "/history/",
   backLabel: "歴史ホーム",
   accentColor: "#1a2b3c",
   showSearch: false,

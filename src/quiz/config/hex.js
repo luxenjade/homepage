@@ -4,7 +4,7 @@
 window.QUIZ_CONFIG = {
   title: "16進法クイズ",
   subtitle: "Hexadecimal — binary, decimal, and color conversions",
-  backLink: "/sub-index.html?slug=miscellaneous",
+  backLink: "/miscellaneous/",
   backLabel: "Miscellaneous",
   accentColor: "#148b9d",
   answerType: "choice",

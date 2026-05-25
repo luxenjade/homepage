@@ -5,7 +5,7 @@
 window.QUIZ_CONFIG = {
   title: "古典 助動詞クイズ",
   subtitle: "一問一答モード",
-  backLink: "/sub-index.html?slug=miscellaneous",
+  backLink: "/miscellaneous/",
   backLabel: "Miscellaneous",
   accentColor: "#c0392b",
   image: "/images/ougi.svg",

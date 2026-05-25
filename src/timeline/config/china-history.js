@@ -30,7 +30,7 @@ import {
 
 const timelineConfig = {
   title: "中国王朝史年表",
-  backLink: "../sub-index.html?slug=history",
+  backLink: "/history/",
   backLabel: "歴史ホーム",
   accentColor: "#d73c37",
   accentColorRgb: "215, 60, 55",

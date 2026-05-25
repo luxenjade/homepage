@@ -41,7 +41,7 @@
           "title": "世界史年表 (legacy)",
           "titleEN": "World History Timeline (Legacy)",
           "description": "世界史年表の旧バージョン。Supabase から直接データを取得して表示",
-          "link": "/history/index.html",
+          "link": "/history/index-old.html",
           "target": "_blank"
         },
         {

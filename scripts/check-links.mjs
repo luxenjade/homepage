@@ -8,10 +8,9 @@ const ATTR_PATTERN = /(href|src)\s*=\s*["']([^"']+)["']/gi;
 
 // HTMLファイル内の特定リンクを除外するエントリ。
 // フォーマット: "relativeHtmlPath::rawLink"
-// ?slug= パラメータを含む sub-index.html へのバックリンクは
-// check-links で false positive になるため登録する。
+// 動的リンクなど、check-links で false positive になるものを登録する。
 const KNOWN_IGNORES = new Set([
-  // 例: "history/worldhistory/quiz.html::/sub-index.html?slug=history/world",
+  // 例: "history/worldhistory/quiz.html::/dynamic/path",
 ]);
 
 // ── ファイル収集 ──────────────────────────────────────────────

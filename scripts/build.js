@@ -1,7 +1,7 @@
 // build.js
 // ビルドパイプライン:
 //   1. dist/ クリーン & src/ コピー
-//   2. _redirects 生成（カテゴリフォルダ -> sub-index）
+//   2. カテゴリ index.html 生成
 //   3. quiz-bundle.css 生成（コンポーネントCSS結合）
 //   4. esbuild（JS/CSS minify）
 //   5. purgecss
@@ -17,9 +17,9 @@ console.log("[1/6] Cleaning dist/ and copying src/...");
 await rm("dist", { recursive: true, force: true });
 await cp("src", "dist", { recursive: true });
 
-// ── 2. _redirects 生成 ───────────────────────────────────
+// ── 2. カテゴリ index.html 生成 ───────────────────────────
 
-console.log("[2/6] Generating Netlify redirects...");
+console.log("[2/6] Generating category index pages...");
 
 const categorySlugs = fs
   .readdirSync("src", { withFileTypes: true })
@@ -28,16 +28,14 @@ const categorySlugs = fs
   .filter((slug) => fs.existsSync(path.join("src", slug, "list.json")))
   .sort();
 
-const redirectRules = categorySlugs.flatMap((slug) => [
-  `/${slug} /sub-index.html?slug=${slug} 301`,
-  `/${slug}/ /sub-index.html?slug=${slug} 301`,
-]);
+const subIndexTemplate = fs.readFileSync("sub-index.html", "utf8");
 
-const redirectsOut = "dist/_redirects";
-fs.writeFileSync(redirectsOut, `${redirectRules.join("\n")}\n`, "utf8");
-console.log(
-  `  -> ${redirectsOut} (${categorySlugs.length} category redirects)`,
-);
+for (const slug of categorySlugs) {
+  const out = path.join("dist", slug, "index.html");
+  fs.writeFileSync(out, subIndexTemplate, "utf8");
+}
+
+console.log(`  -> ${categorySlugs.length} category index pages generated`);
 
 // ── 3. quiz-bundle.css 生成 ───────────────────────────────
 

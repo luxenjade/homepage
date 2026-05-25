@@ -4,7 +4,7 @@
 window.QUIZ_CONFIG = {
   title: "世界史年代クイズ",
   subtitle: "出来事 → 年号",
-  backLink: "/sub-index.html?slug=history",
+  backLink: "/history/",
   backLabel: "History",
   answerType: "text",
   supabaseTable: "wh_quiz",

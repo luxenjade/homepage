@@ -15,7 +15,11 @@ const RUNTIME_CACHE = `shoei451-runtime-${CACHE_VERSION}`;
 const SHELL_ASSETS = [
   "/",
   "/index.html",
-  "/sub-index.html",
+  "/history/",
+  "/geography/",
+  "/seikei/",
+  "/miscellaneous/",
+  "/projects/",
   "/quiz/index.html",
   "/css/base.css",
   "/js/icons.js",

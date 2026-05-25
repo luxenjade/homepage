@@ -46,10 +46,10 @@
 
         <div class="site-nav__menu" id="site-nav-menu">
           <ul class="site-nav__links">
-            <li><a class="site-nav__link" href="/sub-index.html?slug=history">歴史</a></li>
-            <li><a class="site-nav__link" href="/sub-index.html?slug=geography">地理</a></li>
-            <li><a class="site-nav__link" href="/sub-index.html?slug=seikei">政治・経済</a></li>
-            <li><a class="site-nav__link" href="/sub-index.html?slug=miscellaneous">その他</a></li>
+            <li><a class="site-nav__link" href="/history/">歴史</a></li>
+            <li><a class="site-nav__link" href="/geography/">地理</a></li>
+            <li><a class="site-nav__link" href="/seikei/">政治・経済</a></li>
+            <li><a class="site-nav__link" href="/miscellaneous/">その他</a></li>
             <li><a class="site-nav__link" href="/links/">リンク集</a></li>
           </ul>
 

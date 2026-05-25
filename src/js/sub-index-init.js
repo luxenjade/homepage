@@ -1,8 +1,8 @@
 // ============================================================
 // js/sub-index-init.js
 //
-// sub-index.html から呼ばれる共通エンジン（リデザイン版）。
-// URL の ?slug=history などから slug を受け取り:
+// カテゴリ index.html から呼ばれる共通エンジン（リデザイン版）。
+// URL の ?slug=history または /history/ などから slug を受け取り:
 //   1. {slug}/list.json を fetch
 //   2. #page-content だけを書き換える（body 全体を書き換えない）
 //   3. カードを .card-grid で生成（Bootstrap 非依存）
@@ -32,9 +32,9 @@
 // ============================================================
 
 (function () {
-  const slug = new URLSearchParams(location.search).get("slug");
+  const slug = _resolveSlug();
   if (!slug) {
-    _showError("slug パラメータが指定されていません（例: ?slug=history）");
+    _showError("カテゴリ slug を特定できませんでした。");
     return;
   }
 
@@ -43,7 +43,7 @@
   async function _fetchAndBuild(slug) {
     let cfg;
     try {
-      const res = await fetch(slug + "/list.json");
+      const res = await fetch("/" + slug + "/list.json");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       cfg = await res.json();
     } catch (err) {
@@ -67,6 +67,16 @@
         "&ref=" +
         encodeURIComponent(document.referrer),
     );
+  }
+
+  function _resolveSlug() {
+    const querySlug = new URLSearchParams(location.search).get("slug");
+    if (querySlug) return querySlug.replace(/^\/+|\/+$/g, "");
+
+    return location.pathname
+      .split("/")
+      .filter(Boolean)
+      .filter((part) => part !== "index.html")[0];
   }
 
   // ── HTML 生成 ──────────────────────────────────────────────
