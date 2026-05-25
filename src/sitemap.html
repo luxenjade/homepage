@@ -227,7 +227,7 @@
         </ul>
       </div>
 
-      <!-- Dynamic categories -->
+      <!-- build:sitemap-categories -->
       <div id="sitemap-grid" class="sitemap-grid">
         <div class="sitemap-loading">
           <i class="bi bi-arrow-repeat me-1"></i> Loading content...
@@ -240,104 +240,11 @@
     <script src="/js/icons.js"></script>
     <script src="/js/nav.js"></script>
     <script src="/js/theme-toggle.js"></script>
-    <script src="/js/inner-links-data.js"></script>
 
     <script>
       if (document.documentElement.classList.contains("dark")) {
         document.body.classList.add("dark");
       }
-
-      function esc(s) {
-        return String(s ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      // Categories to load: [slug, icon, label]
-      const CATEGORIES = [
-        ["history", "bi-clock-history", "歴史"],
-        ["geography", "bi-globe", "地理"],
-        ["seikei", "bi-bank", "政治・経済"],
-        ["home-economics", "bi-house-heart", "家庭科"],
-        ["koten", "bi-journal-richtext", "古典"],
-        ["informatics", "bi-cpu", "情報I"],
-        ["miscellaneous", "bi-grid", "その他"],
-        ["projects", "bi-box-arrow-up-right", "Projects"],
-      ];
-
-      const grid = document.getElementById("sitemap-grid");
-
-      function loadCategory([slug, icon, label]) {
-        const data = window.INNER_LINKS_DATA?.[slug];
-        if (!data) {
-          return null; // silently skip missing
-        }
-
-        const sections = data.sections ?? [];
-        const totalItems = sections.reduce(
-          (n, s) => n + (s.items ?? []).length,
-          0,
-        );
-        if (!totalItems) return null;
-
-        const sectionsHTML = sections
-          .filter((s) => s.items?.length)
-          .map((s) => {
-            const linksHTML = s.items
-              .map((item) => {
-                const isExternal =
-                  (item.link ?? "").startsWith("http") ||
-                  item.target === "_blank";
-                return `
-                <li>
-                  <a href="${esc(item.link ?? "#")}"
-                     ${isExternal ? 'target="_blank" rel="noopener"' : ""}>
-                    <span class="link-title">${esc(item.title)}</span>
-                    ${item.description ? `<span class="link-desc"> ${esc(item.description.slice(0, 40))}${item.description.length > 40 ? "…" : ""}</span>` : ""}
-                    ${isExternal ? '<i class="bi bi-box-arrow-up-right link-ext"></i>' : ""}
-                  </a>
-                </li>
-              `;
-              })
-              .join("");
-
-            const sectionTitle =
-              sections.length > 1
-                ? `<div class="sitemap-section__title">${esc(s.title ?? "")}</div>`
-                : "";
-
-            return `
-              <div class="sitemap-section">
-                ${sectionTitle}
-                <ul class="sitemap-links">${linksHTML}</ul>
-              </div>
-            `;
-          })
-          .join("");
-
-        return `
-          <div class="sitemap-category">
-            <div class="sitemap-category__header">
-              <i class="bi ${esc(icon)} sitemap-category__icon"></i>
-              <h2 class="sitemap-category__name">${esc(label)}</h2>
-              <span class="sitemap-category__count">${totalItems}件</span>
-            </div>
-            ${sectionsHTML}
-          </div>
-        `;
-      }
-
-      function buildSitemap() {
-        const results = CATEGORIES.map(loadCategory);
-        const html = results.filter(Boolean).join("");
-        grid.innerHTML =
-          html ||
-          `<p class="sitemap-error">コンテンツを読み込めませんでした。</p>`;
-      }
-
-      buildSitemap();
     </script>
   </body>
 </html>

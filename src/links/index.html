@@ -44,7 +44,7 @@
       </div>
       <div class="card-grid" id="forms-grid"></div>
 
-      <div class="section-header" id="learning-header" style="display: none">
+      <div class="section-header" id="learning-header">
         <h2 class="section-header__title">学習リンク</h2>
         <span class="section-header__desc">参考サイト・資料</span>
       </div>
@@ -61,124 +61,7 @@
         document.body.classList.add("dark");
       }
 
-      // コレクション定義
-      // category: "forms" | "learning" で表示先グリッドを分ける
-      const COLLECTIONS = [
-        {
-          slug: "rekisou",
-          title: "歴史総合 語句確認フォーム",
-          titleEN: "Comprehensive History Vocabulary Quiz Forms",
-          desc: "歴史総合の単元別フォーム集",
-          icon: "bi-clock-history",
-          category: "forms",
-        },
-        {
-          slug: "world-history",
-          title: "世界史 学習リンク",
-          titleEN: "World History Learning Links",
-          desc: "世界史の学習に役立つリンク集",
-          icon: "bi-globe",
-          category: "learning",
-        },
-        {
-          slug: "biology",
-          title: "生物基礎 語句確認フォーム",
-          titleEN: "Biology Vocabulary Quiz Forms",
-          desc: "生物基礎の単元別フォーム集",
-          icon: "bi-leaf",
-          category: "forms",
-        },
-        {
-          slug: "classics",
-          title: "古文・漢文",
-          titleEN: "Japanese & Chinese Classics",
-          desc: "古文・漢文のリンク集",
-          icon: "bi-journal-bookmark",
-          category: "learning",
-        },
-        {
-          slug: "seikei",
-          title: "政治経済 学習リンク集",
-          titleEN: "Politics and Economics Learning Links",
-          desc: "政治経済の学習に役立つリンク集",
-          icon: "bi-bank",
-          category: "learning",
-        },
-        {
-          slug: "en-school",
-          title: "英語（学校用）",
-          titleEN: "English (School Use)",
-          desc: "学校の英語教材のデジタルサイトへのリンク集",
-          icon: "bi-translate",
-          category: "learning",
-        },
-        {
-          slug: "informatics",
-          title: "情報",
-          titleEN: "Informatics",
-          desc: "情報Ⅰの共通テスト対策に役立つリンク集",
-          icon: "bi-cpu",
-          category: "learning",
-        },
-        {
-          slug: "geography",
-          title: "地理",
-          titleEN: "Geography",
-          desc: "地理の学習に役立つリンク集",
-          icon: "bi-map",
-          category: "learning",
-        },
-        {
-          slug: "science-basics",
-          title: "理科基礎",
-          titleEN: "Science Bacics",
-          desc: "理科基礎の共通テスト対策・復習用",
-          icon: "bi-beaker",
-          category: "learning",
-        },
-        // Raindrop 移行後はここに追加:
-        // { slug: "study-sites", title: "...", desc: "...", icon: "bi-globe", category: "learning" },
-      ];
-
-      function esc(s) {
-        return String(s ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function buildCard(col) {
-        const iconHtml = /^bi-[\w-]+$/.test(col.icon)
-          ? `<i class="bi ${esc(col.icon)} site-card__bi-icon mb-3" aria-hidden="true"></i>`
-          : `<img src="${esc(col.icon)}" class="site-card__icon mb-3" alt="" loading="lazy">`;
-
-        return `
-          <a href="viewer.html?slug=${esc(col.slug)}" class="site-card" style="display:flex;flex-direction:column;padding:1rem;text-decoration:none;">
-            ${iconHtml}
-            ${col.titleEN ? `<div class="site-card__title-en">${esc(col.titleEN)}</div>` : ""}
-            <div style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;color:var(--color-text-primary);">${esc(col.title)}</div>
-            ${col.desc ? `<p style="font-size:0.875rem;color:var(--color-text-secondary);margin:0;">${esc(col.desc)}</p>` : ""}
-          </a>
-        `;
-      }
-
-      const formsGrid = document.getElementById("forms-grid");
-      const learningGrid = document.getElementById("learning-grid");
-      const learningHeader = document.getElementById("learning-header");
-
-      let hasLearning = false;
-
-      COLLECTIONS.forEach((col) => {
-        if (col.category === "learning") {
-          learningGrid.insertAdjacentHTML("beforeend", buildCard(col));
-          hasLearning = true;
-        } else {
-          formsGrid.insertAdjacentHTML("beforeend", buildCard(col));
-        }
-      });
-
-      if (hasLearning) learningHeader.style.display = "";
+      // build:link-collections
     </script>
   </body>
 </html>

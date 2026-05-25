@@ -1,7 +1,7 @@
 // build.js
 // ビルドパイプライン:
 //   1. dist/ クリーン & src/ コピー
-//   2. inner_links からカテゴリ index.html と共有データ JS 生成
+//   2. inner_links / external_links から静的ページ・データ生成
 //   3. quiz-bundle.css 生成（コンポーネントCSS結合）
 //   4. esbuild（JS/CSS minify）
 //   5. purgecss
@@ -17,13 +17,14 @@ console.log("[1/6] Cleaning dist/ and copying src/...");
 await rm("dist", { recursive: true, force: true });
 await cp("src", "dist", { recursive: true });
 
-// ── 2. inner_links からカテゴリ index.html と共有データ JS 生成 ───
+// ── 2. inner_links / external_links から静的ページ・データ生成 ───
 
-console.log("[2/6] Generating category index pages...");
+console.log("[2/6] Generating link-driven pages...");
 
 const SITE_URL = "https://shoei451.netlify.app";
 const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
 const innerLinksDir = "inner_links";
+const externalLinksDir = "external_links";
 const INDEX_CATEGORY_SLUGS = [
   "history",
   "seikei",
@@ -59,16 +60,13 @@ for (const { slug, path: configPath } of categoryFiles) {
 console.log(`  -> ${categoryFiles.length} category index pages generated`);
 
 fs.writeFileSync(
-  "dist/js/inner-links-data.js",
-  `window.INNER_LINKS_DATA = ${JSON.stringify(innerLinksData, null, 2)};\n`,
-  "utf8",
-);
-fs.writeFileSync(
   "dist/js/lists-loader.js",
   renderListsLoader(innerLinksData),
   "utf8",
 );
 renderIndexPage(innerLinksData);
+renderSitemapPage(innerLinksData);
+renderExternalLinks();
 
 function renderSubIndex(template, config, slug) {
   const url = `${SITE_URL}/${slug}/`;
@@ -228,6 +226,167 @@ function renderIndexPage(data) {
     renderIndexCategories(data),
   );
   fs.writeFileSync(indexPath, output, "utf8");
+}
+
+function renderSitemapPage(data) {
+  const sitemapPath = "dist/sitemap.html";
+  const input = fs.readFileSync(sitemapPath, "utf8");
+  const output = input.replace(
+    /<div id="sitemap-grid" class="sitemap-grid">[\s\S]*?<\/div>\s*<\/div>/,
+    `<div id="sitemap-grid" class="sitemap-grid">
+        ${renderSitemapCategories(data)}
+      </div>`,
+  );
+  fs.writeFileSync(sitemapPath, output, "utf8");
+}
+
+function renderSitemapCategories(data) {
+  const categoryMeta = [
+    ["history", "bi-clock-history", "歴史"],
+    ["geography", "bi-globe", "地理"],
+    ["seikei", "bi-bank", "政治・経済"],
+    ["miscellaneous", "bi-grid", "その他"],
+    ["projects", "bi-box-arrow-up-right", "Projects"],
+  ];
+
+  return categoryMeta
+    .map(([slug, icon, label]) => {
+      const config = data[slug];
+      if (!config) return "";
+
+      const sections = config.sections || [];
+      const totalItems = sections.reduce(
+        (count, section) => count + (section.items || []).length,
+        0,
+      );
+      if (!totalItems) return "";
+
+      const sectionsHTML = sections
+        .filter((section) => section.items?.length)
+        .map((section) => {
+          const links = section.items
+            .map((item) => renderSitemapItem(item))
+            .join("");
+          const title =
+            sections.length > 1
+              ? `<div class="sitemap-section__title">${escapeHtml(section.title || "")}</div>`
+              : "";
+
+          return `
+              <div class="sitemap-section">
+                ${title}
+                <ul class="sitemap-links">${links}</ul>
+              </div>
+            `;
+        })
+        .join("");
+
+      return `
+          <div class="sitemap-category">
+            <div class="sitemap-category__header">
+              <i class="bi ${escapeHtml(icon)} sitemap-category__icon"></i>
+              <h2 class="sitemap-category__name">${escapeHtml(label)}</h2>
+              <span class="sitemap-category__count">${totalItems}件</span>
+            </div>
+            ${sectionsHTML}
+          </div>
+        `;
+    })
+    .join("");
+}
+
+function renderSitemapItem(item) {
+  const link = item.link || "#";
+  const isExternal = link.startsWith("http") || item.target === "_blank";
+  const desc = item.description || "";
+
+  return `
+                <li>
+                  <a href="${escapeHtml(link)}"
+                     ${isExternal ? 'target="_blank" rel="noopener"' : ""}>
+                    <span class="link-title">${escapeHtml(item.title || "")}</span>
+                    ${desc ? `<span class="link-desc"> ${escapeHtml(desc.slice(0, 40))}${desc.length > 40 ? "..." : ""}</span>` : ""}
+                    ${isExternal ? '<i class="bi bi-box-arrow-up-right link-ext"></i>' : ""}
+                  </a>
+                </li>
+              `;
+}
+
+function renderExternalLinks() {
+  const collectionsPath = path.join(externalLinksDir, "collections.json");
+  const collections = JSON.parse(fs.readFileSync(collectionsPath, "utf8"));
+  const outConfigDir = "dist/links/config";
+
+  fs.mkdirSync(outConfigDir, { recursive: true });
+  for (const entry of fs.readdirSync(externalLinksDir, { withFileTypes: true })) {
+    if (
+      !entry.isFile() ||
+      !entry.name.endsWith(".json") ||
+      entry.name === "collections.json"
+    ) {
+      continue;
+    }
+    fs.copyFileSync(
+      path.join(externalLinksDir, entry.name),
+      path.join(outConfigDir, entry.name),
+    );
+  }
+
+  for (const collection of collections) {
+    const source = path.join(externalLinksDir, `${collection.slug}.json`);
+    if (!fs.existsSync(source)) {
+      console.warn(`  WARNING: ${source} not found`);
+    }
+  }
+
+  const indexPath = "dist/links/index.html";
+  const input = fs.readFileSync(indexPath, "utf8");
+  const output = input
+    .replace(
+      /<div class="card-grid" id="forms-grid">[\s\S]*?<\/div>/,
+      `<div class="card-grid" id="forms-grid">${renderLinkCollectionCards(collections, "forms")}</div>`,
+    )
+    .replace(
+      /<div class="section-header" id="learning-header"[\s\S]*?<\/div>\s*<div class="card-grid" id="learning-grid">[\s\S]*?<\/div>/,
+      renderLearningLinkSection(collections),
+    )
+    .replace(/<script>\s*[\s\S]*?\/\/ build:link-collections\s*<\/script>/, "");
+
+  fs.writeFileSync(indexPath, output, "utf8");
+}
+
+function renderLearningLinkSection(collections) {
+  const cards = renderLinkCollectionCards(collections, "learning");
+  if (!cards) return "";
+
+  return `<div class="section-header" id="learning-header">
+        <h2 class="section-header__title">学習リンク</h2>
+        <span class="section-header__desc">参考サイト・資料</span>
+      </div>
+      <div class="card-grid" id="learning-grid">${cards}</div>`;
+}
+
+function renderLinkCollectionCards(collections, category) {
+  return collections
+    .filter((collection) => collection.category === category)
+    .map(renderLinkCollectionCard)
+    .join("");
+}
+
+function renderLinkCollectionCard(collection) {
+  const icon = collection.icon || "bi-link-45deg";
+  const iconHtml = /^bi-[\w-]+$/.test(icon)
+    ? `<i class="bi ${escapeHtml(icon)} site-card__bi-icon mb-3" aria-hidden="true"></i>`
+    : `<img src="${escapeHtml(icon)}" class="site-card__icon mb-3" alt="" loading="lazy">`;
+
+  return `
+          <a href="viewer.html?slug=${escapeHtml(collection.slug)}" class="site-card" style="display:flex;flex-direction:column;padding:1rem;text-decoration:none;">
+            ${iconHtml}
+            ${collection.titleEN ? `<div class="site-card__title-en">${escapeHtml(collection.titleEN)}</div>` : ""}
+            <div style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;color:var(--color-text-primary);">${escapeHtml(collection.title || "")}</div>
+            ${collection.desc ? `<p style="font-size:0.875rem;color:var(--color-text-secondary);margin:0;">${escapeHtml(collection.desc)}</p>` : ""}
+          </a>
+        `;
 }
 
 function renderIndexCategories(data) {

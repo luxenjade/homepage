@@ -7,7 +7,7 @@
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
 // ============================================================
 
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const SHELL_CACHE = `shoei451-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `shoei451-runtime-${CACHE_VERSION}`;
 
@@ -26,7 +26,6 @@ const SHELL_ASSETS = [
   "/js/nav.js",
   "/js/theme-toggle.js",
   "/js/wh-utils.js",
-  "/js/inner-links-data.js",
   "/js/lists-loader.js",
   "/images/favicon.ico",
   "/images/favicon.png",
