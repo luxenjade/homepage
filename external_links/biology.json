@@ -1,7 +1,9 @@
 {
   "title": "生物基礎 語句確認フォーム",
+  "titleEN": "Biology Vocabulary Quiz Forms",
+  "icon": "bi-leaf",
+  "category": "forms",
   "description": "生物基礎の語句確認用 Google Forms 一覧",
-  "backLabel": "Links",
   "note": "一部フォームは学校アカウントでのみ開けます。",
   "sections": [
     {

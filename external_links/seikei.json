@@ -1,7 +1,9 @@
 {
   "title": "政治・経済",
-  "description": "",
-  "backLabel": "Links",
+  "titleEN": "Politics and Economics Learning Links",
+  "icon": "bi-bank",
+  "category": "learning",
+  "description": "政治・経済の学習に役立つリンク集",
   "sections": [
     {
       "title": "mimiいけ先生",

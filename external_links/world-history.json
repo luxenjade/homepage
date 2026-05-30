@@ -1,7 +1,9 @@
 {
   "title": "世界史",
+  "titleEN": "World History Learning Links",
+  "icon": "bi-globe",
+  "category": "learning",
   "description": "世界史の学習に役立つリンク集",
-  "backLabel": "Links",
   "sections": [
     {
       "title": "webサイト",

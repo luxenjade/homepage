@@ -1,7 +1,9 @@
 {
   "title": "歴史総合 語句確認フォーム",
+  "titleEN": "Comprehensive History Vocabulary Quiz Forms",
+  "icon": "bi-clock-history",
+  "category": "forms",
   "description": "歴史総合の語句確認用 Google Forms 一覧",
-  "backLabel": "Links",
   "sections": [
     {
       "title": "19世紀のヨーロッパ・アメリカ・アジア",

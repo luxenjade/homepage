@@ -1,7 +1,9 @@
 {
   "title": "古文・漢文",
-  "description": "",
-  "backLabel": "Links",
+  "titleEN": "Japanese & Chinese Classics",
+  "icon": "bi-journal-bookmark",
+  "category": "learning",
+  "description": "古文・漢文のリンク集",
   "sections": [
     {
       "title": "古典学習全般",
