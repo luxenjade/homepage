@@ -16,14 +16,6 @@
           "icon": "bi-globe-americas"
         },
         {
-          "title": "中国地理クイズ",
-          "link": "/geography/china/",
-          "titleEN": "China Geography Quiz & Atlas",
-          "description": "中国の省・自治区・直轄市の場所を地図上でクリックして答えるクイズと、学習用のインタラクティブ地図",
-          "icon": "bi-map",
-          "target": "_blank"
-        },
-        {
           "title": "首都クイズ",
           "link": "/quiz/?slug=capitals",
           "titleEN": "World Capitals' Quiz",

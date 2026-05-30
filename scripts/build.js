@@ -136,7 +136,6 @@ function renderSubIndex(template, config, slug) {
 }
 
 function renderSubIndexMain(config, slug) {
-  const backLink = config.backLink || "/index.html";
   const sections = (config.sections || [])
     .map((section) => {
       const cards = (section.items || [])
@@ -157,9 +156,9 @@ function renderSubIndexMain(config, slug) {
 
   return `<main id="page-content" class="container py-4">
       <div class="page-header">
-        <a href="${escapeHtml(backLink)}" class="back-link mb-2">
+        <a href="./index.html" class="back-link mb-2">
           <i class="bi bi-chevron-left"></i>
-          ${escapeHtml(config.backLabel || "ホーム")}
+          Back to Home
         </a>
         <h1 class="page-header__title">${renderHeadingWithIcon(config)}</h1>
         ${config.headerDesc ? `<p class="page-header__desc">${escapeHtml(config.headerDesc)}</p>` : ""}

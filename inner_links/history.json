@@ -3,8 +3,6 @@
   "emoji": "📜",
   "h1": "History",
   "headerDesc": "世界史・中国史の年代クイズ・年表ツール",
-  "backLink": "/index.html",
-  "backLabel": "ホーム",
   "sections": [
     {
       "title": "歴史総合",
@@ -71,14 +69,6 @@
           "titleEN": "Chinese Dynasties Timeline",
           "description": "中国史のインタラクティブ年表",
           "link": "/timeline/?slug=china-history"
-        },
-        {
-          "icon": "/images/chinese-history.svg",
-          "title": "中国文化史クイズ",
-          "titleEN": "Chinese Culture History Quiz",
-          "description": "中国の文化史に関する多形式クイズ",
-          "link": "/history/china",
-          "target": "_blank"
         }
       ]
     }
