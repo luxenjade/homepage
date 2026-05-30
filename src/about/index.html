@@ -334,7 +334,7 @@
 
         const body = Object.entries(data)
           .map(([ek, ev]) => `  ${k(ek)}: ${renderVal(ev, 1)}`)
-          .join(",\n\n");
+          .join(",\n");
         return `{\n${body}\n}`;
       }
 

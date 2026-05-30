@@ -2,24 +2,23 @@
 // ビルドパイプライン:
 //   1. dist/ クリーン & src/ コピー
 //   2. inner_links / external_links から静的ページ・データ生成
-//   3. quiz-bundle.css 生成（コンポーネントCSS結合）
-//   4. esbuild（JS/CSS minify）
-//   5. purgecss
+//   3. esbuild（JS/CSS minify）
+//   4. HTML minify
 
 import { execSync } from "child_process";
 import fs from "fs";
 import { cp, glob, rm } from "node:fs/promises";
 import path from "path";
 
-// ── 1. dist クリーン & コピー ─────────────────────────────
+// ── dist クリーン & コピー ─────────────────────────────
 
-console.log("[1/6] Cleaning dist/ and copying src/...");
+console.log("[1/4] Cleaning dist/ and copying src/...");
 await rm("dist", { recursive: true, force: true });
 await cp("src", "dist", { recursive: true });
 
-// ── 2. inner_links / external_links から静的ページ・データ生成 ───
+// ── inner_links / external_links から静的ページ・データ生成 ───
 
-console.log("[2/6] Generating link-driven pages...");
+console.log("[2/4] Generating link-driven pages...");
 
 const SITE_URL = "https://shoei451.netlify.app";
 const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
@@ -315,29 +314,24 @@ function renderSitemapItem(item) {
 function renderExternalLinks() {
   const collectionsPath = path.join(externalLinksDir, "collections.json");
   const collections = JSON.parse(fs.readFileSync(collectionsPath, "utf8"));
-  const outConfigDir = "dist/links/config";
-
-  fs.mkdirSync(outConfigDir, { recursive: true });
-  for (const entry of fs.readdirSync(externalLinksDir, { withFileTypes: true })) {
-    if (
-      !entry.isFile() ||
-      !entry.name.endsWith(".json") ||
-      entry.name === "collections.json"
-    ) {
-      continue;
-    }
-    fs.copyFileSync(
-      path.join(externalLinksDir, entry.name),
-      path.join(outConfigDir, entry.name),
-    );
-  }
+  const viewerTemplatePath = "dist/links/viewer.html";
+  const viewerTemplate = fs.readFileSync(viewerTemplatePath, "utf8");
 
   for (const collection of collections) {
     const source = path.join(externalLinksDir, `${collection.slug}.json`);
     if (!fs.existsSync(source)) {
       console.warn(`  WARNING: ${source} not found`);
+      continue;
     }
+
+    const config = JSON.parse(fs.readFileSync(source, "utf8"));
+    fs.writeFileSync(
+      path.join("dist", "links", `${collection.slug}.html`),
+      renderExternalLinkPage(viewerTemplate, config, collection.slug),
+      "utf8",
+    );
   }
+  fs.rmSync(viewerTemplatePath, { force: true });
 
   const indexPath = "dist/links/index.html";
   const input = fs.readFileSync(indexPath, "utf8");
@@ -350,7 +344,10 @@ function renderExternalLinks() {
       /<div class="section-header" id="learning-header"[\s\S]*?<\/div>\s*<div class="card-grid" id="learning-grid">[\s\S]*?<\/div>/,
       renderLearningLinkSection(collections),
     )
-    .replace(/<script>\s*[\s\S]*?\/\/ build:link-collections\s*<\/script>/, "");
+    .replace(
+      /<script>\s*if \(document\.documentElement\.classList\.contains\("dark"\)\) \{[\s\S]*?\/\/ build:link-collections\s*<\/script>/,
+      "",
+    );
 
   fs.writeFileSync(indexPath, output, "utf8");
 }
@@ -380,13 +377,138 @@ function renderLinkCollectionCard(collection) {
     : `<img src="${escapeHtml(icon)}" class="site-card__icon mb-3" alt="" loading="lazy">`;
 
   return `
-          <a href="viewer.html?slug=${escapeHtml(collection.slug)}" class="site-card" style="display:flex;flex-direction:column;padding:1rem;text-decoration:none;">
+          <a href="${escapeHtml(collection.slug)}.html" class="site-card" style="display:flex;flex-direction:column;padding:1rem;text-decoration:none;">
             ${iconHtml}
             ${collection.titleEN ? `<div class="site-card__title-en">${escapeHtml(collection.titleEN)}</div>` : ""}
             <div style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;color:var(--color-text-primary);">${escapeHtml(collection.title || "")}</div>
             ${collection.desc ? `<p style="font-size:0.875rem;color:var(--color-text-secondary);margin:0;">${escapeHtml(collection.desc)}</p>` : ""}
           </a>
         `;
+}
+
+function renderExternalLinkPage(template, config, slug) {
+  const title = config.title || slug;
+  return template
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — Shoei451</title>`)
+    .replace(
+      /justify-content:\s*bace-between;/,
+      "justify-content: space-between;",
+    )
+    .replace(
+      /<main\s+class="container py-4"\s+id="main">[\s\S]*?<\/main>/,
+      renderExternalLinkMain(config),
+    )
+    .replace(
+      /<script>\s*if \(document\.documentElement\.classList\.contains\("dark"\)\) \{[\s\S]*?\/\/ build:external-link-page\s*<\/script>/,
+      `<script>
+      if (document.documentElement.classList.contains("dark")) {
+        document.body.classList.add("dark");
+      }
+
+      const search = document.getElementById("links-search");
+      const empty = document.getElementById("links-empty");
+      const sections = Array.from(document.querySelectorAll("[data-links-section]"));
+
+      search?.addEventListener("input", () => {
+        const query = search.value.trim().toLowerCase();
+        let visibleTotal = 0;
+
+        for (const section of sections) {
+          let sectionVisible = 0;
+          for (const card of section.querySelectorAll("[data-link-card]")) {
+            const visible = card.dataset.search.includes(query);
+            card.hidden = !visible;
+            if (visible) sectionVisible += 1;
+          }
+
+          section.hidden = sectionVisible === 0;
+          const count = section.querySelector("[data-section-count]");
+          if (count) count.textContent = \`\${sectionVisible}件\`;
+          visibleTotal += sectionVisible;
+        }
+
+        if (empty) empty.style.display = visibleTotal === 0 ? "" : "none";
+      });
+    </script>`,
+    );
+}
+
+function renderExternalLinkMain(config) {
+  return `<main class="container py-4" id="main">
+      <div class="page-header">
+        <a href="index.html" class="back-link mb-2">
+          <i class="bi bi-chevron-left"></i>
+          ${escapeHtml(config.backLabel ?? "Links")}
+        </a>
+        <h1 class="page-header__title">${escapeHtml(config.title || "")}</h1>
+        ${config.description ? `<p class="page-header__desc">${escapeHtml(config.description)}</p>` : ""}
+      </div>
+
+      ${config.note ? `<div class="links-note">${escapeHtml(config.note)}</div>` : ""}
+
+      <div class="links-search-wrap">
+        <svg fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          class="links-search"
+          id="links-search"
+          type="search"
+          placeholder="キーワードで絞り込み..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div id="sections-wrap">
+        ${renderExternalLinkSections(config.sections || [])}
+      </div>
+      <div class="links-empty" id="links-empty" style="display:none;">
+        該当するリンクがありません。
+      </div>
+    </main>`;
+}
+
+function renderExternalLinkSections(sections) {
+  return sections
+    .map((section) => {
+      const items = section.items || [];
+      return `
+        <section data-links-section>
+          <div class="index-section-header">
+            <h2 class="index-section-header__title">${escapeHtml(section.title || "")}</h2>
+            <span class="index-section-header__desc" data-section-count>${items.length}件</span>
+          </div>
+          <div class="links-card-grid mb-3">
+            ${items.map(renderExternalLinkItem).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
+function renderExternalLinkItem(item) {
+  const searchText = [item.title, item.titleEN, item.description]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return `
+            <a href="${escapeHtml(item.url || "#")}" class="link-card"
+               target="_blank" rel="noopener noreferrer"
+               data-link-card data-search="${escapeHtml(searchText)}">
+              <span class="link-card__title">${escapeHtml(item.title || "")}</span>
+              ${item.titleEN ? `<span class="link-card__title-en">${escapeHtml(item.titleEN)}</span>` : ""}
+              <svg class="link-card__icon" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          `;
 }
 
 function renderIndexCategories(data) {
@@ -518,60 +640,19 @@ function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// ── 3. quiz-bundle.css 生成 ───────────────────────────────
 
-console.log("[3/6] Bundling quiz component CSS...");
+// ── esbuild ────────────────────────────────────────────
 
-const QUIZ_CSS_FILES = [
-  "dist/quiz/components/quiz-shell.css",
-  "dist/quiz/components/start/start-screen.css",
-  "dist/quiz/components/progress/progress.css",
-  "dist/quiz/components/question/question-area.css",
-  "dist/quiz/components/answer/answer.css",
-  "dist/quiz/components/answer/table-input.css",
-  "dist/quiz/components/feedback/feedback.css",
-  "dist/quiz/components/result/result.css",
-  "dist/quiz/components/modal/modal.css",
-];
-
-const bundled = QUIZ_CSS_FILES.map((f) => {
-  if (!fs.existsSync(f)) {
-    console.warn(`  WARNING: ${f} not found, skipping`);
-    return "";
-  }
-  return fs.readFileSync(f, "utf8");
-}).join("\n");
-
-const bundleOut = "dist/quiz/components/quiz-bundle.css";
-fs.writeFileSync(bundleOut, bundled, "utf8");
-console.log(`  → ${bundleOut} (${(bundled.length / 1024).toFixed(1)} KB)`);
-
-// ── 4. esbuild ────────────────────────────────────────────
-
-console.log("[4/6] Running esbuild (minify JS/CSS)...");
+console.log("[3/4] Running esbuild (minify JS/CSS)...");
 execSync(
   'esbuild "dist/**/*.js" "dist/**/*.css" --minify --outdir=dist --allow-overwrite',
   { stdio: "inherit" },
 );
 
-// ── 5. purgecss ───────────────────────────────────────────
 
-console.log("[5/6] Running purgecss...");
-execSync(
-  [
-    "purgecss",
-    "--css dist/css/base.css dist/css/utils.css dist/quiz/components/quiz-shell.css",
-    "--content 'dist/**/*.html' 'dist/**/*.js'",
-    "--output dist/css/",
-    "--safelist /^qz-/ /^tl-/ /^bi/ show is-correct is-incorrect is-locked hidden is-active is-selected is-fallback is-open is-expanded is-visible dark fade",
-  ].join(" "),
-  { stdio: "inherit" },
-);
 
-// html minify
-
-// ── 6. HTML minify ────────────────────────────────────────
-console.log("[6/6] Minifying HTML...");
+// ── HTML minify ────────────────────────────────────────
+console.log("[4/4] Minifying HTML...");
 
 import { minify } from "html-minifier-terser";
 

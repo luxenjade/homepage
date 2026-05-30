@@ -4,6 +4,7 @@ import { basename, dirname, extname, join, resolve, relative } from "node:path";
 const ROOT = process.cwd();
 const SITE_ROOT = resolve(ROOT, "src");
 const INNER_LINKS_ROOT = resolve(ROOT, "inner_links");
+const EXTERNAL_LINKS_ROOT = resolve(ROOT, "external_links");
 const IGNORE_DIRS = new Set([".git", "node_modules", "archives"]);
 const ATTR_PATTERN = /(href|src)\s*=\s*["']([^"']+)["']/gi;
 
@@ -55,7 +56,11 @@ function isDynamicSlugLink(link) {
 }
 
 function existsAsPath(targetPath) {
-  return existsSync(targetPath) || existsAsGeneratedInnerLinkPath(targetPath);
+  return (
+    existsSync(targetPath) ||
+    existsAsGeneratedInnerLinkPath(targetPath) ||
+    existsAsGeneratedExternalLinkPath(targetPath)
+  );
 }
 
 function existsAsGeneratedInnerLinkPath(targetPath) {
@@ -67,6 +72,13 @@ function existsAsGeneratedInnerLinkPath(targetPath) {
   const match = relativeTarget.match(/^([^/]+)\/index\.html$/);
   if (!match) return false;
   return existsSync(join(INNER_LINKS_ROOT, `${match[1]}.json`));
+}
+
+function existsAsGeneratedExternalLinkPath(targetPath) {
+  const relativeTarget = relative(SITE_ROOT, targetPath).replaceAll("\\", "/");
+  const match = relativeTarget.match(/^links\/([^/]+)\.html$/);
+  if (!match) return false;
+  return existsSync(join(EXTERNAL_LINKS_ROOT, `${match[1]}.json`));
 }
 
 function resolveCandidates(baseDir, rawLink) {

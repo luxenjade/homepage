@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Links — Shoei451</title>
+    <link rel="icon" href="/images/favicon.ico" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#faba40" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Shoei451" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" />
+
+    <script>
+      (function () {
+        const t = localStorage.getItem("pref-theme");
+        if (
+          t === "dark" ||
+          (!t && matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/utils.css" />
+    <link rel="stylesheet" href="/css/index-cards.css" />
+    <style>
+      .links-search-wrap {
+        position: relative;
+        max-width: 400px;
+        margin-bottom: 1.5rem;
+      }
+
+      .links-search-wrap svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 15px;
+        height: 15px;
+        color: var(--color-text-secondary);
+        pointer-events: none;
+      }
+
+      .links-search {
+        width: 100%;
+        padding: 9px 12px 9px 36px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-surface);
+        color: var(--color-text-primary);
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+
+      .links-search:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(250, 186, 64, 0.15);
+      }
+
+      .links-search::placeholder {
+        color: var(--color-text-secondary);
+      }
+
+      /* ノート（任意） */
+      .links-note {
+        margin-bottom: 1.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-left: 3px solid var(--color-accent);
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+      }
+
+      /* リンクカード（index-card より横長、外部リンク向け） */
+      .link-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-surface);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        padding: 0.8rem 1rem;
+        transition:
+          border-color 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
+        justify-content: bace-between; /* 両端に寄せる */
+      }
+
+      .link-card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+        color: var(--color-text-primary);
+        text-decoration: none;
+      }
+
+      body.dark .link-card:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .link-card__title-en {
+        font-size: 0.72rem;
+        color: var(--color-text-secondary);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+
+        /* --- ここが重要 --- */
+        flex: 0 1 40%; /* 最大でも幅の40%までしか使わせない */
+        text-align: right; /* 右寄せにする */
+        white-space: normal; /* 改行を許可 */
+        word-break: break-word; /* 単語の区切りで改行 */
+        /* ------------------ */
+
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .link-card__title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        flex: 1;
+        min-width: 0;
+        flex-shrink: 0;
+      }
+
+      .link-card__icon {
+        flex-shrink: 0;
+        color: var(--color-text-secondary);
+        width: 14px;
+        height: 14px;
+      }
+
+      /* 検索ヒットなし */
+      .links-empty {
+        padding: 2rem 0;
+        text-align: center;
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* セクションのカードを縦一列グリッドに上書き */
+      .links-card-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 0.25rem;
+      }
+
+      /* ローディング */
+      .links-loading {
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+        padding: 3rem 0;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nav-container"></div>
+
+    <main class="container py-4" id="main">
+      <div class="links-loading">読み込み中...</div>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script src="/js/icons.js"></script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/theme-toggle.js"></script>
+    <script>
+      if (document.documentElement.classList.contains("dark")) {
+        document.body.classList.add("dark");
+      }
+
+      // build:external-link-page
+    </script>
+  </body>
+</html>
