@@ -316,24 +316,16 @@ function renderSitemapItem(item) {
 }
 
 function renderExternalLinks() {
-  const collectionsPath = path.join(externalLinksDir, "collections.json");
-  const collections = JSON.parse(fs.readFileSync(collectionsPath, "utf8"));
+  const collections = collectExternalLinkConfigs();
   const linkPageTemplate = fs.readFileSync(
     path.join(templatesDir, "links.html"),
     "utf8",
   );
 
   for (const collection of collections) {
-    const source = path.join(externalLinksDir, `${collection.slug}.json`);
-    if (!fs.existsSync(source)) {
-      console.warn(`  WARNING: ${source} not found`);
-      continue;
-    }
-
-    const config = JSON.parse(fs.readFileSync(source, "utf8"));
     fs.writeFileSync(
       path.join("dist", "links", `${collection.slug}.html`),
-      renderExternalLinkPage(linkPageTemplate, config, collection.slug),
+      renderExternalLinkPage(linkPageTemplate, collection, collection.slug),
       "utf8",
     );
   }
@@ -355,6 +347,25 @@ function renderExternalLinks() {
     );
 
   fs.writeFileSync(indexPath, output, "utf8");
+}
+
+function collectExternalLinkConfigs() {
+  return fs
+    .readdirSync(externalLinksDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .map((entry) => {
+      const slug = path.basename(entry.name, ".json");
+      const config = JSON.parse(
+        fs.readFileSync(path.join(externalLinksDir, entry.name), "utf8"),
+      );
+      return { ...config, slug };
+    })
+    .sort((a, b) => {
+      const orderA = Number.isFinite(a.order) ? a.order : Infinity;
+      const orderB = Number.isFinite(b.order) ? b.order : Infinity;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.slug.localeCompare(b.slug);
+    });
 }
 
 function renderLearningLinkSection(collections) {
@@ -386,7 +397,7 @@ function renderLinkCollectionCard(collection) {
             ${iconHtml}
             ${collection.titleEN ? `<div class="site-card__title-en">${escapeHtml(collection.titleEN)}</div>` : ""}
             <div style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;color:var(--color-text-primary);">${escapeHtml(collection.title || "")}</div>
-            ${collection.desc ? `<p style="font-size:0.875rem;color:var(--color-text-secondary);margin:0;">${escapeHtml(collection.desc)}</p>` : ""}
+            ${collection.description ? `<p style="font-size:0.875rem;color:var(--color-text-secondary);margin:0;">${escapeHtml(collection.description)}</p>` : ""}
           </a>
         `;
 }
@@ -443,7 +454,7 @@ function renderExternalLinkMain(config) {
       <div class="page-header">
         <a href="index.html" class="back-link mb-2">
           <i class="bi bi-chevron-left"></i>
-          ${escapeHtml(config.backLabel ?? "Links")}
+          Links
         </a>
         <h1 class="page-header__title">${escapeHtml(config.title || "")}</h1>
         ${config.description ? `<p class="page-header__desc">${escapeHtml(config.description)}</p>` : ""}

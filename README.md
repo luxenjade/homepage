@@ -31,7 +31,7 @@ Production: [shoei451.netlify.app](https://shoei451.netlify.app)
 - Category landing pages are generated into `dist/{slug}/index.html` from `inner_links/*.json`; the top page also gets its category headers from the same data. The built site does not fetch category `list.json` files.
 - Shared navigation/footer injection and service worker registration live in `src/js/nav.js`
 - PWA assets and install metadata are now wired through `src/service-worker.js`, `src/manifest.json`, `appstore-images/`, and `netlify.toml`
-- The external links area is `src/links/`, backed at build time by `external_links/*.json` and `external_links/collections.json`
+- The external links area is `src/links/`, backed at build time by `external_links/*.json`; each file's basename becomes its generated slug
 - Active category/content roots are `src/history/`, `src/geography/`, `src/seikei/`, `src/miscellaneous/`, `src/projects/`, plus site pages such as `src/about/`, `src/privacy-policy.html`, `src/sitemap.html`, and `src/404.html`
 - Internal category link data lives in `inner_links/`. Build output embeds this data into HTML/JS instead of publishing JSON endpoints.
 

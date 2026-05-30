@@ -1,6 +1,9 @@
 {
   "title": "地理",
-  "description": "",
+  "titleEN": "Geography",
+  "icon": "bi-map",
+  "category": "learning",
+  "description": "地理の学習に役立つリンク集",
 
   "sections": [
     {

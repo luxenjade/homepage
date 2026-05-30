@@ -1,7 +1,9 @@
 {
   "title": "数学",
-  "description": "",
-
+  "titleEN": "Mathematics",
+  "icon": "bi-calculator",
+  "category": "learning",
+  "description": "数学リンク集",
   "sections": [
     {
       "title": "数学",

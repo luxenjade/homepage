@@ -1,6 +1,9 @@
 {
   "title": "情報Ⅰ",
-  "description": "",
+  "titleEN": "Informatics",
+  "icon": "bi-cpu",
+  "category": "learning",
+  "description": "情報Ⅰの共通テスト対策に役立つリンク集",
 
   "sections": [
     {

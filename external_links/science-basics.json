@@ -1,6 +1,10 @@
 {
   "title": "理科基礎",
-  "description": "",
+  "titleEN": "Science Basics",
+
+  "icon": "bi-beaker",
+  "category": "learning",
+  "description": "理科基礎の共通テスト対策・復習用",
 
   "sections": [
     {

@@ -1,7 +1,9 @@
 {
   "title": "英語（学校用）",
-  "description": "",
-
+  "titleEN": "English (School Use)",
+  "icon": "bi-translate",
+  "category": "learning",
+  "description": "学校の英語教材のデジタルサイトへのリンク集",
   "sections": [
     {
       "title": "共通テストリスニング (emile)",
