@@ -22,6 +22,7 @@ console.log("[2/4] Generating link-driven pages...");
 
 const SITE_URL = "https://shoei451.netlify.app";
 const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
+const templatesDir = "template";
 const innerLinksDir = "inner_links";
 const externalLinksDir = "external_links";
 const INDEX_CATEGORY_SLUGS = [
@@ -40,7 +41,10 @@ const categoryFiles = fs
   }))
   .sort((a, b) => a.slug.localeCompare(b.slug));
 
-const subIndexTemplate = fs.readFileSync("sub-index.html", "utf8");
+const subIndexTemplate = fs.readFileSync(
+  path.join(templatesDir, "sub-index.html"),
+  "utf8",
+);
 const innerLinksData = {};
 
 for (const { slug, path: configPath } of categoryFiles) {
@@ -314,8 +318,10 @@ function renderSitemapItem(item) {
 function renderExternalLinks() {
   const collectionsPath = path.join(externalLinksDir, "collections.json");
   const collections = JSON.parse(fs.readFileSync(collectionsPath, "utf8"));
-  const viewerTemplatePath = "dist/links/viewer.html";
-  const viewerTemplate = fs.readFileSync(viewerTemplatePath, "utf8");
+  const linkPageTemplate = fs.readFileSync(
+    path.join(templatesDir, "links.html"),
+    "utf8",
+  );
 
   for (const collection of collections) {
     const source = path.join(externalLinksDir, `${collection.slug}.json`);
@@ -327,11 +333,10 @@ function renderExternalLinks() {
     const config = JSON.parse(fs.readFileSync(source, "utf8"));
     fs.writeFileSync(
       path.join("dist", "links", `${collection.slug}.html`),
-      renderExternalLinkPage(viewerTemplate, config, collection.slug),
+      renderExternalLinkPage(linkPageTemplate, config, collection.slug),
       "utf8",
     );
   }
-  fs.rmSync(viewerTemplatePath, { force: true });
 
   const indexPath = "dist/links/index.html";
   const input = fs.readFileSync(indexPath, "utf8");
