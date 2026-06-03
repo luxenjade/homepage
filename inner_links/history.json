@@ -1,5 +1,5 @@
 {
-  "title": "History — Shoei451",
+  "title": "History — luxenjade",
   "emoji": "📜",
   "h1": "History",
   "headerDesc": "世界史・中国史の年代クイズ・年表ツール",
@@ -34,14 +34,6 @@
           "titleEN": "Event to Year",
           "description": "表示された出来事の年号を直接入力する。フィルタ：章（第1〜11章）",
           "link": "/quiz/?slug=wh-event-to-year"
-        },
-        {
-          "icon": "/images/wh-quiz.png",
-          "title": "世界史年表 (legacy)",
-          "titleEN": "World History Timeline (Legacy)",
-          "description": "世界史年表の旧バージョン。Supabase から直接データを取得して表示",
-          "link": "/history/index-old.html",
-          "target": "_blank"
         },
         {
           "icon": "/images/wh-quiz.png",

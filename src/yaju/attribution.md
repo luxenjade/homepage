@@ -49,5 +49,5 @@
 
 ### Code & Design
 
-**By:** Shoei451 ほか / 実験室班  
+**By:** luxenjade ほか / 実験室班  
 **Event:** 文化祭 2025

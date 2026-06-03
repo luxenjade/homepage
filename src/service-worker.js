@@ -8,8 +8,8 @@
 // ============================================================
 
 const CACHE_VERSION = "v4";
-const SHELL_CACHE = `shoei451-shell-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `shoei451-runtime-${CACHE_VERSION}`;
+const SHELL_CACHE = `luxenjade-shell-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `luxenjade-runtime-${CACHE_VERSION}`;
 
 // ── App Shell: Cache First で返す静的アセット ──────────────────
 const SHELL_ASSETS = [
@@ -128,7 +128,7 @@ function offlineFallback() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline — Shoei451</title>
+  <title>Offline — luxenjade</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;

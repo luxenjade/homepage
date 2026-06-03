@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://shoei451.netlify.app/sitemap.xml
+Sitemap: https://luxenjade.netlify.app/sitemap.xml

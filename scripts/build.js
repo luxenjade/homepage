@@ -9,6 +9,22 @@ import { execSync } from "child_process";
 import fs from "fs";
 import { cp, glob, rm } from "node:fs/promises";
 import path from "path";
+import {
+  SITE_URL,
+  DEFAULT_IMAGE,
+  TEMPLATES_DIR,
+  INNER_LINKS_DIR,
+  EXTERNAL_LINKS_DIR,
+  INDEX_CATEGORY_SLUGS,
+  SITEMAP_CATEGORIES,
+} from "./config.js";
+import {
+  plainText,
+  escapeHtml,
+  escapeRegExp,
+  isAbsolutePath,
+} from "./utils.js";
+
 
 // ── dist クリーン & コピー ─────────────────────────────
 
@@ -20,29 +36,17 @@ await cp("src", "dist", { recursive: true });
 
 console.log("[2/4] Generating link-driven pages...");
 
-const SITE_URL = "https://shoei451.netlify.app";
-const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
-const templatesDir = "template";
-const innerLinksDir = "inner_links";
-const externalLinksDir = "external_links";
-const INDEX_CATEGORY_SLUGS = [
-  "history",
-  "seikei",
-  "geography",
-  "miscellaneous",
-];
-
 const categoryFiles = fs
-  .readdirSync(innerLinksDir, { withFileTypes: true })
+  .readdirSync(INNER_LINKS_DIR, { withFileTypes: true })
   .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
   .map((entry) => ({
     slug: path.basename(entry.name, ".json"),
-    path: path.join(innerLinksDir, entry.name),
+    path: path.join(INNER_LINKS_DIR, entry.name),
   }))
   .sort((a, b) => a.slug.localeCompare(b.slug));
 
 const subIndexTemplate = fs.readFileSync(
-  path.join(templatesDir, "sub-index.html"),
+  path.join(TEMPLATES_DIR, "sub-index.html"),
   "utf8",
 );
 const innerLinksData = {};
@@ -68,7 +72,7 @@ renderExternalLinks();
 
 function renderSubIndex(template, config, slug) {
   const url = `${SITE_URL}/${slug}/`;
-  const title = config.title || `${plainText(config.h1 || slug)} — Shoei451`;
+  const title = config.title || `${plainText(config.h1 || slug)} — luxenjade`;
   const description =
     config.description ||
     config.headerDesc ||
@@ -219,15 +223,7 @@ function renderSitemapPage(data) {
 }
 
 function renderSitemapCategories(data) {
-  const categoryMeta = [
-    ["history", "bi-clock-history", "歴史"],
-    ["geography", "bi-globe", "地理"],
-    ["seikei", "bi-bank", "政治・経済"],
-    ["miscellaneous", "bi-grid", "その他"],
-    ["projects", "bi-box-arrow-up-right", "Projects"],
-  ];
-
-  return categoryMeta
+  return SITEMAP_CATEGORIES
     .map(([slug, icon, label]) => {
       const config = data[slug];
       if (!config) return "";
@@ -293,7 +289,7 @@ function renderSitemapItem(item) {
 function renderExternalLinks() {
   const collections = collectExternalLinkConfigs();
   const linkPageTemplate = fs.readFileSync(
-    path.join(templatesDir, "links.html"),
+    path.join(TEMPLATES_DIR, "links.html"),
     "utf8",
   );
 
@@ -326,12 +322,12 @@ function renderExternalLinks() {
 
 function collectExternalLinkConfigs() {
   return fs
-    .readdirSync(externalLinksDir, { withFileTypes: true })
+    .readdirSync(EXTERNAL_LINKS_DIR, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
     .map((entry) => {
       const slug = path.basename(entry.name, ".json");
       const config = JSON.parse(
-        fs.readFileSync(path.join(externalLinksDir, entry.name), "utf8"),
+        fs.readFileSync(path.join(EXTERNAL_LINKS_DIR, entry.name), "utf8"),
       );
       return { ...config, slug };
     })
@@ -380,7 +376,7 @@ function renderLinkCollectionCard(collection) {
 function renderExternalLinkPage(template, config, slug) {
   const title = config.title || slug;
   return template
-    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — Shoei451</title>`)
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — luxenjade</title>`)
     .replace(
       /justify-content:\s*bace-between;/,
       "justify-content: space-between;",
@@ -613,17 +609,6 @@ function toAbsoluteUrl(value) {
   return `${SITE_URL}/${value}`;
 }
 
-function isAbsolutePath(value) {
-  return (
-    !value ||
-    value.startsWith("/") ||
-    value.startsWith("http://") ||
-    value.startsWith("https://") ||
-    value.startsWith("#") ||
-    value.startsWith("mailto:")
-  );
-}
-
 function normalizeLink(link, slug) {
   if (isAbsolutePath(link)) return link;
   if (link.startsWith(`${slug}/`)) return `/${link}`;
@@ -635,25 +620,6 @@ function normalizeIcon(icon) {
   if (/^bi-[\w-]+$/.test(icon)) return icon;
   if (isAbsolutePath(icon)) return icon;
   return `/${icon.replace(/^(\.\.\/)+/, "")}`;
-}
-
-function plainText(value) {
-  return String(value ?? "")
-    .replace(/<[^>]*>/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function escapeRegExp(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 

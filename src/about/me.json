@@ -1,5 +1,5 @@
 {
-  "name": "Shoei451",
+  "name": "luxenjade",
   "name_en": "Shoei Okamoto",
   "location": "@Yokohama, Kanagawa, Japan",
   "stack": "Vanilla JS, Supabase, Netlify",
@@ -37,14 +37,14 @@
     {
       "label": "GitHub",
       "icon": "bi-github",
-      "url": "https://github.com/shoei451",
-      "display": "@shoei451"
+      "url": "https://github.com/luxenjade",
+      "display": "@luxenjade"
     },
     {
       "label": "Email",
       "icon": "bi-envelope",
-      "url": "mailto:okamotoshoei451@gmail.com",
-      "display": "okamotoshoei451@gmail.com"
+      "url": "mailto:okamotoluxenjade@gmail.com",
+      "display": "okamotoluxenjade@gmail.com"
     },
     {
       "label": "Note(note.com)",
