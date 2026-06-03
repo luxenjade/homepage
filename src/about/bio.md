@@ -1,6 +1,6 @@
 # about me
 
-> Shoei451: a learner / developer / writer / high school student based in Kanagawa, Japan
+> luxenjade: a learner / developer / writer / high school student based in Kanagawa, Japan
 
 ## EN
 

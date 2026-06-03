@@ -35,7 +35,7 @@
     <nav id="site-nav" aria-label="サイトナビゲーション">
       <div class="site-nav__inner">
 
-        <a class="site-nav__brand" href="/index.html">Shoei451</a>
+        <a class="site-nav__brand" href="/index.html">luxenjade</a>
 
         <button class="site-nav__toggle" type="button"
                 aria-controls="site-nav-menu"
@@ -73,12 +73,12 @@
           <a href="/privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
           <a href="/about/">About</a> &nbsp;·&nbsp;
           <a href="/sitemap.html">Site Map</a> &nbsp;·&nbsp;
-          <a href="https://451-docs.netlify.app/?site=shoei451-website"
+          <a href="https://451-docs.netlify.app/?site=luxenjade-website"
              target="_blank" rel="noopener">Docs</a>
         </span>
-        <a href="mailto:okamotoshoei451@gmail.com"
+        <a href="mailto:okamotoluxenjade@gmail.com"
            style="font-size:0.85rem; color:var(--color-text-secondary);">
-          okamotoshoei451@gmail.com
+          okamotoluxenjade@gmail.com
         </a>
       </div>
     </footer>

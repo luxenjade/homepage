@@ -1,13 +1,13 @@
-# shoei451-website
+# luxenjade-website
 
-Personal learning tools site by Shoei451.  
-Production: [shoei451.netlify.app](https://shoei451.netlify.app)
+Personal learning tools site by luxenjade.  
+Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 
 ---
 
 ## Overview
 
-`shoei451-website` is a static HTML/CSS/JS repository for study tools, category landing pages, and site-wide utility pages.
+`luxenjade-website` is a static HTML/CSS/JS repository for study tools, category landing pages, and site-wide utility pages.
 
 - Frontend: Vanilla HTML/CSS/JS
 - Source root: `src/`
@@ -108,4 +108,4 @@ The checked-in client exports both module bindings and `window.SUPABASE_TABLES` 
 
 ## Contact
 
-okamotoshoei451@gmail.com
+okamotoluxenjade@gmail.com

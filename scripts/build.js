@@ -20,7 +20,7 @@ await cp("src", "dist", { recursive: true });
 
 console.log("[2/4] Generating link-driven pages...");
 
-const SITE_URL = "https://shoei451.netlify.app";
+const SITE_URL = "https://luxenjade.netlify.app";
 const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
 const templatesDir = "template";
 const innerLinksDir = "inner_links";
@@ -68,7 +68,7 @@ renderExternalLinks();
 
 function renderSubIndex(template, config, slug) {
   const url = `${SITE_URL}/${slug}/`;
-  const title = config.title || `${plainText(config.h1 || slug)} — Shoei451`;
+  const title = config.title || `${plainText(config.h1 || slug)} — luxenjade`;
   const description =
     config.description ||
     config.headerDesc ||
@@ -380,7 +380,7 @@ function renderLinkCollectionCard(collection) {
 function renderExternalLinkPage(template, config, slug) {
   const title = config.title || slug;
   return template
-    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — Shoei451</title>`)
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — luxenjade</title>`)
     .replace(
       /justify-content:\s*bace-between;/,
       "justify-content: space-between;",
