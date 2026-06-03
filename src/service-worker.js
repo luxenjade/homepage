@@ -26,7 +26,6 @@ const SHELL_ASSETS = [
   "/js/nav.js",
   "/js/theme-toggle.js",
   "/js/wh-utils.js",
-  "/js/lists-loader.js",
   "/images/favicon.ico",
   "/images/favicon.png",
   "/manifest.json",

@@ -4,27 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shoei451 — 高校生・大学受験生向けの学習・入試対策ツール</title>
-    <meta name="description" content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。" />
+    <meta
+      name="description"
+      content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。"
+    />
     <link rel="canonical" href="https://shoei451.netlify.app/" />
     <!-- Open Graph -->
-    <meta property="og:title" content="Shoei451 — 高校生・大学受験生向けの学習・入試対策ツール" />
-    <meta property="og:description" content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。" />
+    <meta
+      property="og:title"
+      content="Shoei451 — 高校生・大学受験生向けの学習・入試対策ツール"
+    />
+    <meta
+      property="og:description"
+      content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。"
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://shoei451.netlify.app/" />
-    <meta property="og:image" content="https://shoei451.netlify.app/images/favicon.png" />
+    <meta
+      property="og:image"
+      content="https://shoei451.netlify.app/images/favicon.png"
+    />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Shoei451 — 高校生・大学受験生向けの学習・入試対策ツール" />
-    <meta name="twitter:description" content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。" />
-    <meta name="twitter:image" content="https://shoei451.netlify.app/images/favicon.png" />
+    <meta
+      name="twitter:title"
+      content="Shoei451 — 高校生・大学受験生向けの学習・入試対策ツール"
+    />
+    <meta
+      name="twitter:description"
+      content="世界史・政経・地理・古典など、普段の学習や大学入試対策に役立つオンラインクイズ・年表などの学習ツールを提供しています。"
+    />
+    <meta
+      name="twitter:image"
+      content="https://shoei451.netlify.app/images/favicon.png"
+    />
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Shoei451",
-      "url": "https://shoei451.netlify.app/"
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Shoei451",
+        "url": "https://shoei451.netlify.app/"
+      }
     </script>
     <link rel="icon" href="/images/favicon.ico" />
     <!-- PWA -->
@@ -48,13 +69,109 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/css/index-cards.css" />
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/utils.css" />
     <style>
       html.dark body {
         background-color: var(--color-bg);
         color: var(--color-text-primary);
+      }
+      /* ── Section header (index 固有) ── */
+      .index-section-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        margin: 2rem 0 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-accent);
+      }
+
+      .index-section-header__title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--color-text-primary);
+      }
+
+      .index-section-header__desc {
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+
+      /* ── Card grid (index 用: sub-index より少し密) ── */
+      /*
+        sub-index: minmax(280px, 1fr) = ゆったり3列
+        index:     minmax(200px, 1fr) = コンパクト、より多く収まる
+      */
+      .index-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* ── Index カード (site-card より小さく) ── */
+      .index-card {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-surface);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        transition:
+          border-color 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
+        padding: 0.9rem 1rem;
+      }
+
+      .index-card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        color: var(--color-text-primary);
+        text-decoration: none;
+      }
+
+      body.dark .index-card:hover {
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .index-card__icon {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .index-card__bi-icon {
+        font-size: 1.5rem;
+        color: var(--color-accent-text);
+        display: block;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+      }
+
+      body.dark .index-card__bi-icon {
+        color: var(--color-accent);
+      }
+
+      .index-card__title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        line-height: 1.4;
+        color: var(--color-text-primary);
+      }
+
+      .index-card__desc {
+        font-size: 0.78rem;
+        line-height: 1.5;
+        color: var(--color-text-secondary);
+        margin: 0;
       }
 
       /* ── Collapse (countdown) ── */
@@ -263,57 +380,6 @@
             </div>`;
         }).join("");
       })();
-
-      // ── カード描画 ─────────────────────────────────────────
-      // カテゴリページ生成と同じカード構造に揃える。
-      // アイコン・タイトル・説明の構造を統一。
-      function renderCards(sectionId, items) {
-        const container = document.getElementById(sectionId);
-        if (!container || !items?.length) return;
-
-        container.innerHTML = items
-          .map((item) => {
-            const iconHtml = (() => {
-              if (!item.icon) return "";
-              if (/^bi-[\w-]+$/.test(item.icon)) {
-                return `<i class="bi ${item.icon} index-card__bi-icon" aria-hidden="true"></i>`;
-              }
-              return `<img src="${item.icon}" class="index-card__icon" alt="" loading="lazy">`;
-            })();
-            const target = item.target
-              ? `target="${item.target}" rel="noopener"`
-              : "";
-            return `
-            <a href="${item.link}" ${target} class="index-card">
-              ${iconHtml}
-              <span class="index-card__title">${item.title}</span>
-              ${item.description ? `<p class="index-card__desc">${item.description}</p>` : ""}
-            </a>`;
-          })
-          .join("");
-      }
-
-      function tryRenderAll() {
-        if (typeof CARDS_DATA === "undefined") return;
-        (window.INDEX_CATEGORY_SLUGS || Object.keys(CARDS_DATA)).forEach(
-          (slug) => {
-            renderCards(`cards-${slug}`, CARDS_DATA[slug]);
-          },
-        );
-      }
-
-      tryRenderAll();
-      window.addEventListener("load", tryRenderAll);
-      document.addEventListener("cards-data-ready", tryRenderAll);
-      window.tryRenderAll = tryRenderAll;
-    </script>
-
-    <script
-      src="/js/lists-loader.js"
-      onerror="console.info('lists-loader.js not found')"
-    ></script>
-    <script>
-      tryRenderAll();
     </script>
   </body>
 </html>

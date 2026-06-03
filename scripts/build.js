@@ -62,11 +62,6 @@ for (const { slug, path: configPath } of categoryFiles) {
 
 console.log(`  -> ${categoryFiles.length} category index pages generated`);
 
-fs.writeFileSync(
-  "dist/js/lists-loader.js",
-  renderListsLoader(innerLinksData),
-  "utf8",
-);
 renderIndexPage(innerLinksData);
 renderSitemapPage(innerLinksData);
 renderExternalLinks();
@@ -199,25 +194,6 @@ function renderSiteCardIcon(raw) {
     return `<img src="${escapeHtml(normalizeIcon(raw))}" class="site-card__icon" alt="" loading="lazy">`;
   }
   return "";
-}
-
-function renderListsLoader(data) {
-  const cardsData = Object.fromEntries(
-    Object.entries(data).map(([slug, config]) => [
-      slug,
-      extractItems(config, slug),
-    ]),
-  );
-
-  return `(() => {
-  window.INDEX_CATEGORY_SLUGS = ${JSON.stringify(INDEX_CATEGORY_SLUGS.filter((slug) => cardsData[slug]))};
-  window.CARDS_DATA = ${JSON.stringify(cardsData, null, 2)};
-  document.dispatchEvent(new CustomEvent("cards-data-ready", { detail: window.CARDS_DATA }));
-  if (typeof window.tryRenderAll === "function") {
-    window.tryRenderAll();
-  }
-  window.CARDS_DATA_READY = Promise.resolve(window.CARDS_DATA);
-})();\n`;
 }
 
 function renderIndexPage(data) {
@@ -530,15 +506,40 @@ function renderIndexCategories(data) {
   return INDEX_CATEGORY_SLUGS.filter((slug) => data[slug])
     .map((slug) => {
       const config = data[slug];
+      const items = extractItems(config, slug);
       return `
         <div class="index-section-header">
           <h2 class="index-section-header__title">${renderHeadingWithIcon(config)}</h2>
           ${config.headerDesc ? `<span class="index-section-header__desc">${escapeHtml(config.headerDesc)}</span>` : ""}
         </div>
-        <div class="index-card-grid" id="cards-${escapeHtml(slug)}"></div>
+        <div class="index-card-grid" id="cards-${escapeHtml(slug)}">
+          ${items.map(renderIndexCard).join("")}
+        </div>
       `;
     })
     .join("");
+}
+
+function renderIndexCard(item) {
+  const target = item.target
+    ? `target="${escapeHtml(item.target)}" rel="noopener"`
+    : "";
+  const iconHtml = renderIndexCardIcon(item.icon || "");
+
+  return `
+            <a href="${escapeHtml(item.link)}" ${target} class="index-card">
+              ${iconHtml}
+              <span class="index-card__title">${escapeHtml(item.title || "")}</span>
+              ${item.description ? `<p class="index-card__desc">${escapeHtml(item.description)}</p>` : ""}
+            </a>`;
+}
+
+function renderIndexCardIcon(icon) {
+  if (!icon) return "";
+  if (/^bi-[\w-]+$/.test(icon)) {
+    return `<i class="bi ${escapeHtml(icon)} index-card__bi-icon" aria-hidden="true"></i>`;
+  }
+  return `<img src="${escapeHtml(icon)}" class="index-card__icon" alt="" loading="lazy">`;
 }
 
 function renderHeadingWithIcon(config) {
