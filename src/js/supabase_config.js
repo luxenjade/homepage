@@ -29,6 +29,10 @@ export const tables = {
   ENGLISH_IDIOMS: "english_idioms",
 };
 
+if (!window.supabase) {
+  throw new Error("Supabase CDN <script> が正しく読み込まれていません。先に読み込んでください。");
+}
+
 // ── クライアント生成 ─────────────────────────────────────────
 export const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
