@@ -37,14 +37,6 @@
         },
         {
           "icon": "/images/wh-quiz.png",
-          "title": "世界史年表 (legacy)",
-          "titleEN": "World History Timeline (Legacy)",
-          "description": "世界史年表の旧バージョン。Supabase から直接データを取得して表示",
-          "link": "/history/index-old.html",
-          "target": "_blank"
-        },
-        {
-          "icon": "/images/wh-quiz.png",
           "title": "世界史年表（新版）",
           "titleEN": "World History Timeline",
           "description": "世界史年代クイズのデータをインタラクティブな年表で閲覧（旧データ移行中）",

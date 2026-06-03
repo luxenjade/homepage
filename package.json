@@ -15,12 +15,13 @@
   },
   "devDependencies": {
     "esbuild": "^0.27.4",
+    "eslint": "^10.4.1",
     "html-minifier-terser": "^7.2.0",
-    "serve": "^14.2.6"
+    "serve": "^14.2.6",
+    "vitest": "^4.1.8",
+    "zod": "^4.4.3"
   },
-  "pnpm": {
-    "overrides": {
-      "brace-expansion": "^2.0.1"
-    }
+  "overrides": {
+    "brace-expansion": "^2.0.1"
   }
 }

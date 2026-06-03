@@ -9,6 +9,15 @@ import { execSync } from "child_process";
 import fs from "fs";
 import { cp, glob, rm } from "node:fs/promises";
 import path from "path";
+import {
+  SITE_URL,
+  DEFAULT_IMAGE,
+  TEMPLATES_DIR,
+  INNER_LINKS_DIR,
+  EXTERNAL_LINKS_DIR,
+  INDEX_CATEGORY_SLUGS,
+  SITEMAP_CATEGORIES,
+} from "./config.js";
 
 // ── dist クリーン & コピー ─────────────────────────────
 
@@ -20,29 +29,17 @@ await cp("src", "dist", { recursive: true });
 
 console.log("[2/4] Generating link-driven pages...");
 
-const SITE_URL = "https://luxenjade.netlify.app";
-const DEFAULT_IMAGE = `${SITE_URL}/images/favicon.png`;
-const templatesDir = "template";
-const innerLinksDir = "inner_links";
-const externalLinksDir = "external_links";
-const INDEX_CATEGORY_SLUGS = [
-  "history",
-  "seikei",
-  "geography",
-  "miscellaneous",
-];
-
 const categoryFiles = fs
-  .readdirSync(innerLinksDir, { withFileTypes: true })
+  .readdirSync(INNER_LINKS_DIR, { withFileTypes: true })
   .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
   .map((entry) => ({
     slug: path.basename(entry.name, ".json"),
-    path: path.join(innerLinksDir, entry.name),
+    path: path.join(INNER_LINKS_DIR, entry.name),
   }))
   .sort((a, b) => a.slug.localeCompare(b.slug));
 
 const subIndexTemplate = fs.readFileSync(
-  path.join(templatesDir, "sub-index.html"),
+  path.join(TEMPLATES_DIR, "sub-index.html"),
   "utf8",
 );
 const innerLinksData = {};
@@ -219,15 +216,7 @@ function renderSitemapPage(data) {
 }
 
 function renderSitemapCategories(data) {
-  const categoryMeta = [
-    ["history", "bi-clock-history", "歴史"],
-    ["geography", "bi-globe", "地理"],
-    ["seikei", "bi-bank", "政治・経済"],
-    ["miscellaneous", "bi-grid", "その他"],
-    ["projects", "bi-box-arrow-up-right", "Projects"],
-  ];
-
-  return categoryMeta
+  return SITEMAP_CATEGORIES
     .map(([slug, icon, label]) => {
       const config = data[slug];
       if (!config) return "";
