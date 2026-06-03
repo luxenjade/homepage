@@ -76,9 +76,9 @@
           <a href="https://451-docs.netlify.app/?site=luxenjade-website"
              target="_blank" rel="noopener">Docs</a>
         </span>
-        <a href="mailto:okamotoluxenjade@gmail.com"
+        <a href="mailto:okamotoshoei4512@gmail.com"
            style="font-size:0.85rem; color:var(--color-text-secondary);">
-          okamotoluxenjade@gmail.com
+          okamotoshoei4512@gmail.com
         </a>
       </div>
     </footer>

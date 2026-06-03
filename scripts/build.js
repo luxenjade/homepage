@@ -18,6 +18,13 @@ import {
   INDEX_CATEGORY_SLUGS,
   SITEMAP_CATEGORIES,
 } from "./config.js";
+import {
+  plainText,
+  escapeHtml,
+  escapeRegExp,
+  isAbsolutePath,
+} from "./utils.js";
+
 
 // ── dist クリーン & コピー ─────────────────────────────
 
@@ -282,7 +289,7 @@ function renderSitemapItem(item) {
 function renderExternalLinks() {
   const collections = collectExternalLinkConfigs();
   const linkPageTemplate = fs.readFileSync(
-    path.join(templatesDir, "links.html"),
+    path.join(TEMPLATES_DIR, "links.html"),
     "utf8",
   );
 
@@ -315,12 +322,12 @@ function renderExternalLinks() {
 
 function collectExternalLinkConfigs() {
   return fs
-    .readdirSync(externalLinksDir, { withFileTypes: true })
+    .readdirSync(EXTERNAL_LINKS_DIR, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
     .map((entry) => {
       const slug = path.basename(entry.name, ".json");
       const config = JSON.parse(
-        fs.readFileSync(path.join(externalLinksDir, entry.name), "utf8"),
+        fs.readFileSync(path.join(EXTERNAL_LINKS_DIR, entry.name), "utf8"),
       );
       return { ...config, slug };
     })
@@ -602,17 +609,6 @@ function toAbsoluteUrl(value) {
   return `${SITE_URL}/${value}`;
 }
 
-function isAbsolutePath(value) {
-  return (
-    !value ||
-    value.startsWith("/") ||
-    value.startsWith("http://") ||
-    value.startsWith("https://") ||
-    value.startsWith("#") ||
-    value.startsWith("mailto:")
-  );
-}
-
 function normalizeLink(link, slug) {
   if (isAbsolutePath(link)) return link;
   if (link.startsWith(`${slug}/`)) return `/${link}`;
@@ -624,25 +620,6 @@ function normalizeIcon(icon) {
   if (/^bi-[\w-]+$/.test(icon)) return icon;
   if (isAbsolutePath(icon)) return icon;
   return `/${icon.replace(/^(\.\.\/)+/, "")}`;
-}
-
-function plainText(value) {
-  return String(value ?? "")
-    .replace(/<[^>]*>/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function escapeRegExp(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 
