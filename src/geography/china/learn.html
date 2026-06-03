@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>学習モード — 中国地理</title>
+    <title>学習モード | 中国地理</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       body {
@@ -488,7 +488,7 @@
           );
           el.setAttribute("d", pathGen(feat));
           el.dataset.eng = prov ? prov.eng : raw;
-          // NO <title> — no browser tooltip
+          // NO <title> | no browser tooltip
           if (prov) {
             el.classList.add("interactive");
             el.addEventListener("click", () => selectProvince(prov.eng));

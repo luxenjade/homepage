@@ -32,7 +32,7 @@ async function initTimeline(cfg) {
   }
 
   // ── ページ情報を適用 ──────────────────────────────────────
-  document.title = cfg.title + " — Shoei451";
+  document.title = cfg.title + " | Shoei451";
   document.getElementById("header-title").textContent = cfg.title;
   document.getElementById("back-link").href = cfg.backLink || "/index.html";
   document.getElementById("back-label").textContent = cfg.backLabel || "ホーム";
@@ -231,7 +231,7 @@ function renderTimeline(cfg, allEvents, allLines, catId, searchVal) {
 }
 
 // ============================================================
-// renderAxis — 年代ラベルを等間隔で間引いて表示
+// renderAxis | 年代ラベルを等間隔で間引いて表示
 // ============================================================
 function renderAxis(sorted, cfg, N) {
   const axisEl = document.getElementById("tl-axis");
@@ -261,7 +261,7 @@ function renderAxis(sorted, cfg, N) {
 }
 
 // ============================================================
-// renderLines — period/person の縦ライン
+// renderLines | period/person の縦ライン
 // ============================================================
 function renderLines(lines, sorted, cfg, N) {
   const col = document.getElementById("tl-lines-col");
@@ -369,7 +369,7 @@ function yearToRowIndex(year, sorted, cfg, N) {
 }
 
 // ============================================================
-// renderEvents — 出来事ドット列
+// renderEvents | 出来事ドット列
 // ============================================================
 function renderEvents(sorted, cfg, N) {
   const col = document.getElementById("tl-events-col");
@@ -422,7 +422,7 @@ function renderEvents(sorted, cfg, N) {
 }
 
 // ============================================================
-// openModal — Bootstrap モーダルに詳細を表示
+// openModal | Bootstrap モーダルに詳細を表示
 // ============================================================
 function openModal(row, cfg) {
   const body = document.getElementById("tl-modal-body");

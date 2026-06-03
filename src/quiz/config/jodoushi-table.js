@@ -116,7 +116,7 @@ function _formatValue(v) {
 function _isEmpty(v) {
   return _asArray(v).every((s) => {
     const n = _norm(s);
-    return !n || n === "-" || n === "－" || n === "—";
+    return !n || n === "-" || n === "－" || n === "|";
   });
 }
 

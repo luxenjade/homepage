@@ -152,7 +152,7 @@ function renderResultGrid(withSpinner) {
         const vEl = document.createElement("div");
         vEl.className = "rval";
         vEl.style.fontSize = fs + "px";
-        vEl.textContent = val != null ? val : "—";
+        vEl.textContent = val != null ? val : "|";
         div.appendChild(vEl);
       }
       grid.appendChild(div);

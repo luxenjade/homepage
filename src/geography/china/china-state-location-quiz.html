@@ -420,7 +420,7 @@
         >
       </div>
       <div id="question-box">
-        <span id="question">—</span>
+        <span id="question">|</span>
         <span id="reading"></span>
       </div>
       <div id="map-wrapper">
@@ -602,7 +602,7 @@
         } else {
           el.classList.add("wrong");
           correctEl?.classList.add("show-answer");
-          feedbackEl.textContent = `不正解 — 正解は ${current.name}（${current.reading}）`;
+          feedbackEl.textContent = `不正解 | 正解は ${current.name}（${current.reading}）`;
           feedbackEl.className = "bad";
         }
 

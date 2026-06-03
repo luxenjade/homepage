@@ -72,7 +72,7 @@ renderExternalLinks();
 
 function renderSubIndex(template, config, slug) {
   const url = `${SITE_URL}/${slug}/`;
-  const title = config.title || `${plainText(config.h1 || slug)} — luxenjade`;
+  const title = config.title || `${plainText(config.h1 || slug)} | luxenjade`;
   const description =
     config.description ||
     config.headerDesc ||
@@ -376,7 +376,7 @@ function renderLinkCollectionCard(collection) {
 function renderExternalLinkPage(template, config, slug) {
   const title = config.title || slug;
   return template
-    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} — luxenjade</title>`)
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)} | luxenjade</title>`)
     .replace(
       /justify-content:\s*bace-between;/,
       "justify-content: space-between;",

@@ -197,5 +197,5 @@ const htmlCount = collectFiles(SITE_ROOT, [".html"]).length;
 const jsonCount = collectInnerLinkFiles().length;
 
 console.log(
-  `Local link check passed — ${htmlCount} HTML files, ${jsonCount} inner_links files.`,
+  `Local link check passed | ${htmlCount} HTML files, ${jsonCount} inner_links files.`,
 );

@@ -1,5 +1,5 @@
 // ============================================================
-//  wh-admin — supabase_config.js から DB を取得
+//  wh-admin | supabase_config.js から DB を取得
 // ============================================================
 
 const TABLE = "wh_dates";
@@ -274,9 +274,9 @@ function renderTable() {
             <td class="cell-year">${escHtml(yearStr)}</td>
             <td>${recTag}</td>
             <td>${escHtml(row.event || "")}</td>
-            <td><span class="tag">${escHtml(row.field || "—")}</span></td>
+            <td><span class="tag">${escHtml(row.field || "|")}</span></td>
             <td>${escHtml(regionStr)}</td>
-            <td style="text-align:center;">${row.wiki_score || "—"}</td>
+            <td style="text-align:center;">${row.wiki_score || "|"}</td>
             <td style="text-align:center;">${hasMemo}</td>
           </tr>`;
     })
@@ -471,7 +471,7 @@ async function searchWikiUrl(query) {
       wikiStatus.textContent = `✓ 「${title}」が見つかりました。必要に応じて修正してください。`;
       wikiStatus.className = "wiki-status found";
     } else {
-      wikiStatus.textContent = "該当なし — URLを手動で入力してください。";
+      wikiStatus.textContent = "該当なし | URLを手動で入力してください。";
       wikiStatus.className = "wiki-status not-found";
     }
   } catch (e) {

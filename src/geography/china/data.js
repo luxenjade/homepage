@@ -1,4 +1,4 @@
-// china-data.js — 共通省データ
+// china-data.js | 共通省データ
 // eng は cn-atlas の feature.properties.name と照合するキー
 // neighbors は eng キーで参照
 

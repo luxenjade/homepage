@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>クイズ — 中国地理</title>
+    <title>クイズ | 中国地理</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       body {
@@ -389,7 +389,7 @@
       </div>
 
       <div id="question-box" class="card">
-        <span id="question">—</span>
+        <span id="question">|</span>
         <span id="reading"></span>
       </div>
 
@@ -535,7 +535,7 @@
         } else {
           el.classList.add("wrong");
           correctEl?.classList.add("show-answer");
-          $fb.textContent = `不正解 — 正解は ${current.name}（${current.reading}）`;
+          $fb.textContent = `不正解 | 正解は ${current.name}（${current.reading}）`;
           $fb.className = "bad";
           if (!wrongEngs.includes(current.eng)) wrongEngs.push(current.eng);
         }
@@ -625,7 +625,7 @@
           );
           el.setAttribute("d", pathGen(feat));
           el.dataset.eng = prov ? prov.eng : raw;
-          // NO <title> element — prevents browser tooltip
+          // NO <title> element | prevents browser tooltip
           if (prov) {
             el.classList.add("interactive");
             el.addEventListener("click", () => handleClick(prov.eng, el));

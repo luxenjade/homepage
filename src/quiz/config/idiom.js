@@ -14,12 +14,12 @@ window.QUIZ_CONFIG = {
   rangeMode: "single",
   rangeLabel: "Quiz Mode",
   ranges: [
-    { id: "random", label: "Random Practice — 全問からランダム" },
-    { id: "difficult", label: "Focus on Weak Areas — 正答率50%未満" },
-    { id: "unattempted", label: "Not Yet Attempted — 取り組み数5未満" },
+    { id: "random", label: "Random Practice | 全問からランダム" },
+    { id: "difficult", label: "Focus on Weak Areas | 正答率50%未満" },
+    { id: "unattempted", label: "Not Yet Attempted | 取り組み数5未満" },
     {
       id: "mixed",
-      label: "Mixed Review — 60% difficult / 30% medium / 10% easy",
+      label: "Mixed Review | 60% difficult / 30% medium / 10% easy",
     },
   ],
   countMode: "select",
@@ -132,7 +132,7 @@ window.QUIZ_CONFIG = {
         <span class="qz-review-item__user">Your answer: ${_esc(item.userAnswer)}</span>
         <span class="qz-review-item__correct">Correct: <strong>${_esc(item.correctAnswer)}</strong></span>
       </div>
-      ${q ? `<div style="font-size:0.8rem;color:var(--qz-text-sub);margin-top:6px;">${_esc(q.idiom)} — ${_esc(q.definition_jp)}</div>` : ""}
+      ${q ? `<div style="font-size:0.8rem;color:var(--qz-text-sub);margin-top:6px;">${_esc(q.idiom)} | ${_esc(q.definition_jp)}</div>` : ""}
     `;
   },
 

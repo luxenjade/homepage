@@ -3,7 +3,7 @@
 
 window.QUIZ_CONFIG = {
   title: "16進法クイズ",
-  subtitle: "Hexadecimal — binary, decimal, and color conversions",
+  subtitle: "Hexadecimal | binary, decimal, and color conversions",
   backLink: "/miscellaneous/",
   backLabel: "Miscellaneous",
   accentColor: "#148b9d",

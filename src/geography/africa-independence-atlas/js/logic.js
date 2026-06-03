@@ -1,4 +1,4 @@
-// logic.js — 地図描画・ズーム・パネル・モード切替
+// logic.js | 地図描画・ズーム・パネル・モード切替
 
 let currentMode = "year";
 let selectedIso = null;
@@ -155,14 +155,14 @@ function renderPanel(iso) {
   const eraColor = ERA_COLORS[d.era] || "#ccc";
   const colColor = COL_COLORS[d.colonial] || "#ccc";
   const eraLabel = ERA_LABELS[d.era] || "不明";
-  const colLabel = COL_LABELS[d.colonial] || "—";
+  const colLabel = COL_LABELS[d.colonial] || "|";
   const yearDisp = d.indYear ? `${d.indYear}年` : "植民地化されず";
 
   // 言語リスト
   const langsHtml =
     d.langs && d.langs.length
       ? d.langs.map((l) => `<span class="lang-tag">${l}</span>`).join("")
-      : `<span class="lang-tag">—</span>`;
+      : `<span class="lang-tag">|</span>`;
 
   // 国旗：flagcdn画像、失敗時は絵文字にフォールバック
   const url = flagUrl(iso);

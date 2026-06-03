@@ -26,7 +26,7 @@ function setStateMessage(message) {
 }
 
 function applyHeader(cfg) {
-  document.title = cfg.title + " — Shoei451";
+  document.title = cfg.title + " | Shoei451";
   document.getElementById("qz-header-title").textContent = cfg.title;
 
   if (cfg.subtitle) {

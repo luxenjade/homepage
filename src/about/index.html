@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About — luxenjade</title>
+    <title>About | luxenjade</title>
     <link rel="icon" href="/images/favicon.ico" />
 
     <!-- PWA -->
@@ -270,7 +270,7 @@
           inner.classList.remove("is-expanded");
 
           if (fullH <= COLLAPSED_PX + 20) {
-            // Content fits — hide toggle
+            // Content fits | hide toggle
             footer.style.display = "none";
             inner.classList.add("is-expanded"); // show all
             return;
@@ -422,7 +422,7 @@
           const res = await fetch("/about/bio.md");
           if (!res.ok) throw new Error(res.status);
           const text = await res.text();
-          // textContent auto-escapes HTML — safe and raw
+          // textContent auto-escapes HTML | safe and raw
           el.textContent = text;
         } catch (e) {
           el.textContent = "// Failed to load bio.md: " + e;

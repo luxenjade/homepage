@@ -323,7 +323,7 @@ function buildMissedList() {
           : `<span class="missed-item-emoji">${d.flag}</span>`
       }
       <span class="missed-item-name">${d.name}</span>
-      <span class="missed-item-year">${d.indYear ? d.indYear + "年" : "—"}</span>`;
+      <span class="missed-item-year">${d.indYear ? d.indYear + "年" : "|"}</span>`;
     list.appendChild(li);
   });
 }
