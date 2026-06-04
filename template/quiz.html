@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz | Shoei451</title>
+    <link rel="icon" href="/images/favicon.ico" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#faba40" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Shoei451" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" />
+
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/quiz/quiz.css" />
+  </head>
+  <body>
+    <header class="qz-header" id="qz-header">
+      <div class="qz-header__inner">
+        <div class="qz-header__title-wrap">
+          <div class="qz-header__title" id="qz-header-title">Quiz</div>
+          <div class="qz-header__subtitle" id="qz-header-subtitle"></div>
+        </div>
+        <div class="qz-header__actions">
+          <a class="qz-btn qz-btn--ghost qz-btn--sm" id="qz-back-link" href="/">
+            ホーム
+          </a>
+          <span class="logo-switches" id="theme-toggle-container"></span>
+        </div>
+      </div>
+    </header>
+
+    <main class="qz-container">
+      <div id="start-screen" class="qz-screen hidden"></div>
+
+      <div id="quiz-screen" class="qz-screen hidden">
+        <div id="qz-progress-bar"></div>
+        <div id="qz-question-area"></div>
+        <div id="qz-question-extras"></div>
+        <div id="qz-choices"></div>
+        <div id="qz-text-input"></div>
+        <div id="qz-table-input"></div>
+        <div id="qz-feedback" class="hidden"></div>
+        <div id="qz-nav-buttons"></div>
+      </div>
+
+      <div id="result-screen" class="qz-screen hidden"></div>
+
+      <div id="state-msg" class="qz-state-msg"></div>
+    </main>
+
+    <script src="/js/theme-toggle.js"></script>
+    <script src="/quiz/boot.js"></script>
+  </body>
+</html>

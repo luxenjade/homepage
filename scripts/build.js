@@ -69,28 +69,73 @@ console.log(`  -> ${categoryFiles.length} category index pages generated`);
 renderIndexPage(innerLinksData);
 renderSitemapPage(innerLinksData);
 renderExternalLinks();
-renderQuizPages();
+const quizList = renderQuizPages();
+renderQuizIndex(quizList);
 
 function renderQuizPages() {
   console.log("  -> Generating static quiz pages...");
   const quizConfigDir = "src/quiz/config";
-  const quizTemplate = fs.readFileSync("src/quiz/index.html", "utf8");
+  const quizTemplate = fs.readFileSync("template/quiz.html", "utf8");
   const configFiles = fs
     .readdirSync(quizConfigDir)
     .filter((f) => f.endsWith(".js"));
 
+  const generatedQuizzes = [];
+  let count = 0;
   for (const file of configFiles) {
     const slug = path.basename(file, ".js");
     const content = fs.readFileSync(path.join(quizConfigDir, file), "utf8");
     const config = extractQuizConfig(content);
+
+    if (!config.title) continue;
 
     const outDir = path.join("dist", "quiz", slug);
     fs.mkdirSync(outDir, { recursive: true });
 
     const rendered = renderQuizHtml(quizTemplate, config, slug);
     fs.writeFileSync(path.join(outDir, "index.html"), rendered, "utf8");
+    count++;
+
+    generatedQuizzes.push({
+      slug,
+      title: config.title,
+      subtitle: config.subtitle,
+    });
   }
-  console.log(`  -> ${configFiles.length} quiz pages generated`);
+  console.log(`  -> ${count} quiz pages generated`);
+  return generatedQuizzes;
+}
+
+function renderQuizIndex(quizzes) {
+  const indexPath = "dist/quiz/index.html";
+  if (!fs.existsSync(indexPath)) return;
+
+  const html = fs.readFileSync(indexPath, "utf8");
+  const listHtml = `
+    <div class="index-section-header">
+      <h2 class="index-section-header__title">利用可能なクイズ</h2>
+      <span class="index-section-header__desc">${quizzes.length}件</span>
+    </div>
+    <div class="index-card-grid">
+      ${quizzes
+        .map(
+          (q) => `
+        <a href="/quiz/${escapeHtml(q.slug)}/" class="index-card">
+          <i class="bi bi-question-circle index-card__bi-icon" aria-hidden="true"></i>
+          <span class="index-card__title">${escapeHtml(q.title)}</span>
+          ${q.subtitle ? `<p class="index-card__desc">${escapeHtml(q.subtitle)}</p>` : ""}
+        </a>
+      `,
+        )
+        .join("")}
+    </div>
+  `;
+
+  fs.writeFileSync(
+    indexPath,
+    html.replace(/<!-- build:quiz-list -->/, listHtml),
+    "utf8",
+  );
 }
 
 function extractQuizConfig(content) {

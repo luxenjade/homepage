@@ -3,56 +3,141 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz | Shoei451</title>
+    <title>Quizzes | luxenjade</title>
+    <meta
+      name="description"
+      content="luxenjade で提供している学習クイズの一覧です。世界史、政経、地理、古典などの重要事項を確認できます。"
+    />
+    <link rel="canonical" href="https://luxenjade.netlify.app/quiz/" />
     <link rel="icon" href="/images/favicon.ico" />
-
-    <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#faba40" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Shoei451" />
     <link rel="apple-touch-icon" href="/images/favicon.png" />
 
+    <script>
+      (function () {
+        const t = localStorage.getItem("pref-theme");
+        if (
+          t === "dark" ||
+          (!t && matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/quiz/quiz.css" />
+    <link rel="stylesheet" href="/css/utils.css" />
+    <style>
+      /* ── Index ページと共通のスタイル ── */
+      .index-section-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        margin: 2rem 0 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-accent);
+      }
+      .index-section-header__title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--color-text-primary);
+      }
+      .index-section-header__desc {
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+      .index-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+      .index-card {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-surface);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+        padding: 0.9rem 1rem;
+      }
+      .index-card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        color: var(--color-text-primary);
+      }
+      body.dark .index-card:hover {
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+      }
+      .index-card__bi-icon {
+        font-size: 1.5rem;
+        color: var(--color-accent-text);
+        display: block;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+      }
+      body.dark .index-card__bi-icon {
+        color: var(--color-accent);
+      }
+      .index-card__title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        line-height: 1.4;
+      }
+      .index-card__desc {
+        font-size: 0.78rem;
+        line-height: 1.5;
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+      /* ── Hero ── */
+      .page-hero {
+        padding: 2.5rem 0 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: 1.5rem;
+      }
+      .page-hero__title {
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .page-hero__desc {
+        font-size: 0.95rem;
+        color: var(--color-text-secondary);
+        max-width: 560px;
+      }
+    </style>
   </head>
   <body>
-    <header class="qz-header" id="qz-header">
-      <div class="qz-header__inner">
-        <div class="qz-header__title-wrap">
-          <div class="qz-header__title" id="qz-header-title">Quiz</div>
-          <div class="qz-header__subtitle" id="qz-header-subtitle"></div>
+    <main>
+      <div id="nav-container"></div>
+      <div class="container py-4">
+        <div class="page-hero">
+          <h1 class="page-hero__title">Quizzes</h1>
+          <p class="page-hero__desc">
+            学習効率を高めるためのクイズツール一覧です。
+          </p>
         </div>
-        <div class="qz-header__actions">
-          <a class="qz-btn qz-btn--ghost qz-btn--sm" id="qz-back-link" href="/">
-            ホーム
-          </a>
-          <span class="logo-switches" id="theme-toggle-container"></span>
+
+        <div id="quiz-list-root">
+          <!-- build:quiz-list -->
         </div>
       </div>
-    </header>
-
-    <main class="qz-container">
-      <div id="start-screen" class="qz-screen hidden"></div>
-
-      <div id="quiz-screen" class="qz-screen hidden">
-        <div id="qz-progress-bar"></div>
-        <div id="qz-question-area"></div>
-        <div id="qz-question-extras"></div>
-        <div id="qz-choices"></div>
-        <div id="qz-text-input"></div>
-        <div id="qz-table-input"></div>
-        <div id="qz-feedback" class="hidden"></div>
-        <div id="qz-nav-buttons"></div>
-      </div>
-
-      <div id="result-screen" class="qz-screen hidden"></div>
-
-      <div id="state-msg" class="qz-state-msg"></div>
     </main>
-
+    <footer id="site-footer"></footer>
+    <script src="/js/icons.js"></script>
+    <script src="/js/nav.js"></script>
     <script src="/js/theme-toggle.js"></script>
-    <script src="/quiz/boot.js"></script>
+    <script>
+      if (document.documentElement.classList.contains("dark")) {
+        document.body.classList.add("dark");
+      }
+    </script>
   </body>
 </html>

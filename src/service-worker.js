@@ -7,7 +7,7 @@
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
 // ============================================================
 
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const SHELL_CACHE = `luxenjade-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `luxenjade-runtime-${CACHE_VERSION}`;
 
@@ -20,8 +20,15 @@ const SHELL_ASSETS = [
   "/seikei/",
   "/miscellaneous/",
   "/projects/",
-  "/quiz/",
-  "/quiz/index.html",
+  "/quiz/capitals/",
+  "/quiz/wh-year-to-event/",
+  "/quiz/wh-event-to-year/",
+  "/quiz/china-era/",
+  "/quiz/seikei/",
+  "/quiz/jodoushi-typing/",
+  "/quiz/jodoushi-table/",
+  "/quiz/idiom/",
+  "/quiz/hex/",
   "/css/base.css",
   "/js/icons.js",
   "/js/nav.js",
