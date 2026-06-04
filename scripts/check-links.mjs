@@ -50,16 +50,19 @@ function isSkippableLink(link) {
   );
 }
 
-// ?slug= を持つリンクは動的ルーティングなので存在チェック対象外
-function isDynamicSlugLink(link) {
-  return link.includes("?slug=");
+function existsAsGeneratedQuizPath(targetPath) {
+  const relativeTarget = relative(SITE_ROOT, targetPath).replaceAll("\\", "/");
+  const match = relativeTarget.match(/^quiz\/([^/]+)\/index\.html$/);
+  if (!match) return false;
+  return existsSync(join(SITE_ROOT, "quiz", "config", `${match[1]}.js`));
 }
 
 function existsAsPath(targetPath) {
   return (
     existsSync(targetPath) ||
     existsAsGeneratedInnerLinkPath(targetPath) ||
-    existsAsGeneratedExternalLinkPath(targetPath)
+    existsAsGeneratedExternalLinkPath(targetPath) ||
+    existsAsGeneratedQuizPath(targetPath)
   );
 }
 
@@ -116,9 +119,7 @@ function checkHtmlFiles(errors) {
       const link = match[2].trim();
 
       if (isSkippableLink(link)) continue;
-      if (isDynamicSlugLink(link)) continue;
       if (KNOWN_IGNORES.has(`${relativeFile}::${link}`)) continue;
-
       const candidates = resolveCandidates(dirname(htmlFile), link);
       if (!candidates.some(existsAsPath)) {
         errors.push({ source: relativeFile, link });
@@ -158,7 +159,6 @@ function checkInnerLinkJsonFiles(errors) {
         const link = item.link;
         if (!link) continue;
         if (isSkippableLink(link)) continue;
-        if (isDynamicSlugLink(link)) continue;
 
         const candidates = resolveCandidates(generatedBaseDir, link);
         if (!candidates.some(existsAsPath)) {
@@ -168,11 +168,7 @@ function checkInnerLinkJsonFiles(errors) {
     }
 
     // backLink も確認
-    if (
-      cfg.backLink &&
-      !isSkippableLink(cfg.backLink) &&
-      !isDynamicSlugLink(cfg.backLink)
-    ) {
+    if (cfg.backLink && !isSkippableLink(cfg.backLink)) {
       const candidates = resolveCandidates(generatedBaseDir, cfg.backLink);
       if (!candidates.some(existsAsPath)) {
         errors.push({ source: relativeFile, link: cfg.backLink });

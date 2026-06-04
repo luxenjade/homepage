@@ -108,12 +108,7 @@
 
     document.querySelectorAll(".site-nav__link").forEach((link) => {
       const href = link.getAttribute("href");
-      if (!href || href === "/index.html") return;
-
-      if (href.includes("?slug=")) {
-        if (path.includes(href)) link.classList.add("active");
-        return;
-      }
+      if (!href || href === "/" || href === "/index.html") return;
 
       if (path.startsWith(href)) link.classList.add("active");
     });

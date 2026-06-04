@@ -20,6 +20,7 @@ const SHELL_ASSETS = [
   "/seikei/",
   "/miscellaneous/",
   "/projects/",
+  "/quiz/",
   "/quiz/index.html",
   "/css/base.css",
   "/js/icons.js",

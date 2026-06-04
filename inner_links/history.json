@@ -34,13 +34,6 @@
           "titleEN": "Event to Year",
           "description": "表示された出来事の年号を直接入力する。フィルタ：章（第1〜11章）",
           "link": "/quiz/wh-event-to-year/"
-        },
-        {
-          "icon": "/images/wh-quiz.png",
-          "title": "世界史年表（新版）",
-          "titleEN": "World History Timeline",
-          "description": "世界史年代クイズのデータをインタラクティブな年表で閲覧（旧データ移行中）",
-          "link": "/timeline/?slug=world-history"
         }
       ]
     },
@@ -54,13 +47,6 @@
           "titleEN": "Chinese History Era Quiz",
           "description": "中国史における出来事の西暦をマスター",
           "link": "/quiz/china-era/"
-        },
-        {
-          "icon": "/images/chinese-history.svg",
-          "title": "中国王朝史年表",
-          "titleEN": "Chinese Dynasties Timeline",
-          "description": "中国史のインタラクティブ年表",
-          "link": "/timeline/?slug=china-history"
         }
       ]
     }

@@ -23,13 +23,6 @@
       "desc": "Learning tools for postwar economic history of Japan",
       "items": [
         {
-          "title": "政治・経済 学習用年表",
-          "link": "/timeline/?slug=seikei",
-          "titleEN": "Political and Economic Timeline for Learning",
-          "description": "戦後経済史の年表です",
-          "icon": "bi-bank"
-        },
-        {
           "title": "戦後経済史 年代クイズ",
           "link": "/quiz/seikei/",
           "titleEN": "Political and Economic Timeline - Quiz Version",

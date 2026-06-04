@@ -10,14 +10,14 @@
       "items": [
         {
           "title": "古文助動詞クイズ 一問一答",
-          "link": "/quiz/index.html?slug=jodoushi-typing",
+          "link": "/quiz/jodoushi-typing/",
           "titleEN": "Japanese classical aux quiz",
           "description": "古文助動詞の知識を一問一答形式で確認",
           "icon": "/images/ougi.svg"
         },
         {
           "title": "古文助動詞クイズ 表形式",
-          "link": "/quiz/index.html?slug=jodoushi-table",
+          "link": "/quiz/jodoushi-table/",
           "titleEN": "Japanese classical aux quiz",
           "description": "古文助動詞の知識を表形式で確認",
           "icon": "/images/ougi.svg"
@@ -51,7 +51,7 @@
       "items": [
         {
           "title": "Vintage イディオムクイズ",
-          "link": "/quiz?slug=idiom",
+          "link": "/quiz/idiom/",
           "titleEN": "English Idiom Quiz",
           "description": "Vintage 冬季課題範囲の暗記用クイズです。",
           "icon": "bi-chat-dots"
@@ -64,7 +64,7 @@
       "items": [
         {
           "title": "16進数クイズ",
-          "link": "/quiz?slug=hex",
+          "link": "/quiz/hex",
           "titleEN": "Hexadecimal Quiz",
           "description": "16進数/2進数についての計算クイズです",
           "icon": "/images/hex-quiz.svg",

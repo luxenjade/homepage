@@ -80,17 +80,11 @@ async function loadOptionalDependencies(cfg) {
 }
 
 async function boot() {
-  let slug = new URLSearchParams(location.search).get("slug");
+  const match = location.pathname.match(/\/quiz\/([^/]+)/);
+  const slug = match ? match[1] : null;
 
-  if (!slug) {
-    const match = location.pathname.match(/\/quiz\/([^/]+)/);
-    if (match) {
-      slug = match[1];
-    }
-  }
-
-  if (!slug) {
-    setStateMessage("slug パラメータが指定されていません。");
+  if (!slug || slug === "index.html") {
+    setStateMessage("クイズの識別子が見つかりません。");
     return;
   }
 

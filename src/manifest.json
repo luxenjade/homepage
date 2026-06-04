@@ -3,7 +3,7 @@
   "short_name": "luxenjade",
   "start_url": "/",
   "display": "standalone",
-  "description": "luxenjade is a web application that provides various educational tools and resources, which are especially targetted for university entrance exams. Developed by a student vibe-coder living in Kanagawa, Japan.",
+  "description": "luxenjade.netlify.app is a web application that provides various educational tools and resources, which are especially targetted for university entrance exams. Developed by a student living in Japan.",
   "lang": "ja",
   "dir": "auto",
   "theme_color": "#ffffff",
@@ -26,16 +26,16 @@
   ],
   "screenshots": [
     {
-      "src": "images/mobile_screenshot.png",
+      "src": "images/mobile_screenshot.webp",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "narrow",
       "label": "モバイルでの利用イメージ"
     },
     {
-      "src": "images/desktop_screenshot.png",
+      "src": "images/desktop_screenshot.webp",
       "sizes": "1920x1080",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "wide",
       "label": "デスクトップでの利用イメージ"
     }
