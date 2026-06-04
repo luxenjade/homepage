@@ -26,7 +26,7 @@ function setStateMessage(message) {
 }
 
 function applyHeader(cfg) {
-  document.title = cfg.title + " | Shoei451";
+  document.title = cfg.title + " | luxenjade";
   document.getElementById("qz-header-title").textContent = cfg.title;
 
   if (cfg.subtitle) {
@@ -80,7 +80,15 @@ async function loadOptionalDependencies(cfg) {
 }
 
 async function boot() {
-  const slug = new URLSearchParams(location.search).get("slug");
+  let slug = new URLSearchParams(location.search).get("slug");
+
+  if (!slug) {
+    const match = location.pathname.match(/\/quiz\/([^/]+)/);
+    if (match) {
+      slug = match[1];
+    }
+  }
+
   if (!slug) {
     setStateMessage("slug パラメータが指定されていません。");
     return;

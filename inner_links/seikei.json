@@ -31,7 +31,7 @@
         },
         {
           "title": "戦後経済史 年代クイズ",
-          "link": "/quiz/?slug=seikei",
+          "link": "/quiz/seikei/",
           "titleEN": "Political and Economic Timeline - Quiz Version",
           "description": "戦後経済史についてのクイズです",
           "icon": "bi-coin"

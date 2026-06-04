@@ -17,7 +17,7 @@
         },
         {
           "title": "首都クイズ",
-          "link": "/quiz/?slug=capitals",
+          "link": "/quiz/capitals/",
           "titleEN": "World Capitals' Quiz",
           "description": "世界各国・地域の首都名を答えるクイズです",
           "icon": "bi-geo"

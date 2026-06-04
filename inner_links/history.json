@@ -26,14 +26,14 @@
           "title": "年号 → 出来事",
           "titleEN": "Year to Event",
           "description": "表示された年号に対応する出来事を4択で選ぶ。フィルタ：時代区分",
-          "link": "/quiz/?slug=wh-year-to-event"
+          "link": "/quiz/wh-year-to-event/"
         },
         {
           "icon": "../images/wh-quiz.png",
           "title": "出来事 → 年号",
           "titleEN": "Event to Year",
           "description": "表示された出来事の年号を直接入力する。フィルタ：章（第1〜11章）",
-          "link": "/quiz/?slug=wh-event-to-year"
+          "link": "/quiz/wh-event-to-year/"
         },
         {
           "icon": "/images/wh-quiz.png",
@@ -53,7 +53,7 @@
           "title": "中国史年代クイズ",
           "titleEN": "Chinese History Era Quiz",
           "description": "中国史における出来事の西暦をマスター",
-          "link": "/quiz/?slug=china-era"
+          "link": "/quiz/china-era/"
         },
         {
           "icon": "/images/chinese-history.svg",

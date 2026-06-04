@@ -69,6 +69,81 @@ console.log(`  -> ${categoryFiles.length} category index pages generated`);
 renderIndexPage(innerLinksData);
 renderSitemapPage(innerLinksData);
 renderExternalLinks();
+renderQuizPages();
+
+function renderQuizPages() {
+  console.log("  -> Generating static quiz pages...");
+  const quizConfigDir = "src/quiz/config";
+  const quizTemplate = fs.readFileSync("src/quiz/index.html", "utf8");
+  const configFiles = fs
+    .readdirSync(quizConfigDir)
+    .filter((f) => f.endsWith(".js"));
+
+  for (const file of configFiles) {
+    const slug = path.basename(file, ".js");
+    const content = fs.readFileSync(path.join(quizConfigDir, file), "utf8");
+    const config = extractQuizConfig(content);
+
+    const outDir = path.join("dist", "quiz", slug);
+    fs.mkdirSync(outDir, { recursive: true });
+
+    const rendered = renderQuizHtml(quizTemplate, config, slug);
+    fs.writeFileSync(path.join(outDir, "index.html"), rendered, "utf8");
+  }
+  console.log(`  -> ${configFiles.length} quiz pages generated`);
+}
+
+function extractQuizConfig(content) {
+  const getString = (key) => {
+    const regex = new RegExp(`${key}\\s*:\\s*["'\`](.*?)["'\`]`);
+    return content.match(regex)?.[1] || "";
+  };
+
+  return {
+    title: getString("title"),
+    subtitle: getString("subtitle"),
+    backLink: getString("backLink") || "/",
+    backLabel: getString("backLabel") || "戻る",
+    accentColor: getString("accentColor"),
+  };
+}
+
+function renderQuizHtml(template, config, slug) {
+  const fullTitle = `${config.title} | luxenjade`;
+  let html = template
+    .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(fullTitle)}</title>`)
+    .replace(
+      /<div class="qz-header__title" id="qz-header-title">.*?<\/div>/,
+      `<div class="qz-header__title" id="qz-header-title">${escapeHtml(config.title)}</div>`,
+    )
+    .replace(
+      /<div class="qz-header__subtitle" id="qz-header-subtitle">.*?<\/div>/,
+      `<div class="qz-header__subtitle" id="qz-header-subtitle">${escapeHtml(config.subtitle)}</div>`,
+    );
+
+  // Handle back link
+  html = html.replace(
+    /<a class="qz-btn qz-btn--ghost qz-btn--sm" id="qz-back-link" href="\/">[\s\S]*?<\/a>/,
+    `<a class="qz-btn qz-btn--ghost qz-btn--sm" id="qz-back-link" href="${escapeHtml(config.backLink)}">${escapeHtml(config.backLabel)}</a>`,
+  );
+
+  // Accent color
+  if (config.accentColor) {
+    html = html.replace(
+      "</head>",
+      `<style>:root { --qz-accent: ${config.accentColor}; }</style></head>`,
+    );
+  }
+
+  // Inject canonical URL
+  const canonicalUrl = `${SITE_URL}/quiz/${slug}/`;
+  html = html.replace(
+    "</head>",
+    `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />\n</head>`,
+  );
+
+  return html;
+}
 
 function renderSubIndex(template, config, slug) {
   const url = `${SITE_URL}/${slug}/`;
