@@ -32,6 +32,12 @@ console.log("[1/4] Cleaning dist/ and copying src/...");
 await rm("dist", { recursive: true, force: true });
 await cp("src", "dist", { recursive: true });
 
+// ── learning-box ビルド & 統合 ──────────────────────────
+
+console.log("[1.5/4] Building learning-box...");
+execSync("cd learning-box && pnpm run build", { stdio: "inherit" });
+await cp("learning-box/dist", "dist/learning-box", { recursive: true });
+
 // ── inner_links / external_links から静的ページ・データ生成 ───
 
 console.log("[2/4] Generating link-driven pages...");

@@ -42,10 +42,10 @@
         },
         {
           "title": "451-Learning Box",
-          "link": "https://451-learning-box.netlify.app/",
+          "link": "/learning-box/",
           "titleEN": "Learning Resources",
           "description": "A collection of learning resources and materials.",
-          "icon": "https://451-learning-box.netlify.app/images/451-lbox.svg",
+          "icon": "/learning-box/images/lbox.svg",
           "iconType": "image"
         },
         {

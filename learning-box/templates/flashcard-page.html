@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{TITLE}} — learning box</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <link rel="icon" type="image/svg+xml" href="../images/lbox.svg" />
+    {{PWA_HEAD}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    {{SUBJECT_STYLE}}
+    <link rel="stylesheet" href="../css/subject-colors.css" />
+    <link rel="stylesheet" href="../css/flashcard-style.css" />
+  </head>
+  <body data-subject="{{SUBJECT}}">
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <a href="../index.html" class="header-back">Back to Home</a>
+          <span class="header-title" id="headerTitle">{{TITLE}}</span>
+          <span class="header-sub" id="headerSub">{{SUBJECT}}</span>
+        </div>
+        <div class="header-right"></div>
+      </div>
+    </header>
+
+    <div class="start-overlay" id="startOverlay">
+      <div class="start-hero">
+        <p class="start-hero__label" id="startLabel">
+          {{SUBJECT}} · Flashcards
+        </p>
+        <h1 class="start-hero__title" id="startTitle">{{TITLE}}</h1>
+        <div class="start-hero__divider"></div>
+      </div>
+      <div class="start-card">
+        <h2 class="start-card__title">学習スタート</h2>
+        <p class="start-card__desc">カテゴリと問題数を選んでください</p>
+        <div class="start-block">
+          <span class="start-label">カテゴリ</span>
+          <div class="start-cats" id="startCats"></div>
+        </div>
+        <div class="start-block">
+          <span class="start-label">問題数</span>
+          <select id="startCount" class="start-count">
+            <option value="10">10問</option>
+            <option value="20" selected>20問</option>
+            <option value="30">30問</option>
+            <option value="all">全問</option>
+          </select>
+        </div>
+        <p class="start-meta" id="startMeta"></p>
+        <button class="btn-primary start-btn" onclick="startStudy()">
+          Tap to Start
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-panel" id="mode-study">
+      <div class="study-area">
+        <div class="progress-strip">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="deck-nav-row">
+          <button class="nav-btn" id="prevBtn" onclick="prevCard()" disabled>
+            &#x2039;
+          </button>
+          <div class="deck-center">
+            <span class="deck-indicator" id="deckIndicator">1 / --</span>
+            <div class="mastery-dots" id="masteryDots"></div>
+          </div>
+          <button class="nav-btn" id="nextBtn" onclick="nextCard()">
+            &#x203A;
+          </button>
+        </div>
+        <div class="card-scene" id="cardScene" onclick="flipCard()">
+          <div class="card-body" id="cardBody">
+            <div class="card-face card-front">
+              <div class="card-face-inner">
+                <div class="face-top">
+                  <span class="face-badge" id="frontBadge"></span>
+                  <span class="face-hint"
+                    >Tap / <kbd>Space</kbd> to reveal answer</span
+                  >
+                </div>
+                <p class="card-question" id="cardQuestion"></p>
+                <span class="card-watermark">Question</span>
+              </div>
+            </div>
+            <div class="card-face card-back" id="cardBack">
+              <div class="card-face-inner">
+                <div class="face-top">
+                  <span class="face-badge back-badge" id="backBadge"></span>
+                </div>
+                <p class="card-answer" id="cardAnswer"></p>
+                <p class="card-sub" id="cardSub"></p>
+                <img
+                  id="cardImg"
+                  class="card-img"
+                  src=""
+                  alt=""
+                  style="display: none"
+                />
+                <span class="card-watermark back-wm">Answer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-row">
+          <button class="mastery-btn m-forgot" onclick="markCard('forgot')">
+            <span class="m-icon">✗</span><span class="m-label">わからない</span>
+          </button>
+          <button class="mastery-btn m-unsure" onclick="markCard('unsure')">
+            <span class="m-icon">△</span><span class="m-label">あやふや</span>
+          </button>
+          <button class="mastery-btn m-knew" onclick="markCard('knew')">
+            <span class="m-icon">✓</span><span class="m-label">わかった</span>
+          </button>
+        </div>
+        <p class="kb-hint">
+          <kbd>←</kbd><kbd>→</kbd> 移動 &nbsp;|&nbsp; <kbd>Space</kbd> 裏返す
+          &nbsp;|&nbsp; <kbd>1</kbd>✗ <kbd>2</kbd>△ <kbd>3</kbd>✓
+        </p>
+      </div>
+    </div>
+
+    <div class="complete-overlay" id="completeOverlay" style="display: none">
+      <div class="complete-card">
+        <div class="complete-icon">◐</div>
+        <h2 class="complete-title">一周完了</h2>
+        <div class="complete-stats" id="completeStats"></div>
+        <div class="complete-breakdown" id="completeBreakdown"></div>
+        <div class="complete-actions">
+          <button class="btn-secondary" onclick="reviewWeak()">
+            ✗ △ のみ復習
+          </button>
+          <button class="btn-secondary" onclick="openStartScreen()">
+            設定に戻る
+          </button>
+          <button class="btn-primary" onclick="restartDeck()">もう一度</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-toggle" onclick="toggleList()">
+      <span>一覧</span>
+      <span id="listArrow">›</span>
+    </div>
+    <div class="list-panel" id="listPanel">
+      <div class="list-head">
+        <span>カード一覧</span>
+        <button class="list-close" onclick="toggleList()">閉じる</button>
+      </div>
+      <div class="list-body" id="listBody"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>{{DECK_SCRIPT}}</script>
+    <script src="../js/flashcard-app.js"></script>
+  </body>
+</html>

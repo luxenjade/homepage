@@ -1,0 +1,12 @@
+/* Generated from subject-colors.json — rebuilt in dist/ on each build */
+:root {
+  --color-accent: #2d6a4f;
+  --color-accent-light: rgba(45,106,79,0.09);
+}
+[data-subject="家庭基礎"] { --card-color: #2d6a4f; --unit-color: #2d6a4f; --unit-color-light: rgba(45,106,79,0.09); }
+[data-subject="保健"] { --card-color: #5b6abf; --unit-color: #5b6abf; --unit-color-light: rgba(91,106,191,0.09); }
+[data-subject="地理総合"] { --card-color: #0e7490; --unit-color: #0e7490; --unit-color-light: rgba(14,116,144,0.09); }
+[data-subject="地理探究"] { --card-color: #34c78f; --unit-color: #34c78f; --unit-color-light: rgba(52,199,143,0.09); }
+[data-subject="世界史探究"] { --card-color: #8b5cf6; --unit-color: #8b5cf6; --unit-color-light: rgba(139,92,246,0.09); }
+[data-subject="政治経済"] { --card-color: #d97706; --unit-color: #d97706; --unit-color-light: rgba(217,119,6,0.09); }
+[data-subject="古典"] { --card-color: #bb5c25; --unit-color: #bb5c25; --unit-color-light: rgba(187,92,37,0.09); }
