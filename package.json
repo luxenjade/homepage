@@ -22,6 +22,7 @@
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
     "html-minifier-terser": "^7.2.0",
+    "marked": "^18.0.5",
     "serve": "^14.2.6",
     "vitest": "^4.1.8",
     "zod": "^4.4.3"

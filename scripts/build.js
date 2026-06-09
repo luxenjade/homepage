@@ -35,8 +35,11 @@ await cp("src", "dist", { recursive: true });
 // ── learning-box ビルド & 統合 ──────────────────────────
 
 console.log("[1.5/4] Building learning-box...");
-execSync("cd learning-box && pnpm run build", { stdio: "inherit" });
-await cp("learning-box/dist", "dist/learning-box", { recursive: true });
+execSync("cd src/learning-box && pnpm run build", { stdio: "inherit" });
+// src を dist に丸ごとコピーしているため、ソースファイルが dist/learning-box に混入している。
+// ビルド成果物で上書きする前に一度削除してクリーンにする。
+await rm("dist/learning-box", { recursive: true, force: true });
+await cp("src/learning-box/dist", "dist/learning-box", { recursive: true });
 
 // ── inner_links / external_links から静的ページ・データ生成 ───
 
