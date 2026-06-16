@@ -1,0 +1,32 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  
+  <!-- Background -->
+  <rect width="256" height="256" rx="48" fill="#1e293b"/>
+
+  <!-- Centered S -->
+  <text
+    x="50%"
+    y="50%"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="DM Sans, sans-serif"
+    font-weight="700"
+    font-size="180"
+    fill="#60a5fa">
+    S
+  </text>
+
+  <!-- Bottom-right docs (non-overlapping safe zone) -->
+  <text
+    x="232"
+    y="228"
+    text-anchor="end"
+    font-family="DM Sans, sans-serif"
+    font-weight="700"
+    font-size="40"
+    fill="#f1f5f9"
+    opacity="0.9">
+    docs
+  </text>
+
+</svg>

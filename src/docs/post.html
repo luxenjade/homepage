@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading… — My Notes</title>
+    <link rel="icon" href="images/451-docs-favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <!-- marked.js is needed for every post; load statically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <div id="page-loader"></div>
+
+    <a href="index.html" class="back-link" aria-label="ホームへ戻る">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      <span>Home</span>
+    </a>
+
+    <span class="logo-switches" id="theme-toggle-container"></span>
+
+    <div class="overlay" id="overlay"></div>
+
+    <button class="toc-toggle" id="tocToggle" style="display: none">
+      <span class="icon">☰</span>
+      <span class="label">目次</span>
+    </button>
+
+    <aside class="toc" id="toc">
+      <h3>目次</h3>
+      <nav id="tocList"></nav>
+    </aside>
+
+    <article class="article" id="article">
+      <div
+        id="post-loading"
+        style="text-align: center; padding: 80px 0; color: var(--sub)"
+      >
+        読み込み中…
+      </div>
+
+      <div
+        id="post-error"
+        style="display: none; text-align: center; padding: 80px 0"
+      >
+        <p style="color: var(--sub); font-size: 1.1rem">Post not found.</p>
+        <p style="margin-top: 12px">
+          <a href="index.html" data-home-link style="color: var(--accent)">
+            Back to Home
+          </a>
+        </p>
+      </div>
+
+      <div id="post-content" style="display: none">
+        <img
+          id="post-thumbnail"
+          class="thumbnail"
+          alt=""
+          style="display: none"
+        />
+        <h1 id="post-title"></h1>
+        <p id="post-date" class="post-meta"></p>
+
+        <nav class="toc-box" id="tocBox" style="display: none">
+          <h3>Table of Contents</h3>
+          <ul></ul>
+        </nav>
+
+        <div id="post-body"></div>
+      </div>
+
+      <footer class="site-footer-bottom" id="post-footer" style="display: none">
+        <p>© 2026 Shoei451</p>
+      </footer>
+    </article>
+
+    <script src="js/theme-toggle.js"></script>
+    <script src="js/post-common.js"></script>
+
+    <script src="js/public-post.js"></script>
+  </body>
+</html>

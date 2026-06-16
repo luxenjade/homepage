@@ -27,6 +27,7 @@ import {
 
 
 import { build as buildLearningBox } from "./learning-box/build.mjs";
+import { build as buildDocs } from "./docs/build.mjs";
 
 
 // ── dist クリーン & コピー ─────────────────────────────
@@ -37,11 +38,14 @@ await cp("src", "dist", { recursive: true });
 
 // ── learning-box ビルド & 統合 ──────────────────────────
 
-console.log("[1.5/4] Building learning-box...");
-// src を dist に丸ごとコピーしているため、ソースファイルが dist/learning-box に混入している。
+console.log("[1.5/4] Building learning-box and docs...");
+// src を dist に丸ごとコピーしているため、ソースファイルが dist/learning-box や dist/docs に混入している。
 // ビルド成果物で上書きする前に一度削除してクリーンにする。
 await rm("dist/learning-box", { recursive: true, force: true });
 await buildLearningBox();
+
+await rm("dist/docs", { recursive: true, force: true });
+await buildDocs();
 
 // ── inner_links / external_links から静的ページ・データ生成 ───
 

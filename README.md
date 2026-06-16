@@ -5,8 +5,6 @@ Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 
 ---
 
-aaaaaa
-
 ## Overview
 
 `luxenjade-website` is a static HTML/CSS/JS repository for study tools, category landing pages, and site-wide utility pages.
