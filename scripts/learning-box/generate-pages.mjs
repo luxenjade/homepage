@@ -109,10 +109,10 @@ export async function generateIndex(sourceDir, outputDir, subjectColors) {
   return { notes: notes.length, flashcards: flashcards.length };
 }
 
-export async function generateNotePages(sourceDir, outputDir, subjectColors) {
+export async function generateNotePages(sourceDir, outputDir, subjectColors, templateDir) {
   const notes = await collectNotes(sourceDir);
   const template = await fs.readFile(
-    path.join(sourceDir, "..", "templates", "note-page.html"),
+    path.join(templateDir, "note-page.html"),
     "utf8",
   );
   const notesDir = path.join(outputDir, "notes");
@@ -145,10 +145,10 @@ export async function generateNotePages(sourceDir, outputDir, subjectColors) {
   return notes.length;
 }
 
-export async function generateFlashcardPages(sourceDir, outputDir, subjectColors) {
+export async function generateFlashcardPages(sourceDir, outputDir, subjectColors, templateDir) {
   const decks = await collectFlashcards(sourceDir);
   const template = await fs.readFile(
-    path.join(sourceDir, "..", "templates", "flashcard-page.html"),
+    path.join(templateDir, "flashcard-page.html"),
     "utf8",
   );
   const flashcardsDir = path.join(outputDir, "flashcards");

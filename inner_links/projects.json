@@ -41,14 +41,6 @@
           "iconType": "image"
         },
         {
-          "title": "451-Learning Box",
-          "link": "/learning-box/",
-          "titleEN": "Learning Resources",
-          "description": "A collection of learning resources and materials.",
-          "icon": "/learning-box/images/lbox.svg",
-          "iconType": "image"
-        },
-        {
           "title": "451-Schedule Tracker",
           "link": "https://451-suite.netlify.app/schedule-tracker",
           "titleEN": "Schedule Tracker",

@@ -13,9 +13,10 @@ import {
 import { generateManifest, generateServiceWorker } from "./lib/pwa.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.join(__dirname, "..");
-const sourceDir = path.join(rootDir, "src");
-const outputDir = path.join(rootDir, "dist");
+const projectRoot = path.join(__dirname, "../..");
+const sourceDir = path.join(projectRoot, "src/learning-box");
+const outputDir = path.join(projectRoot, "dist/learning-box");
+const templateDir = path.join(projectRoot, "template/learning-box");
 
 const requiredEntries = ["index.html"];
 
@@ -186,10 +187,10 @@ async function assertFlashcardPagesHaveDeckData() {
   }
 }
 
-async function build() {
+export async function build() {
   await validateSource();
 
-  console.log("[1/6] Cleaning dist/ and copying deployable assets...");
+  console.log("[1/6] Cleaning dist/learning-box/ and copying deployable assets...");
   await fs.rm(outputDir, { recursive: true, force: true });
   await fs.mkdir(outputDir, { recursive: true });
   await copyDeployableAssets();
@@ -200,17 +201,18 @@ async function build() {
 
   console.log("[3/6] Generating index and content pages...");
   const indexStats = await generateIndex(sourceDir, outputDir, subjectColors);
-  const noteCount = await generateNotePages(sourceDir, outputDir, subjectColors);
+  const noteCount = await generateNotePages(sourceDir, outputDir, subjectColors, templateDir);
   const flashcardCount = await generateFlashcardPages(
     sourceDir,
     outputDir,
     subjectColors,
+    templateDir
   );
   console.log(
     `  → index (${indexStats.flashcards} flashcards, ${indexStats.notes} notes), ${noteCount} note pages, ${flashcardCount} flashcard pages`,
   );
 
-  console.log("[4/6] Running esbuild on all JS/CSS in dist/...");
+  console.log("[4/6] Running esbuild on all JS/CSS in dist/learning-box/...");
   const copiedFiles = await listFiles(outputDir);
   const assetFiles = copiedFiles.filter((file) => {
     const ext = path.extname(file).toLowerCase();
@@ -233,7 +235,7 @@ async function build() {
 
   console.log(
     `Minified ${minifiedAssets.length} assets in ${path.relative(
-      rootDir,
+      projectRoot,
       outputDir,
     )} (${formatBytes(beforeBytes)} -> ${formatBytes(
       afterBytes,
@@ -241,9 +243,9 @@ async function build() {
   );
   console.log(
     `Built ${files.length} files from ${path.relative(
-      rootDir,
+      projectRoot,
       sourceDir,
-    )} to ${path.relative(rootDir, outputDir)} (${formatBytes(
+    )} to ${path.relative(projectRoot, outputDir)} (${formatBytes(
       totalBytes,
     )} total).`,
   );
@@ -259,7 +261,10 @@ async function build() {
   await assertNoSourceLeakage();
 }
 
-build().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  build().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}
+

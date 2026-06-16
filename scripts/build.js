@@ -26,6 +26,9 @@ import {
 } from "./utils.js";
 
 
+import { build as buildLearningBox } from "./learning-box/build.mjs";
+
+
 // ── dist クリーン & コピー ─────────────────────────────
 
 console.log("[1/4] Cleaning dist/ and copying src/...");
@@ -35,11 +38,10 @@ await cp("src", "dist", { recursive: true });
 // ── learning-box ビルド & 統合 ──────────────────────────
 
 console.log("[1.5/4] Building learning-box...");
-execSync("cd src/learning-box && pnpm run build", { stdio: "inherit" });
 // src を dist に丸ごとコピーしているため、ソースファイルが dist/learning-box に混入している。
 // ビルド成果物で上書きする前に一度削除してクリーンにする。
 await rm("dist/learning-box", { recursive: true, force: true });
-await cp("src/learning-box/dist", "dist/learning-box", { recursive: true });
+await buildLearningBox();
 
 // ── inner_links / external_links から静的ページ・データ生成 ───
 
@@ -774,6 +776,7 @@ for await (const file of glob("dist/**/*.html")) {
 
 for (const file of htmlFiles) {
   const input = fs.readFileSync(file, "utf-8");
+  const isFlashcardHtml = file.includes("learning-box/flashcards/");
   const output = await minify(input, {
     collapseWhitespace: true,
     conservativeCollapse: false, // 追加: 連続空白を1つに
@@ -781,7 +784,7 @@ for (const file of htmlFiles) {
     removeRedundantAttributes: true,
     removeEmptyAttributes: false, // alt="" を守る
     minifyCSS: true,
-    minifyJS: true,
+    minifyJS: !isFlashcardHtml,
   });
   fs.writeFileSync(file, output);
 }

@@ -4,15 +4,15 @@ import path from "node:path";
 const BASE_PATH = "/learning-box/";
 
 const MANIFEST_BASE = {
-  name: "451 learning box",
+  name: "luxenjade | learning box",
   short_name: "learning box",
   description: "フラッシュカードとまとめノートの学習ツール",
   start_url: `${BASE_PATH}index.html`,
   scope: BASE_PATH,
   display: "standalone",
   orientation: "any",
-  background_color: "#f8faf9",
-  theme_color: "#2d6a4f",
+  background_color: "#ffffff",
+  theme_color: "#faba40",
   lang: "ja",
 };
 
@@ -52,7 +52,7 @@ export async function generateManifest(sourceDir, outputDir) {
         : "wide";
       screenshots.push({
         src,
-        sizes: form_factor === "narrow" ? "390x844" : "1280x720",
+        sizes: form_factor === "narrow" ? "1080x1920" : "1920x1080",
         type: imageMime(name),
         form_factor,
         label: "learning box",
@@ -61,7 +61,7 @@ export async function generateManifest(sourceDir, outputDir) {
     }
 
     if (/\.(png|webp)$/i.test(name) && /icon/i.test(lower)) {
-      const purpose = lower.includes("maskable") ? "maskable" : "any";
+      const purpose = lower.includes("512") ? "maskable" : "any";
       icons.push({
         src,
         sizes: iconSizeFromName(name),
@@ -83,9 +83,9 @@ export async function generateManifest(sourceDir, outputDir) {
 
   if (!icons.length) {
     icons.push({
-      src: "images/lbox.svg",
+      src: "images/favicon.png",
       sizes: "any",
-      type: "image/svg+xml",
+      type: "image/png",
       purpose: "any",
     });
   }
@@ -106,11 +106,11 @@ export async function generateManifest(sourceDir, outputDir) {
 export function pwaHeadTags(basePath = "") {
   const base = basePath || "";
   return `<link rel="manifest" href="${base}manifest.webmanifest" />
-    <meta name="theme-color" content="#2d6a4f" />
+    <meta name="theme-color" content="#faba40" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="learning box" />
-    <link rel="apple-touch-icon" href="${base}images/icon-192.png" />
+    <link rel="apple-touch-icon" href="${base}images/apple-touch-icon.png" />
     <script src="${base}js/pwa.js" defer></script>`;
 }
 

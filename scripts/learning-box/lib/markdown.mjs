@@ -1,7 +1,7 @@
 import { marked } from "marked";
 import { escHtml } from "./html.mjs";
 
-marked.setOptions({ gfm: true, breaks: false });
+marked.use({ gfm: true, breaks: false });
 
 function extractClozePlaceholders(md) {
   const phrases = [];
