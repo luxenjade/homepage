@@ -73,7 +73,7 @@
           <a href="/privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
           <a href="/about/">About</a> &nbsp;·&nbsp;
           <a href="/sitemap.html">Site Map</a> &nbsp;·&nbsp;
-          <a href="https://451-docs.netlify.app/?site=luxenjade-website"
+          <a href="/docs/"
              target="_blank" rel="noopener">Docs</a>
         </span>
         <a href="mailto:okamotoshoei4512@gmail.com"

@@ -77,7 +77,7 @@ async function loadAndApplySiteAccent(siteId) {
 
 function buildHomeHref(siteId) {
   const site = (siteId || "").trim();
-  return site ? `index.html?site=${encodeURIComponent(site)}` : "index.html";
+  return site ? `/docs/${encodeURIComponent(site)}/` : "/docs/";
 }
 
 function applyHomeLinks(siteId, root = document) {

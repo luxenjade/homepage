@@ -4,9 +4,14 @@
 async function loadPost() {
   loaderStart();
 
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  // Expected: ["docs", "site-id", "slug"]
+  const siteInPath = pathParts[0] === "docs" ? pathParts[1] : null;
+  const slugInPath = pathParts[0] === "docs" ? pathParts[2] : null;
+
   const params = new URLSearchParams(window.location.search);
-  const slug = params.get("slug");
-  const site = params.get("site") || window.SITE_ID || "";
+  const slug = slugInPath || params.get("slug");
+  const site = siteInPath || params.get("site") || window.SITE_ID || "451-docs";
 
   applyHomeLinks(site);
 

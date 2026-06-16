@@ -8,10 +8,19 @@ function formatDateStr(dateStr) {
 }
 
 /**
- * ?site= クエリパラメータからサイトIDを取得する。
- * 未指定の場合は '451-docs'（デフォルト）にフォールバック。
+ * URLパスまたは ?site= クエリパラメータからサイトIDを取得する。
+ * 1. パスが /docs/[site-id]/ の形式ならその site-id を使用。
+ * 2. クエリパラメータ ?site= があればそれを使用。
+ * 3. いずれもなければ '451-docs'（デフォルト）にフォールバック。
  */
 function getSiteId() {
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  // Expected: ["docs", "site-id"] or ["docs"]
+  if (pathParts[0] === "docs" && pathParts[1]) {
+    // インデックスページ (/docs/site-id/) の場合
+    return pathParts[1];
+  }
+
   return new URLSearchParams(window.location.search).get("site") || "451-docs";
 }
 
@@ -22,9 +31,10 @@ function siteParam() {
 
 function resolveHref(post) {
   const id = getSiteId();
-  const extra = `&site=${encodeURIComponent(id)}`;
-  if (post.slug)
-    return `post.html?slug=${encodeURIComponent(post.slug)}${extra}`;
+  if (post.slug) {
+    // クリーンなURL: /docs/site-id/slug
+    return `/docs/${encodeURIComponent(id)}/${encodeURIComponent(post.slug)}`;
+  }
   if (post.outputFile) return post.outputFile;
   return "#";
 }
@@ -155,9 +165,9 @@ function createPublicCard(p) {
 
 function createProtectedCard(p) {
   const id = getSiteId();
-  const extra = `&site=${encodeURIComponent(id)}`;
   const a = document.createElement("a");
-  a.href = `protected-post.html?slug=${encodeURIComponent(p.slug)}${extra}`;
+  // クリーンなURL: /docs/site-id/protected/slug
+  a.href = `/docs/${encodeURIComponent(id)}/protected/${encodeURIComponent(p.slug)}`;
   a.className = "card card--protected";
   a.dataset.date = p.date || "";
   a.dataset.category = p.category || "";

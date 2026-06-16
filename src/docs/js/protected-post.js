@@ -4,9 +4,22 @@
  */
 
 /* ── URL params ──────────────────────────────────────── */
+const pathParts = window.location.pathname.split("/").filter(Boolean);
+// Expected: ["docs", "site-id", "protected", "slug"] or ["docs", "site-id", "slug"] (if redirected)
+const siteInPath = pathParts[0] === "docs" ? pathParts[1] : null;
+// Find slug: it might be after "protected" or just at the end
+let slugInPath = null;
+if (pathParts[0] === "docs") {
+  if (pathParts[2] === "protected") {
+    slugInPath = pathParts[3];
+  } else {
+    slugInPath = pathParts[2];
+  }
+}
+
 const params = new URLSearchParams(window.location.search);
-const slug = params.get("slug");
-const site = params.get("site") || window.SITE_ID || "";
+const slug = slugInPath || params.get("slug");
+const site = siteInPath || params.get("site") || window.SITE_ID || "451-docs";
 
 applyHomeLinks(site);
 
@@ -152,9 +165,7 @@ form.addEventListener("submit", async (e) => {
     } else {
       loaderDone();
       passwordError.textContent =
-        result.error === "server_error"
-          ? "エラーが発生しました。後ほど再試行してください。"
-          : "パスワードが違います。";
+        result.error === "server_error" ? "エラーが発生しました。後ほど再試行してください。" : "パスワードが違います。";
       passwordError.classList.add("show");
       passwordInput.value = "";
       passwordInput.focus();
@@ -162,8 +173,7 @@ form.addEventListener("submit", async (e) => {
   } catch (err) {
     console.error(err);
     loaderDone();
-    passwordError.textContent =
-      "エラーが発生しました。後ほど再試行してください。";
+    passwordError.textContent = "エラーが発生しました。後ほど再試行してください。";
     passwordError.classList.add("show");
   } finally {
     spinner.classList.remove("show");

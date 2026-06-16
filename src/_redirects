@@ -2,3 +2,13 @@
 /learning-box/flashcard.html?slug=:slug    /learning-box/flashcards/:slug.html    301
 /learning-box/note.html    /learning-box/index.html    301
 /learning-box/flashcard.html    /learning-box/index.html    301
+
+# Docs Clean URLs
+/docs/:site/protected/:slug    /docs/protected-post.html    200
+/docs/:site/:slug              /docs/post.html              200
+/docs/:site/                   /docs/index.html             200
+
+# Legacy Docs (Redirect to clean URLs)
+/docs/protected-post.html?site=:site&slug=:slug    /docs/:site/protected/:slug    301
+/docs/post.html?site=:site&slug=:slug              /docs/:site/:slug              301
+/docs/index.html?site=:site                        /docs/:site/                   301
