@@ -31,7 +31,7 @@ function imageMime(name) {
 
 export async function generateManifest(sourceDir, outputDir) {
   const imagesDir = path.join(sourceDir, "images");
-  let names = [];
+  let names;
 
   try {
     names = await fs.readdir(imagesDir);
