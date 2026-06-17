@@ -2,66 +2,51 @@
 
 /**
  * Netlify Function: posts
- * Route: GET /api/posts   (site baked in via netlify.toml redirect query param)
  * Returns: { accent, accentDark, ui, posts }
  */
 
-const { listFiles, fetchRaw } = require("./_lib/github");
-const { buildMeta } = require("./_lib/frontmatter");
 const { CORS, handleOptions } = require("./_lib/cors");
-const { REPO, getSite } = require("./_lib/config");
-
-const caches = {};
-const CACHE_TTL_MS = 60 * 1000;
+const { SUPABASE_URL, SUPABASE_KEY, SITE_CONFIG } = require("./_lib/config");
 
 exports.handler = async (event) => {
   const preflight = handleOptions(event);
   if (preflight) return preflight;
 
-  const siteId = (event.queryStringParameters?.site || "").trim();
-  const site = getSite(siteId);
-
-  const cached = caches[site.id];
-  if (cached && Date.now() - cached.cachedAt < CACHE_TTL_MS) {
-    return {
-      statusCode: 200,
-      headers: CORS,
-      body: JSON.stringify(cached.data),
-    };
-  }
-
   try {
-    const files = await listFiles(REPO, site.BASE_PUBLIC);
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/public_posts?select=slug,title,date,description,category,thumbnail&order=date.desc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+      },
+    );
 
-    const posts = (
-      await Promise.all(
-        files.map(async ({ path }) => {
-          const slug = path
-            .replace(`${site.BASE_PUBLIC}/`, "")
-            .replace(/\.md$/i, "");
-          const raw = await fetchRaw(REPO, site.BASE_PUBLIC, slug);
-          return raw ? buildMeta(slug, raw) : null;
-        }),
-      )
-    )
-      .filter(Boolean)
-      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    if (!res.ok) {
+      throw new Error(`Supabase API ${res.status}: ${await res.text()}`);
+    }
+
+    const posts = await res.json();
 
     const data = {
-      accent: site.accent,
-      accentDark: site.accentDark,
-      ui: site.ui,
+      accent: SITE_CONFIG.accent,
+      accentDark: SITE_CONFIG.accentDark,
+      ui: SITE_CONFIG.ui,
       posts,
     };
 
-    caches[site.id] = { data, cachedAt: Date.now() };
-    return { statusCode: 200, headers: CORS, body: JSON.stringify(data) };
+    return {
+      statusCode: 200,
+      headers: CORS,
+      body: JSON.stringify(data),
+    };
   } catch (err) {
     console.error("[posts]", err);
     return {
       statusCode: 502,
       headers: CORS,
-      body: JSON.stringify({ error: "Failed to fetch posts." }),
+      body: JSON.stringify({ error: "Failed to fetch posts from Supabase." }),
     };
   }
 };

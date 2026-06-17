@@ -2,14 +2,12 @@
 
 /**
  * Netlify Function: post
- * Route: GET /api/post?slug={slug}&site={id}
- * Returns full post JSON including Markdown content.
+ * Route: GET /api/post?slug={slug}
+ * Returns full post JSON including Markdown content from Supabase.
  */
 
-const { fetchRaw } = require("./_lib/github");
-const { buildPostData } = require("./_lib/frontmatter");
 const { CORS, handleOptions } = require("./_lib/cors");
-const { REPO, getSite } = require("./_lib/config");
+const { SUPABASE_URL, SUPABASE_KEY } = require("./_lib/config");
 
 const VALID_SLUG = /^[\w][\w/-]*$/;
 
@@ -18,8 +16,6 @@ exports.handler = async (event) => {
   if (preflight) return preflight;
 
   const slug = (event.queryStringParameters?.slug || "").trim();
-  const siteId = (event.queryStringParameters?.site || "").trim();
-  const site = getSite(siteId);
 
   if (!slug || slug.includes("..") || !VALID_SLUG.test(slug)) {
     return {
@@ -30,24 +26,41 @@ exports.handler = async (event) => {
   }
 
   try {
-    const raw = await fetchRaw(REPO, site.BASE_PUBLIC, slug);
-    if (!raw)
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/public_posts?slug=eq.${encodeURIComponent(slug)}&select=*`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/vnd.pgrst.object+json", // Get a single object, not an array
+        },
+      },
+    );
+
+    if (res.status === 404) {
       return {
         statusCode: 404,
         headers: CORS,
         body: JSON.stringify({ error: "Post not found." }),
       };
+    }
+
+    if (!res.ok) {
+      throw new Error(`Supabase API ${res.status}: ${await res.text()}`);
+    }
+
+    const post = await res.json();
     return {
       statusCode: 200,
       headers: CORS,
-      body: JSON.stringify(buildPostData(slug, raw)),
+      body: JSON.stringify(post),
     };
   } catch (err) {
     console.error("[post]", err);
     return {
       statusCode: 502,
       headers: CORS,
-      body: JSON.stringify({ error: "Failed to fetch post." }),
+      body: JSON.stringify({ error: "Failed to fetch post from Supabase." }),
     };
   }
 };

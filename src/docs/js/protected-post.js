@@ -5,26 +5,21 @@
 
 /* ── URL params ──────────────────────────────────────── */
 const pathParts = window.location.pathname.split("/").filter(Boolean);
-// Expected: ["docs", "site-id", "protected", "slug"] or ["docs", "site-id", "slug"] (if redirected)
-const siteInPath = pathParts[0] === "docs" ? pathParts[1] : null;
-// Find slug: it might be after "protected" or just at the end
+// Expected: ["docs", "protected", "slug"] or ["docs", "slug"] (if redirected)
 let slugInPath = null;
 if (pathParts[0] === "docs") {
-  if (pathParts[2] === "protected") {
-    slugInPath = pathParts[3];
-  } else {
+  if (pathParts[1] === "protected") {
     slugInPath = pathParts[2];
+  } else {
+    slugInPath = pathParts[1];
   }
 }
 
 const params = new URLSearchParams(window.location.search);
 const slug = slugInPath || params.get("slug");
-const site = siteInPath || params.get("site") || window.SITE_ID || "451-docs";
 
-applyHomeLinks(site);
-
-const siteParam = site ? `&site=${encodeURIComponent(site)}` : "";
-void loadAndApplySiteAccent(site);
+applyHomeLinks();
+void loadAndApplySiteAccent();
 
 /* ── DOM refs ────────────────────────────────────────── */
 const form = document.getElementById("password-form");
@@ -43,9 +38,7 @@ async function getProtectedPostMeta(slug) {
   }
 
   try {
-    const res = await fetch(
-      `/api/protected-posts${siteParam ? "?" + siteParam.slice(1) : ""}`,
-    );
+    const res = await fetch("/api/protected-posts");
     if (!res.ok) return { exists: true, title: slug };
     const list = await res.json();
     if (!Array.isArray(list)) return { exists: true, title: slug };
@@ -64,13 +57,13 @@ function showSlugError(msg) {
     <p style="font-size:2rem; margin-bottom:12px;">🔍</p>
     <h2 style="margin-bottom:8px;">Post not found</h2>
     <p style="color:var(--sub); font-size:0.9rem; margin-bottom:20px;">${msg}</p>
-    <a href="index.html" data-home-link
+    <a href="/docs/" data-home-link
        style="display:inline-block; padding:10px 24px; background:var(--accent);
               color:#fff; border-radius:8px; text-decoration:none; font-weight:600;">
       Back to Home
     </a>
   `;
-  applyHomeLinks(site, dialog);
+  applyHomeLinks(dialog);
 }
 
 function setOverlayPostTitle(title) {
@@ -80,7 +73,7 @@ function setOverlayPostTitle(title) {
 
 /* ── Fetch protected post ────────────────────────────── */
 async function fetchProtectedPost(slug, password) {
-  const url = `/api/protected-post?slug=${encodeURIComponent(slug)}&password=${encodeURIComponent(password)}${siteParam}`;
+  const url = `/api/protected-post?slug=${encodeURIComponent(slug)}&password=${encodeURIComponent(password)}`;
   const res = await fetch(url);
 
   if (res.status === 401) return { success: false, error: "invalid_password" };

@@ -61,12 +61,9 @@ function applyAccent(accent, accentDark) {
   document.head.appendChild(style);
 }
 
-async function loadAndApplySiteAccent(siteId) {
-  const site = (siteId || "").trim();
-  const sp = site ? `?site=${encodeURIComponent(site)}` : "";
-
+async function loadAndApplySiteAccent() {
   try {
-    const res = await fetch(`/api/posts${sp}`);
+    const res = await fetch("/api/posts");
     if (!res.ok) return;
     const data = await res.json();
     applyAccent(data.accent, data.accentDark);
@@ -75,13 +72,12 @@ async function loadAndApplySiteAccent(siteId) {
   }
 }
 
-function buildHomeHref(siteId) {
-  const site = (siteId || "").trim();
-  return site ? `/docs/${encodeURIComponent(site)}/` : "/docs/";
+function buildHomeHref() {
+  return "/docs/";
 }
 
-function applyHomeLinks(siteId, root = document) {
-  const href = buildHomeHref(siteId);
+function applyHomeLinks(root = document) {
+  const href = buildHomeHref();
   root.querySelectorAll("a.back-link, a[data-home-link]").forEach((link) => {
     link.href = href;
   });

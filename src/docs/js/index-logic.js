@@ -7,33 +7,10 @@ function formatDateStr(dateStr) {
   return y + "年" + parseInt(m) + "月" + parseInt(d) + "日";
 }
 
-/**
- * URLパスまたは ?site= クエリパラメータからサイトIDを取得する。
- * 1. パスが /docs/[site-id]/ の形式ならその site-id を使用。
- * 2. クエリパラメータ ?site= があればそれを使用。
- * 3. いずれもなければ '451-docs'（デフォルト）にフォールバック。
- */
-function getSiteId() {
-  const pathParts = window.location.pathname.split("/").filter(Boolean);
-  // Expected: ["docs", "site-id"] or ["docs"]
-  if (pathParts[0] === "docs" && pathParts[1]) {
-    // インデックスページ (/docs/site-id/) の場合
-    return pathParts[1];
-  }
-
-  return new URLSearchParams(window.location.search).get("site") || "451-docs";
-}
-
-function siteParam() {
-  const id = getSiteId();
-  return `?site=${encodeURIComponent(id)}`;
-}
-
 function resolveHref(post) {
-  const id = getSiteId();
   if (post.slug) {
-    // クリーンなURL: /docs/site-id/slug
-    return `/docs/${encodeURIComponent(id)}/${encodeURIComponent(post.slug)}`;
+    // クリーンなURL: /docs/slug
+    return `/docs/${encodeURIComponent(post.slug)}`;
   }
   if (post.outputFile) return post.outputFile;
   return "#";
@@ -41,8 +18,6 @@ function resolveHref(post) {
 
 // =====================================================
 // アクセントカラー注入
-// <style> タグで :root と body.dark を同時定義することで
-// theme-toggle.js の body.dark 付与タイミングに依存しない
 // =====================================================
 function applyAccent(accent, accentDark) {
   if (!accent) return;
@@ -103,19 +78,6 @@ function applyUI(ui) {
       )
       .join("");
   }
-  if (ui.avatarAttribution) {
-    const wrap = document.getElementById("hero-avatar-wrap");
-    if (wrap) {
-      const a = document.createElement("a");
-      a.href = ui.avatarAttribution.href;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.textContent = ui.avatarAttribution.label;
-      a.style.cssText =
-        "display:block; font-size:0.65rem; color:var(--sub); margin-top:4px; text-align:center; text-decoration:none;";
-      wrap.appendChild(a);
-    }
-  }
 }
 
 function iconSVG(icon) {
@@ -164,10 +126,9 @@ function createPublicCard(p) {
 }
 
 function createProtectedCard(p) {
-  const id = getSiteId();
   const a = document.createElement("a");
-  // クリーンなURL: /docs/site-id/protected/slug
-  a.href = `/docs/${encodeURIComponent(id)}/protected/${encodeURIComponent(p.slug)}`;
+  // クリーンなURL: /docs/protected/slug
+  a.href = `/docs/protected/${encodeURIComponent(p.slug)}`;
   a.className = "card card--protected";
   a.dataset.date = p.date || "";
   a.dataset.category = p.category || "";
@@ -194,12 +155,10 @@ async function initialize() {
   const tocList = document.getElementById("tocList");
   let selectedCategory = "";
 
-  const sp = siteParam();
-
   // 1. 公開記事 + サイト設定を /api/posts から一括取得
   let publicPosts = [];
   try {
-    const res = await fetch(`/api/posts${sp}`);
+    const res = await fetch("/api/posts");
     if (res.ok) {
       const data = await res.json();
       applyAccent(data.accent, data.accentDark);
@@ -215,9 +174,9 @@ async function initialize() {
     date: p.date || "",
   }));
 
-  // 2. 保護記事（BASE_PROTECTED がないサイトは [] が返る）
+  // 2. 保護記事
   try {
-    const res = await fetch(`/api/protected-posts${sp}`);
+    const res = await fetch("/api/protected-posts");
     if (res.ok) {
       const protectedPosts = await res.json();
       protectedPosts.forEach((p) => {

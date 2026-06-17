@@ -5,18 +5,14 @@ async function loadPost() {
   loaderStart();
 
   const pathParts = window.location.pathname.split("/").filter(Boolean);
-  // Expected: ["docs", "site-id", "slug"]
-  const siteInPath = pathParts[0] === "docs" ? pathParts[1] : null;
-  const slugInPath = pathParts[0] === "docs" ? pathParts[2] : null;
+  // Expected: ["docs", "slug"]
+  const slugInPath = pathParts[0] === "docs" ? pathParts[1] : null;
 
   const params = new URLSearchParams(window.location.search);
   const slug = slugInPath || params.get("slug");
-  const site = siteInPath || params.get("site") || window.SITE_ID || "451-docs";
 
-  applyHomeLinks(site);
-
-  const siteParam = site ? `&site=${encodeURIComponent(site)}` : "";
-  void loadAndApplySiteAccent(site);
+  applyHomeLinks();
+  void loadAndApplySiteAccent();
 
   const showError = () => {
     document.getElementById("post-loading").style.display = "none";
@@ -32,9 +28,7 @@ async function loadPost() {
   // 1. Fetch post JSON
   let post;
   try {
-    const res = await fetch(
-      `/api/post?slug=${encodeURIComponent(slug)}${siteParam}`,
-    );
+    const res = await fetch(`/api/post?slug=${encodeURIComponent(slug)}`);
     if (!res.ok) throw new Error("not found");
     post = await res.json();
   } catch {

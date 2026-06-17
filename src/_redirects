@@ -4,11 +4,11 @@
 /learning-box/flashcard.html    /learning-box/index.html    301
 
 # Docs Clean URLs
-/docs/:site/protected/:slug    /docs/protected-post.html    200
-/docs/:site/:slug              /docs/post.html              200
-/docs/:site/                   /docs/index.html             200
+/docs/protected/:slug    /docs/protected-post.html    200
+/docs/:slug              /docs/post.html              200
+/docs/                   /docs/index.html             200
 
 # Legacy Docs (Redirect to clean URLs)
-/docs/protected-post.html?site=:site&slug=:slug    /docs/:site/protected/:slug    301
-/docs/post.html?site=:site&slug=:slug              /docs/:site/:slug              301
-/docs/index.html?site=:site                        /docs/:site/                   301
+/docs/protected-post.html?slug=:slug    /docs/protected/:slug    301
+/docs/post.html?slug=:slug              /docs/:slug              301
+/docs/index.html                        /docs/                   301
