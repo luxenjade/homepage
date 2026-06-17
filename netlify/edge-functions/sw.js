@@ -9,8 +9,8 @@ export default async (request, context) => {
   const userAgent = request.headers.get("user-agent") || null;
   const country = context.geo?.country?.code || null;
 
-  const SUPABASE_URL = "https://gjuqsyaugrsshmjerhme.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_K-TVhPlOAGY7cLhanI9Tag_kKIDoIGU";
+  const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_E056pt4Dp5w3nTBEkYpRSA_scTTtrfa";
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/access_logs`, {
     method: "POST",
