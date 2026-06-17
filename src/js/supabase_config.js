@@ -14,9 +14,8 @@
 //
 // ============================================================
 
-// ── Project 1（学習コンテンツDB）────────────────────────────
-const SUPABASE_URL = "https://gjuqsyaugrsshmjerhme.supabase.co";
-const SUPABASE_KEY = "sb_publishable_K-TVhPlOAGY7cLhanI9Tag_kKIDoIGU";
+const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_E056pt4Dp5w3nTBEkYpRSA_scTTtrfa";
 
 // ── テーブル名定数 ───────────────────────────────────────────
 export const tables = {
