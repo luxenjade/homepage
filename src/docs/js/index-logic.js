@@ -17,69 +17,8 @@ function resolveHref(post) {
 }
 
 // =====================================================
-// アクセントカラー注入
+// アイコン
 // =====================================================
-function applyAccent(accent, accentDark) {
-  if (!accent) return;
-  const existing = document.getElementById("site-accent");
-  if (existing) existing.remove();
-  const style = document.createElement("style");
-  style.id = "site-accent";
-  style.textContent = `
-    :root     { --accent: ${accent}; }
-    body.dark { --accent: ${accentDark || accent}; }
-  `;
-  document.head.appendChild(style);
-}
-
-// =====================================================
-// UI文言の差し込み
-// =====================================================
-function applyUI(ui) {
-  if (!ui) return;
-
-  const setHTML = (id, html) => {
-    const el = document.getElementById(id);
-    if (el && html != null) el.innerHTML = html;
-  };
-  const setText = (id, text) => {
-    const el = document.getElementById(id);
-    if (el && text != null) el.textContent = text;
-  };
-
-  if (ui.siteTitle) document.title = ui.siteTitle;
-  setHTML("hero-label", ui.heroLabel);
-  setHTML("hero-title", ui.heroTitle);
-  setText("hero-owner", ui.ownerLabel);
-  setText("hero-bio", ui.heroBio);
-  setHTML("posts-heading", ui.postsHeading);
-  setHTML("footer-text", ui.footerText);
-
-  const avatar = document.getElementById("hero-avatar");
-  if (avatar) {
-    if (ui.avatarUrl) {
-      avatar.src = ui.avatarUrl;
-    } else {
-      document
-        .getElementById("hero-avatar-wrap")
-        ?.style.setProperty("display", "none");
-    }
-  }
-
-  const linksEl = document.getElementById("profile-links");
-  if (linksEl && Array.isArray(ui.links)) {
-    linksEl.innerHTML = ui.links
-      .map(
-        (link) => `
-      <a href="${link.href}" target="_blank" rel="noopener" class="profile-link">
-        ${iconSVG(link.icon)}${link.label}
-      </a>
-    `,
-      )
-      .join("");
-  }
-}
-
 function iconSVG(icon) {
   if (icon === "github")
     return `
@@ -155,14 +94,12 @@ async function initialize() {
   const tocList = document.getElementById("tocList");
   let selectedCategory = "";
 
-  // 1. 公開記事 + サイト設定を /api/posts から一括取得
+  // 1. 公開記事の取得
   let publicPosts = [];
   try {
     const res = await fetch("/api/posts");
     if (res.ok) {
       const data = await res.json();
-      applyAccent(data.accent, data.accentDark);
-      applyUI(data.ui);
       publicPosts = Array.isArray(data.posts) ? data.posts : [];
     }
   } catch (e) {
@@ -314,7 +251,7 @@ async function initialize() {
 
     let activeCat = "";
 
-    // カテゴリフィルタが変わったときにactiveCatを同期させる
+    // カテゴリフィルターが変わったときにactiveCatを同期させる
     document.addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-cat]");
       if (!btn) return;

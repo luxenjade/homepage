@@ -6,7 +6,7 @@
  */
 
 const { CORS, handleOptions } = require("./_lib/cors");
-const { SUPABASE_URL, SUPABASE_KEY } = require("./_lib/config");
+const { SUPABASE_URL, SUPABASE_KEY, TABLES } = require("./_lib/config");
 
 exports.handler = async (event) => {
   const preflight = handleOptions(event);
@@ -14,7 +14,7 @@ exports.handler = async (event) => {
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/private_posts?select=slug,title,date,excerpt,category&order=date.desc`,
+      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PRIVATE}?select=slug,title,date,excerpt,category&order=date.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -22,6 +22,7 @@ exports.handler = async (event) => {
         },
       },
     );
+
 
     if (!res.ok) {
       throw new Error(`Supabase API ${res.status}: ${await res.text()}`);

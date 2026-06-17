@@ -7,7 +7,7 @@
  */
 
 const { CORS, handleOptions } = require("./_lib/cors");
-const { SUPABASE_URL, SUPABASE_KEY } = require("./_lib/config");
+const { SUPABASE_URL, SUPABASE_KEY, TABLES } = require("./_lib/config");
 
 const VALID_SLUG = /^[\w][\w/-]*$/;
 
@@ -36,7 +36,7 @@ exports.handler = async (event) => {
   try {
     // Fetch post and password using resource embedding
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/private_posts?slug=eq.${encodeURIComponent(slug)}&select=*,posts_password(password)`,
+      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PRIVATE}?slug=eq.${encodeURIComponent(slug)}&select=*,${TABLES.DOCS_PASSWORD}(password)`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -60,8 +60,8 @@ exports.handler = async (event) => {
 
     const post = await res.json();
 
-    // The embedded posts_password will be an object (or null if not found)
-    const dbPassword = post.posts_password?.password;
+    // The embedded password object
+    const dbPassword = post[TABLES.DOCS_PASSWORD]?.password;
 
     if (!dbPassword || dbPassword !== password) {
       return {
@@ -72,7 +72,8 @@ exports.handler = async (event) => {
     }
 
     // Remove the password before returning
-    delete post.posts_password;
+    delete post[TABLES.DOCS_PASSWORD];
+
 
     return {
       statusCode: 200,

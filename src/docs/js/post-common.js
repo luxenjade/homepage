@@ -5,7 +5,6 @@
  * Globals exposed:
  *   ComponentLoader  — dynamic CSS/JS injection (dedup by URL)
  *   loadComponents() — load KaTeX / Highlight.js per post.components
- *   loadAndApplySiteAccent() — fetch site accent from /api/posts and apply CSS vars
  *   makeTablesScrollable() — wrap markdown tables for horizontal scroll
  *   buildToc()       — generate sidebar + inline TOC from article headings
  *   loaderStart()    — start top loading bar animation
@@ -45,32 +44,6 @@ const ComponentLoader = (() => {
 
   return { loadCSS, loadJS };
 })();
-
-/* ── Site accent (from config.js via /api/posts) ─────── */
-function applyAccent(accent, accentDark) {
-  if (!accent) return;
-  const existing = document.getElementById("site-accent");
-  if (existing) existing.remove();
-
-  const style = document.createElement("style");
-  style.id = "site-accent";
-  style.textContent = `
-    :root     { --accent: ${accent}; }
-    body.dark { --accent: ${accentDark || accent}; }
-  `;
-  document.head.appendChild(style);
-}
-
-async function loadAndApplySiteAccent() {
-  try {
-    const res = await fetch("/api/posts");
-    if (!res.ok) return;
-    const data = await res.json();
-    applyAccent(data.accent, data.accentDark);
-  } catch (err) {
-    console.warn("Failed to fetch accent from /api/posts:", err);
-  }
-}
 
 function buildHomeHref() {
   return "/docs/";

@@ -7,7 +7,7 @@
  */
 
 const { CORS, handleOptions } = require("./_lib/cors");
-const { SUPABASE_URL, SUPABASE_KEY } = require("./_lib/config");
+const { SUPABASE_URL, SUPABASE_KEY, TABLES } = require("./_lib/config");
 
 const VALID_SLUG = /^[\w][\w/-]*$/;
 
@@ -27,7 +27,7 @@ exports.handler = async (event) => {
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/public_posts?slug=eq.${encodeURIComponent(slug)}&select=*`,
+      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PUBLIC}?slug=eq.${encodeURIComponent(slug)}&select=*`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -36,6 +36,7 @@ exports.handler = async (event) => {
         },
       },
     );
+
 
     if (res.status === 404) {
       return {

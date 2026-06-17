@@ -6,7 +6,7 @@
   --text: #222;
   --sub: #6b7280;
   --border: #e5e7eb;
-  --accent: #3b82f6;
+  --accent: #e99700;
   --shadow: rgba(0, 0, 0, 0.15);
 }
 
@@ -16,7 +16,7 @@ body.dark {
   --text: #f1f5f9;
   --sub: #94a3b8;
   --border: #334155;
-  --accent: #60a5fa;
+  --accent: #f5be4c;
   --shadow: rgba(0, 0, 0, 0.5);
 }
 

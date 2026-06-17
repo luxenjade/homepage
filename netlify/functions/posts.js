@@ -2,11 +2,11 @@
 
 /**
  * Netlify Function: posts
- * Returns: { accent, accentDark, ui, posts }
+ * Returns: { posts }
  */
 
 const { CORS, handleOptions } = require("./_lib/cors");
-const { SUPABASE_URL, SUPABASE_KEY, SITE_CONFIG } = require("./_lib/config");
+const { SUPABASE_URL, SUPABASE_KEY, TABLES } = require("./_lib/config");
 
 exports.handler = async (event) => {
   const preflight = handleOptions(event);
@@ -14,7 +14,7 @@ exports.handler = async (event) => {
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/public_posts?select=slug,title,date,description,category,thumbnail&order=date.desc`,
+      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PUBLIC}?select=slug,title,date,description,category,thumbnail&order=date.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -23,6 +23,7 @@ exports.handler = async (event) => {
       },
     );
 
+
     if (!res.ok) {
       throw new Error(`Supabase API ${res.status}: ${await res.text()}`);
     }
@@ -30,9 +31,6 @@ exports.handler = async (event) => {
     const posts = await res.json();
 
     const data = {
-      accent: SITE_CONFIG.accent,
-      accentDark: SITE_CONFIG.accentDark,
-      ui: SITE_CONFIG.ui,
       posts,
     };
 

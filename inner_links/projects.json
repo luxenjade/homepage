@@ -17,27 +17,11 @@
           "iconType": "image"
         },
         {
-          "title": "451-docs",
-          "link": "https://451-docs.netlify.app",
-          "titleEN": "Study Notes & Updates",
-          "description": "Learning notes, thoughts, and update posts(Markdown-based docs).",
-          "icon": "https://451-docs.netlify.app/images/s-docs.svg",
-          "iconType": "image"
-        },
-        {
           "title": "Calendar App",
           "link": "https://451-suite.netlify.app/calendar",
           "titleEN": "Mini calendar app for students",
           "description": "A simple calendar app where students can manage assignments, exams, and classes all in one place and sync them across devices",
           "icon": "https://451-suite.netlify.app/calendar/favicon/calendar-favicon.svg",
-          "iconType": "image"
-        },
-        {
-          "title": "中国王朝変遷図+",
-          "link": "https://chinese-history-note.netlify.app/",
-          "titleEN": "Chinese History Notes",
-          "description": "A personal collection of notes and resources for Chinese history study. ",
-          "icon": "https://chinese-history-note.netlify.app/images/3dynasities_favicon.png",
           "iconType": "image"
         },
         {

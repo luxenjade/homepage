@@ -1,3 +1,0 @@
-- geo2025
-- kateika71
-- 71-hoken-exam

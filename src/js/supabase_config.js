@@ -26,6 +26,9 @@ export const tables = {
   SEIKEI: "seikei_events",
   ACCESS_LOG: "access_logs",
   ENGLISH_IDIOMS: "english_idioms",
+  DOCS_PUBLIC: "posts_public",
+  DOCS_PRIVATE: "posts_private",
+  DOCS_PASSWORD: "posts_password",
 };
 
 if (!window.supabase) {
