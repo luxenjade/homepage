@@ -1,21 +1,12 @@
 /* ============================================================
    css/base.css
-   全ページ共通の基盤CSS。bootstrap-min.css 非依存版。
+   全ページ共通の基盤CSS。テーマカラーやレイアウトの基本を定義。
 
    読み込み方（各ページの <head>）:
      <link rel="stylesheet" href="/css/base.css">
      <link rel="stylesheet" href="/css/utils.css">
      <!-- アイコンを使うページでは body 終了前に /js/icons.js を読む -->
 
-   CSS変数の移行マップ（common.css → base.css）:
-     --theme         → --color-bg
-     --entry         → --color-surface
-     --primary       → --color-text-primary
-     --secondary     → --color-text-secondary
-     --accent        → --color-accent
-     --accent-text   → --color-accent-text
-     --border        → --color-border
-     --shadow        → shadow ユーティリティ
 
    注意:
      - --qz-* 変数はクイズ専用として quiz-shell.css で管理。変更しない。

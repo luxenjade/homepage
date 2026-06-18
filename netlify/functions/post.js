@@ -7,7 +7,7 @@
  */
 
 const { CORS, handleOptions } = require("./_lib/cors");
-const { SUPABASE_URL, SUPABASE_KEY, TABLES } = require("./_lib/config");
+const { supabase, TABLES } = require("./_lib/config");
 
 const VALID_SLUG = /^[\w][\w/-]*$/;
 
@@ -26,31 +26,23 @@ exports.handler = async (event) => {
   }
 
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PUBLIC}?slug=eq.${encodeURIComponent(slug)}&select=*`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          Accept: "application/vnd.pgrst.object+json", // Get a single object, not an array
-        },
-      },
-    );
+    const { data: post, error } = await supabase
+      .from(TABLES.DOCS_PUBLIC)
+      .select("*")
+      .eq("slug", slug)
+      .single();
 
-
-    if (res.status === 404) {
-      return {
-        statusCode: 404,
-        headers: CORS,
-        body: JSON.stringify({ error: "Post not found." }),
-      };
+    if (error) {
+      if (error.code === "PGRST116") { // No rows found
+        return {
+          statusCode: 404,
+          headers: CORS,
+          body: JSON.stringify({ error: "Post not found." }),
+        };
+      }
+      throw error;
     }
 
-    if (!res.ok) {
-      throw new Error(`Supabase API ${res.status}: ${await res.text()}`);
-    }
-
-    const post = await res.json();
     return {
       statusCode: 200,
       headers: CORS,

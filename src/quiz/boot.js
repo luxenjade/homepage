@@ -57,14 +57,11 @@ async function loadOptionalDependencies(cfg) {
 
   if (cfg.supabaseTable) {
     loads.push(
-      loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2").then(
-        () =>
-          import("/js/supabase_config.js").then(({ db, tables }) => {
-            window.db = db;
-            window._db = db;
-            window.SUPABASE_TABLES = tables;
-          }),
-      ),
+      import("/js/supabase_config.js").then(({ db, tables }) => {
+        window.db = db;
+        window._db = db;
+        window.SUPABASE_TABLES = tables;
+      }),
     );
   }
 

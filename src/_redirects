@@ -3,10 +3,10 @@
 /learning-box/note.html    /learning-box/index.html    301
 /learning-box/flashcard.html    /learning-box/index.html    301
 
-# Docs Clean URLs
-/docs/protected/:slug    /docs/protected-post.html    200
-/docs/:slug              /docs/post.html              200
-/docs/                   /docs/index.html             200
+# Docs Clean URLs (Unified)
+/docs/protected/:slug    /docs/post.html    200
+/docs/:slug              /docs/post.html    200
+/docs/                   /docs/index.html   200
 
 # Legacy Docs (Redirect to clean URLs)
 /docs/protected-post.html?slug=:slug    /docs/protected/:slug    301

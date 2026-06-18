@@ -10,7 +10,7 @@ const projectRoot = path.resolve(__dirname, "../..");
 const sourceDir = path.join(projectRoot, "src/docs");
 const outputDir = path.join(projectRoot, "dist/docs");
 
-const requiredEntries = ["index.html", "post.html", "protected-post.html"];
+const requiredEntries = ["index.html", "post.html"];
 
 async function pathExists(targetPath) {
   try {

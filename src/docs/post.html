@@ -13,6 +13,7 @@
     />
     <link rel="stylesheet" href="/docs/css/styles.css" />
     <link rel="stylesheet" href="/docs/css/theme.css" />
+    <link rel="stylesheet" href="/docs/css/protected-post.css" />
     <!-- marked.js is needed for every post; load statically -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"></script>
@@ -51,6 +52,30 @@
       <h3>目次</h3>
       <nav id="tocList"></nav>
     </aside>
+
+    <!-- Password Overlay -->
+    <div class="password-overlay hidden" id="password-overlay">
+      <div class="password-dialog">
+        <p id="overlay-post-title" class="overlay-post-title"></p>
+        <h2>🔒 Protected Post</h2>
+        <p>Please enter the password to view this post.</p>
+        <form id="password-form">
+          <input
+            type="password"
+            id="password-input"
+            class="password-input"
+            placeholder="Password"
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="password-submit">
+            <span id="submit-text">View Post</span>
+            <div class="loading-spinner" id="loading-spinner"></div>
+          </button>
+        </form>
+        <p class="password-error" id="password-error">Incorrect password.</p>
+      </div>
+    </div>
 
     <article class="article" id="article">
       <div
@@ -100,7 +125,6 @@
 
     <script src="/docs/js/theme-toggle.js"></script>
     <script src="/docs/js/post-common.js"></script>
-
-    <script src="/docs/js/public-post.js"></script>
+    <script src="/docs/js/post-logic.js"></script>
   </body>
 </html>

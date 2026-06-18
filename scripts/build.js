@@ -760,7 +760,14 @@ function normalizeIcon(icon) {
 
 // ── esbuild ────────────────────────────────────────────
 
-console.log("[3/4] Running esbuild (minify JS/CSS)...");
+console.log("[3/4] Running esbuild (bundle & minify JS/CSS)...");
+// First bundle the supabase config to resolve node_modules imports
+execSync(
+  'esbuild src/js/supabase_config.js --bundle --format=esm --minify --outfile=dist/js/supabase_config.js',
+  { stdio: "inherit" },
+);
+
+// Minify the rest of the files as before
 execSync(
   'esbuild "dist/**/*.js" "dist/**/*.css" --minify --outdir=dist --allow-overwrite',
   { stdio: "inherit" },
