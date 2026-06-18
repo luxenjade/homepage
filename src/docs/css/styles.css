@@ -146,6 +146,39 @@ body.toc-open .toc {
   margin-bottom: 40px;
 }
 
+#post-title {
+  font-size: 2.2rem;
+  line-height: 1.3;
+  margin: 12px 0 16px;
+  color: var(--text);
+}
+
+.post-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.post-tag {
+  background: var(--surface);
+  color: var(--sub);
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
 #post-body a,
 #markdown-content a {
   color: var(--accent);

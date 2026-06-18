@@ -15,6 +15,11 @@
     <link rel="stylesheet" href="/docs/css/theme.css" />
     <!-- marked.js is needed for every post; load statically -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+    />
   </head>
   <body>
     <div id="page-loader"></div>
@@ -75,7 +80,10 @@
           style="display: none"
         />
         <h1 id="post-title"></h1>
-        <p id="post-date" class="post-meta"></p>
+        <div class="post-meta-row">
+          <span id="post-date" class="post-meta"></span>
+          <div id="post-tags" class="post-tags"></div>
+        </div>
 
         <nav class="toc-box" id="tocBox" style="display: none">
           <h3>Table of Contents</h3>

@@ -6,6 +6,7 @@ CREATE TABLE posts_public (
   date TEXT, -- YYYY-MM-DD 形式
   description TEXT,
   category TEXT,
+  tags TEXT[],
   thumbnail TEXT,
   content TEXT,
   created_at TIMESTAMPTZ DEFAULT now(),
@@ -20,6 +21,7 @@ CREATE TABLE posts_private (
   date TEXT, -- YYYY-MM-DD 形式
   excerpt TEXT,
   category TEXT,
+  tags TEXT[],
   content TEXT,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
@@ -34,7 +36,7 @@ CREATE TABLE posts_password (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- updated_at 自動更新用の関数とトリガー（任意）
+-- updated_at 自動更新用の関数とトリガー
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -45,7 +47,4 @@ $$ language 'plpgsql';
 
 CREATE TRIGGER update_posts_public_updated_at BEFORE UPDATE ON posts_public FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_posts_private_updated_at BEFORE UPDATE ON posts_private FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-CREATE TRIGGER update_posts_passw
-
-
-ord_updated_at BEFORE UPDATE ON posts_password FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_posts_password_updated_at BEFORE UPDATE ON posts_password FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();

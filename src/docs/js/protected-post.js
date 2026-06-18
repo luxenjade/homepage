@@ -1,6 +1,6 @@
 /**
  * js/protected-post.js
- * Depends on: js/post-common.js (ComponentLoader, loadComponents, buildToc, loaderStart, loaderDone)
+ * Depends on: js/post-common.js (makeTablesScrollable, buildToc, loaderStart, loaderDone)
  */
 
 /* ── URL params ──────────────────────────────────────── */
@@ -19,7 +19,6 @@ const params = new URLSearchParams(window.location.search);
 const slug = slugInPath || params.get("slug");
 
 applyHomeLinks();
-void loadAndApplySiteAccent();
 
 /* ── DOM refs ────────────────────────────────────────── */
 const form = document.getElementById("password-form");
@@ -86,8 +85,6 @@ async function fetchProtectedPost(slug, password) {
 
 /* ── Render post (after auth) ────────────────────────── */
 async function renderPost(post) {
-  await loadComponents(post.components);
-
   document.getElementById("post-title").textContent = post.title || slug;
   document.title = (post.title || slug) + " — My Notes";
 
@@ -111,31 +108,6 @@ async function renderPost(post) {
   marked.use({ mangle: false, headerIds: false });
   contentEl.innerHTML = marked.parse(post.content || "");
   makeTablesScrollable(contentEl);
-
-  if (post.components?.katex && typeof renderMathInElement !== "undefined") {
-    renderMathInElement(contentEl, {
-      delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false },
-      ],
-      throwOnError: false,
-    });
-  }
-
-  if (post.components?.highlight && typeof hljs !== "undefined") {
-    contentEl
-      .querySelectorAll("pre code")
-      .forEach((el) => hljs.highlightElement(el));
-    new MutationObserver(() => {
-      const dark =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-      const light =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-      ComponentLoader.loadCSS(
-        document.body.classList.contains("dark") ? dark : light,
-      );
-    }).observe(document.body, { attributeFilter: ["class"] });
-  }
 
   pwOverlay.classList.add("hidden");
   loaderDone();

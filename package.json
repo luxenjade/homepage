@@ -29,5 +29,8 @@
   },
   "overrides": {
     "brace-expansion": "^2.0.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2"
   }
 }

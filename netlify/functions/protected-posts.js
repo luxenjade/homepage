@@ -14,7 +14,7 @@ exports.handler = async (event) => {
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PRIVATE}?select=slug,title,date,excerpt,category&order=date.desc`,
+      `${SUPABASE_URL}/rest/v1/${TABLES.DOCS_PRIVATE}?select=slug,title,date,excerpt,category,tags&order=date.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,

@@ -12,7 +12,6 @@ async function loadPost() {
   const slug = slugInPath || params.get("slug");
 
   applyHomeLinks();
-  void loadAndApplySiteAccent();
 
   const showError = () => {
     document.getElementById("post-loading").style.display = "none";
@@ -36,10 +35,7 @@ async function loadPost() {
     return;
   }
 
-  // 2. Load optional libraries before rendering
-  await loadComponents(post.components);
-
-  // 3. Metadata
+  // 2. Metadata
   document.title = (post.title || slug) + " — My Notes";
 
   if (post.thumbnail) {
@@ -56,47 +52,32 @@ async function loadPost() {
       `${y}年${parseInt(m)}月${parseInt(d)}日`;
   }
 
-  // 4. Markdown → HTML
+  // Tags
+  const tagsEl = document.getElementById("post-tags");
+  if (tagsEl) {
+    tagsEl.innerHTML = "";
+    (post.tags || []).forEach((tag) => {
+      const span = document.createElement("span");
+      span.className = "post-tag";
+      span.textContent = tag;
+      tagsEl.appendChild(span);
+    });
+  }
+
+  // 3. Markdown → HTML
   marked.use({ mangle: false, headerIds: false });
   const postBody = document.getElementById("post-body");
   postBody.innerHTML = marked.parse(post.content || "");
   makeTablesScrollable(postBody);
 
-  // 5. KaTeX
-  if (post.components?.katex && typeof renderMathInElement !== "undefined") {
-    renderMathInElement(postBody, {
-      delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false },
-      ],
-      throwOnError: false,
-    });
-  }
-
-  // 6. Highlight.js + dark mode watch
-  if (post.components?.highlight && typeof hljs !== "undefined") {
-    document
-      .querySelectorAll("#post-body pre code")
-      .forEach((el) => hljs.highlightElement(el));
-    new MutationObserver(() => {
-      const dark =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-      const light =
-        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-      ComponentLoader.loadCSS(
-        document.body.classList.contains("dark") ? dark : light,
-      );
-    }).observe(document.body, { attributeFilter: ["class"] });
-  }
-
-  // 7. Show content
+  // 4. Show content
   document.getElementById("post-loading").style.display = "none";
   document.getElementById("post-content").style.display = "";
   document.getElementById("post-footer").style.display = "";
 
   loaderDone();
 
-  // 8. TOC (after content is in the DOM)
+  // 5. TOC (after content is in the DOM)
   buildToc();
 }
 

@@ -3,47 +3,11 @@
  * Shared utilities for post.html and protected-post.html.
  *
  * Globals exposed:
- *   ComponentLoader  — dynamic CSS/JS injection (dedup by URL)
- *   loadComponents() — load KaTeX / Highlight.js per post.components
  *   makeTablesScrollable() — wrap markdown tables for horizontal scroll
  *   buildToc()       — generate sidebar + inline TOC from article headings
  *   loaderStart()    — start top loading bar animation
  *   loaderDone()     — complete + fade out loading bar
  */
-
-/* ── ComponentLoader ─────────────────────────────────── */
-const ComponentLoader = (() => {
-  const loaded = new Set();
-
-  function loadCSS(href) {
-    if (loaded.has(href)) return Promise.resolve();
-    return new Promise((resolve) => {
-      const el = document.createElement("link");
-      el.rel = "stylesheet";
-      el.href = href;
-      el.onload = el.onerror = () => {
-        loaded.add(href);
-        resolve();
-      };
-      document.head.appendChild(el);
-    });
-  }
-
-  function loadJS(src) {
-    if (loaded.has(src)) return Promise.resolve();
-    return new Promise((resolve) => {
-      const el = document.createElement("script");
-      el.src = src;
-      el.onload = el.onerror = () => {
-        loaded.add(src);
-        resolve();
-      };
-      document.head.appendChild(el);
-    });
-  }
-
-  return { loadCSS, loadJS };
-})();
 
 function buildHomeHref() {
   return "/docs/";
@@ -54,46 +18,6 @@ function applyHomeLinks(root = document) {
   root.querySelectorAll("a.back-link, a[data-home-link]").forEach((link) => {
     link.href = href;
   });
-}
-
-/* ── loadComponents ──────────────────────────────────── */
-async function loadComponents(components) {
-  const c = components || {};
-  const jobs = [];
-
-  if (c.katex) {
-    jobs.push(
-      ComponentLoader.loadCSS(
-        "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css",
-      )
-        .then(() =>
-          ComponentLoader.loadJS(
-            "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js",
-          ),
-        )
-        .then(() =>
-          ComponentLoader.loadJS(
-            "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js",
-          ),
-        ),
-    );
-  }
-
-  if (c.highlight) {
-    const isDark = document.body.classList.contains("dark");
-    const themeCDN = isDark
-      ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-      : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-    jobs.push(
-      ComponentLoader.loadCSS(themeCDN).then(() =>
-        ComponentLoader.loadJS(
-          "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
-        ),
-      ),
-    );
-  }
-
-  await Promise.all(jobs);
 }
 
 /* ── makeTablesScrollable ───────────────────────────── */
