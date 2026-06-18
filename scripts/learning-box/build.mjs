@@ -10,7 +10,6 @@ import {
   generateNotePages,
   generateSubjectColorsCss,
 } from "./generate-pages.mjs";
-import { generateManifest, generateServiceWorker } from "./lib/pwa.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, "../..");
@@ -23,7 +22,7 @@ const requiredEntries = ["index.html"];
 /** Paths under src/ that are published to dist/ (content sources are excluded). */
 const DEPLOY_DIRS = ["css", "images"];
 const DEPLOY_ROOT_FILES = [];
-const DEPLOY_JS_FILES = ["note-static.js", "flashcard-app.js", "pwa.js"];
+const DEPLOY_JS_FILES = ["note-static.js", "flashcard-app.js"];
 
 async function pathExists(targetPath) {
   try {
@@ -190,16 +189,15 @@ async function assertFlashcardPagesHaveDeckData() {
 export async function build() {
   await validateSource();
 
-  console.log("[1/6] Cleaning dist/learning-box/ and copying deployable assets...");
+  console.log("[1/5] Cleaning dist/learning-box/ and copying deployable assets...");
   await fs.rm(outputDir, { recursive: true, force: true });
   await fs.mkdir(outputDir, { recursive: true });
   await copyDeployableAssets();
 
-  console.log("[2/6] Generating subject colors CSS and web manifest...");
+  console.log("[2/5] Generating subject colors CSS...");
   const subjectColors = await generateSubjectColorsCss(sourceDir, outputDir);
-  await generateManifest(sourceDir, outputDir);
 
-  console.log("[3/6] Generating index and content pages...");
+  console.log("[3/5] Generating index and content pages...");
   const indexStats = await generateIndex(sourceDir, outputDir, subjectColors);
   const noteCount = await generateNotePages(sourceDir, outputDir, subjectColors, templateDir);
   const flashcardCount = await generateFlashcardPages(
@@ -212,7 +210,7 @@ export async function build() {
     `  → index (${indexStats.flashcards} flashcards, ${indexStats.notes} notes), ${noteCount} note pages, ${flashcardCount} flashcard pages`,
   );
 
-  console.log("[4/6] Running esbuild on all JS/CSS in dist/learning-box/...");
+  console.log("[4/5] Running esbuild on all JS/CSS in dist/learning-box/...");
   const copiedFiles = await listFiles(outputDir);
   const assetFiles = copiedFiles.filter((file) => {
     const ext = path.extname(file).toLowerCase();
@@ -250,12 +248,8 @@ export async function build() {
     )} total).`,
   );
 
-  console.log("[5/6] Minifying HTML...");
+  console.log("[5/5] Minifying HTML...");
   await minifyHtmlInDist();
-
-  console.log("[6/6] Generating service worker...");
-  const precacheCount = await generateServiceWorker(outputDir);
-  console.log(`  → ${precacheCount} URLs precached`);
 
   await assertFlashcardPagesHaveDeckData();
   await assertNoSourceLeakage();
@@ -267,4 +261,3 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     process.exitCode = 1;
   });
 }
-

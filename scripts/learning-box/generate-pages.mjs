@@ -16,7 +16,6 @@ import {
   getSubjectColor,
   loadSubjectColors,
 } from "./lib/subject-colors.mjs";
-import { pwaHeadTags } from "./lib/pwa.mjs";
 
 function buildNavButtons(units) {
   return units
@@ -102,7 +101,6 @@ export async function generateIndex(sourceDir, outputDir, subjectColors) {
     NOTE_COUNT: String(notes.length),
     FLASHCARD_CARDS: flashcardCards,
     NOTE_CARDS: noteCards,
-    PWA_HEAD: pwaHeadTags(""),
   });
 
   await fs.writeFile(path.join(outputDir, "index.html"), html, "utf8");
@@ -133,7 +131,6 @@ export async function generateNotePages(sourceDir, outputDir, subjectColors, tem
       SUBJECT: escHtml(note.subject),
       DESCRIPTION: escHtml(`${note.subject} — ${note.title}`),
       SUBJECT_STYLE: buildSubjectStyleTag(subjectColors, note.subject),
-      PWA_HEAD: pwaHeadTags("../"),
       NAV_BUTTONS: buildNavButtons(note.units),
       UNIT_PANELS: buildUnitPanels(note.units),
       UNITS_JSON: unitsJson,
@@ -160,7 +157,6 @@ export async function generateFlashcardPages(sourceDir, outputDir, subjectColors
       SUBJECT: escHtml(deck.subject),
       DESCRIPTION: escHtml(`${deck.subject} — ${deck.title}`),
       SUBJECT_STYLE: buildSubjectStyleTag(subjectColors, deck.subject),
-      PWA_HEAD: pwaHeadTags("../"),
       DECK_SCRIPT: parseDeckSource(deck.deckSource),
     });
 
