@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@supabase/auth-js':
+        specifier: ^2.108.2
+        version: 2.108.2
       '@supabase/supabase-js':
         specifier: ^2.108.2
         version: 2.108.2
