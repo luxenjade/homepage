@@ -6,6 +6,7 @@
   /* Site root variables are used from base.css */
   --unit-color: var(--color-accent);
   --unit-color-light: var(--color-accent-light);
+  --color-on-accent: #3d2a00;
 
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.09);
@@ -127,15 +128,12 @@ body.dark .nav-unit-btn.active .nav-label {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--color-accent-text);
+  color: var(--color-on-accent, var(--color-accent-text));
   background: var(--unit-color, var(--color-accent));
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   flex-shrink: 0;
   margin-top: 0.3rem;
-}
-body.dark .unit-num {
-  color: var(--color-bg);
 }
 
 .unit-title {
@@ -324,13 +322,12 @@ body.dark .markdown-body code {
   padding: 0.75rem 1.25rem;
   border-radius: 100px;
   background: var(--color-accent);
-  color: var(--color-accent-text);
+  color: var(--color-on-accent, var(--color-accent-text));
   font-weight: 700;
   border: none;
   box-shadow: var(--shadow-md);
   cursor: pointer;
 }
-body.dark .nav-toggle { color: var(--color-bg); }
 
 .nav-overlay {
   position: fixed;

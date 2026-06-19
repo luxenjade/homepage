@@ -258,20 +258,20 @@ function renderCard() {
   const card = deck[deckIdx];
   const styles = typeof CATEGORY_STYLES !== "undefined" ? CATEGORY_STYLES : {};
   const col = styles[card.category] ||
-    styles.default || { text: "#2d6a4f", bg: "#e8f5e9", card: "#2d6a4f" };
+    styles.default || { text: "#7a5000", bg: "#fff4cc" };
 
-  // フロントバッジ（label のみ、type廃止）
+  // カテゴリ色はバッジに限定する。
   const fb = document.getElementById("frontBadge");
   fb.textContent = card.label;
   fb.style.color = col.text;
   fb.style.background = col.bg;
   fb.style.border = `1px solid ${col.text}33`;
 
-  document.getElementById("backBadge").textContent = card.label;
-
-  const back = document.getElementById("cardBack");
-  back.style.setProperty("--card-back-color", col.card);
-  back.style.background = col.card;
+  const bb = document.getElementById("backBadge");
+  bb.textContent = card.label;
+  bb.style.color = col.text;
+  bb.style.background = col.bg;
+  bb.style.border = `1px solid ${col.text}33`;
 
   document.getElementById("cardQuestion").textContent = card.q;
   document.getElementById("cardAnswer").textContent = card.a;
