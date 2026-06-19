@@ -20,6 +20,9 @@ importers:
       '@supabase/realtime-js':
         specifier: ^2.108.2
         version: 2.108.2
+      '@supabase/storage-js':
+        specifier: ^2.108.2
+        version: 2.108.2
       '@supabase/supabase-js':
         specifier: ^2.108.2
         version: 2.108.2
