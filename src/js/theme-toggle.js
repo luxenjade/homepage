@@ -51,21 +51,26 @@ const TOGGLE_MARKUP = `
 
 function mountThemeToggle() {
   const container = document.getElementById("theme-toggle-container");
-  if (!container) return;
-
-  if (!container.querySelector("#theme-toggle")) {
-    container.innerHTML = TOGGLE_MARKUP;
+  let toggle = null;
+  if (container) {
+    if (!container.querySelector("#theme-toggle")) {
+      container.innerHTML = TOGGLE_MARKUP;
+    }
+    toggle = container.querySelector("#theme-toggle");
+  } else {
+    toggle = document.getElementById("theme-toggle");
   }
 
-  const toggle = container.querySelector("#theme-toggle");
   if (!toggle || toggle.dataset.boundThemeToggle === "1") return;
 
   toggle.dataset.boundThemeToggle = "1";
   toggle.addEventListener("click", function () {
     document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", isDark);
     localStorage.setItem(
       "pref-theme",
-      document.body.classList.contains("dark") ? "dark" : "light",
+      isDark ? "dark" : "light",
     );
   });
 }

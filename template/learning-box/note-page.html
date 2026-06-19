@@ -3,39 +3,108 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{TITLE}} — learning box</title>
+    <title>{{TITLE}} | learning box</title>
     <meta name="description" content="{{DESCRIPTION}}" />
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="icon" href="/images/favicon.ico" />
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#faba40" />
+
+    <!-- フラッシュ防止：テーマをCSSより前に適用 -->
+    <script>
+      (function () {
+        const t = localStorage.getItem("pref-theme");
+        if (
+          t === "dark" ||
+          (!t && matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/utils.css" />
     {{SUBJECT_STYLE}}
     <link rel="stylesheet" href="../css/subject-colors.css" />
     <link rel="stylesheet" href="../css/note-style.css" />
+    <style>
+      html.dark body {
+        background-color: var(--color-bg);
+        color: var(--color-text-primary);
+      }
+      /* Individual page header adjustment */
+      .app-header {
+        background: var(--color-bg);
+        border-bottom: 1px solid var(--color-border);
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .app-header__inner {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 0 var(--container-pad);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .app-header__left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .app-header__title-group {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+      .app-header__title {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+      .app-header__subject {
+        font-size: 0.75rem;
+        color: var(--color-text-secondary);
+      }
+      .app-header__right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+    </style>
   </head>
   <body data-subject="{{SUBJECT}}">
-    <header class="site-header">
-      <div class="header-inner">
-        <div class="header-left">
-          <a href="../index.html" class="header-back">Back to Home</a>
-          <span class="header-title header-title--desktop" id="headerTitle"
-            >{{TITLE}}</span
-          >
-          <span class="header-sub" id="headerSub">{{SUBJECT}}</span>
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div class="app-header__left">
+          <a href="../index.html" class="back-link">
+            <i class="bi bi-chevron-left"></i> Back
+          </a>
+          <div class="app-header__title-group">
+            <span class="app-header__title">{{TITLE}}</span>
+            <span class="app-header__subject">{{SUBJECT}}</span>
+          </div>
         </div>
-        <div class="header-right">
-          <button
-            class="tab-btn active"
-            id="tabSummary"
-            onclick="switchTab('summary')"
-          >
-            まとめ
-          </button>
-          <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
-            穴埋め
-          </button>
+        <div class="app-header__right">
+          <div class="tab-btns">
+            <button
+              class="tab-btn active"
+              id="tabSummary"
+              onclick="switchTab('summary')"
+            >
+              まとめ
+            </button>
+            <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
+              穴埋め
+            </button>
+          </div>
+          <div class="logo-switches">
+            <button id="theme-toggle" title="Toggle Theme">
+              <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -73,6 +142,13 @@
 
     <script type="application/json" id="noteUnitsData">
       {{UNITS_JSON}}
+    </script>
+    <script src="/js/icons.js"></script>
+    <script src="/js/theme-toggle.js"></script>
+    <script>
+      if (document.documentElement.classList.contains("dark")) {
+        document.body.classList.add("dark");
+      }
     </script>
     <script src="../js/note-static.js"></script>
   </body>

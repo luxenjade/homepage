@@ -3,93 +3,132 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>learning box — luxenjade</title>
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+    <title>learning box | luxenjade</title>
+    <meta
+      name="description"
+      content="フラッシュカードとまとめノートをまとめて管理。世界史・地理・古典などの学習ツールを提供しています。"
     />
+    <link rel="icon" href="/images/favicon.ico" />
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#faba40" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" />
+
+    <!-- フラッシュ防止：テーマをCSSより前に適用 -->
+    <script>
+      (function () {
+        const t = localStorage.getItem("pref-theme");
+        if (
+          t === "dark" ||
+          (!t && matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/utils.css" />
     <link rel="stylesheet" href="css/subject-colors.css" />
     <link rel="stylesheet" href="css/index-style.css" />
+    <style>
+      html.dark body {
+        background-color: var(--color-bg);
+        color: var(--color-text-primary);
+      }
+      /* Override learning-box specific hero styles if needed to match root */
+      .site-hero {
+        padding: 2.5rem 0 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: 2rem;
+      }
+      .site-hero__eyebrow {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-accent-text);
+        margin-bottom: 0.5rem;
+      }
+      body.dark .site-hero__eyebrow {
+        color: var(--color-accent);
+      }
+      .site-hero__title {
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .site-hero__desc {
+        font-size: 0.95rem;
+        color: var(--color-text-secondary);
+        max-width: 560px;
+        margin: 0;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .hero-stat {
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+      }
+      .hero-stat strong {
+        font-size: 1.2rem;
+        color: var(--color-accent-text);
+        display: block;
+      }
+      body.dark .hero-stat strong {
+        color: var(--color-accent);
+      }
+    </style>
   </head>
   <body>
-    <nav class="navbar">
-      <div class="navbar__inner">
-        <a href="/" class="navbar__logo">
-          <span class="navbar__logo-mark">luxenjade</span>
-          learning box
-        </a>
-        <div class="navbar__right">
-          <ul class="navbar__section-links">
-            <li><a href="#flashcards">Flashcards</a></li>
-            <li><a href="#notes">Summary Notes</a></li>
-          </ul>
-          <span class="navbar__count">{{TOTAL_COUNT}} tools</span>
-        </div>
-      </div>
-    </nav>
+    <main>
+      <div id="nav-container"></div>
 
-    <div class="hero">
-      <div>
-        <p class="hero__eyebrow">@luxenjade — learning box</p>
-        <h1 class="hero__title">Learning Tools</h1>
-        <p class="hero__sub">フラッシュカードとまとめノートをまとめて管理</p>
-      </div>
-      <div class="hero__stats">
-        <div class="hero__stat">
-          <strong>{{FLASHCARD_COUNT}}</strong>
-          flashcard sets
+      <div class="container py-4">
+        <!-- Hero -->
+        <div class="site-hero">
+          <p class="site-hero__eyebrow">@luxenjade — learning box</p>
+          <h1 class="site-hero__title">Learning Tools</h1>
+          <p class="site-hero__desc">
+            フラッシュカードとまとめノートをまとめて管理。テスト対策や日々の学習に。
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <strong>{{FLASHCARD_COUNT}}</strong>
+              Flashcard sets
+            </div>
+            <div class="hero-stat">
+              <strong>{{NOTE_COUNT}}</strong>
+              Note sets
+            </div>
+          </div>
         </div>
-        <div class="hero__stat">
-          <strong>{{NOTE_COUNT}}</strong>
-          note sets
+
+        <div class="section-divider">
+          <span class="section-divider__title">Flashcards</span>
         </div>
-      </div>
-    </div>
+        <div class="index-card-grid" id="fcGrid">{{FLASHCARD_CARDS}}</div>
 
-    <section class="section" id="flashcards">
-      <div class="section-header">
-        <div class="section-header__left">
-          <h2 class="section-title">
-            フラッシュカード
-            <span class="section-title__en">Flashcards</span>
-          </h2>
-          <span class="section-count">({{FLASHCARD_COUNT}})</span>
+        <div class="section-divider">
+          <span class="section-divider__title">Summary Notes</span>
         </div>
+        <div class="index-card-grid" id="notesGrid">{{NOTE_CARDS}}</div>
       </div>
-      <div class="card-grid" id="fcGrid">{{FLASHCARD_CARDS}}</div>
-    </section>
+    </main>
 
-    <hr class="divider" />
+    <footer id="site-footer"></footer>
 
-    <section class="section" id="notes">
-      <div class="section-header">
-        <div class="section-header__left">
-          <h2 class="section-title">
-            まとめノート
-            <span class="section-title__en">Summary Notes</span>
-          </h2>
-          <span class="section-count">({{NOTE_COUNT}})</span>
-        </div>
-      </div>
-      <div class="card-grid" id="notesGrid">{{NOTE_CARDS}}</div>
-    </section>
-
-    <footer>
-      <p class="footer__left">© 2026 luxenjade</p>
-      <h2 class="footer__center">About learning box</h2>
-      <p class="footer__center">
-        テスト対策などのために個人的に作成した学習ツールです。参考になればよいと思います
-      </p>
-      <ul class="footer__links">
-        <li>
-          <a href="/">My main website</a>
-        </li>
-        <li>
-          <a href="https://451-docs.netlify.app" target="_blank">My docs</a>
-        </li>
-      </ul>
-    </footer>
+    <script src="/js/icons.js"></script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/theme-toggle.js"></script>
+    <script>
+      if (document.documentElement.classList.contains("dark")) {
+        document.body.classList.add("dark");
+      }
+    </script>
   </body>
 </html>
