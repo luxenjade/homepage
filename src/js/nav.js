@@ -178,7 +178,28 @@
     window.addEventListener("load", () => {
       navigator.serviceWorker
         .register("/service-worker.js")
+        .then((registration) => unregisterLegacyServiceWorkers(registration))
         .catch((err) => console.warn("SW registration failed:", err));
     });
+  }
+
+  async function unregisterLegacyServiceWorkers(rootRegistration) {
+    if (!navigator.serviceWorker.getRegistrations) return;
+
+    const expectedScope = new URL("/", location.origin).href;
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(
+      registrations
+        .filter(
+          (registration) =>
+            registration.scope !== expectedScope &&
+            registration.scope.startsWith(location.origin),
+        )
+        .map((registration) => registration.unregister()),
+    );
+
+    if (rootRegistration.scope !== expectedScope) {
+      console.warn("Unexpected root SW scope:", rootRegistration.scope);
+    }
   }
 })();

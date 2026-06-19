@@ -7,7 +7,7 @@
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
 // ============================================================
 
-const CACHE_VERSION = "v5";
+const CACHE_VERSION = "v6";
 const SHELL_CACHE = `luxenjade-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `luxenjade-runtime-${CACHE_VERSION}`;
 
@@ -19,6 +19,7 @@ const SHELL_ASSETS = [
   "/geography/",
   "/seikei/",
   "/miscellaneous/",
+  "/links/",
   "/projects/",
   "/quiz/capitals/",
   "/quiz/wh-year-to-event/",
