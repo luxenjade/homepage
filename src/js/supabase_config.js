@@ -1,9 +1,9 @@
 // ============================================================
 // js/supabase_config.js
-// Supabase 共通設定 (npm package version)
+// Supabase 共通設定 (CDN version)
 // ============================================================
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/+esm";
 
 const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_E056pt4Dp5w3nTBEkYpRSA_scTTtrfa";
