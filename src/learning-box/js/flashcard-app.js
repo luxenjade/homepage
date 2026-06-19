@@ -55,12 +55,21 @@ function applyMeta() {
   const subject = meta.subject || "";
 
   document.title = `${title} — フラッシュカード`;
-  document.getElementById("headerTitle").textContent = title;
-  document.getElementById("headerSub").textContent = subject;
-  document.getElementById("startTitle").textContent = title;
-  document.getElementById("startLabel").textContent = subject
-    ? `${subject} · Flashcards`
-    : "Flashcards";
+  const headerTitleEl = document.getElementById("headerTitle");
+  if (headerTitleEl) headerTitleEl.textContent = title;
+
+  const headerSubEl = document.getElementById("headerSub");
+  if (headerSubEl) headerSubEl.textContent = subject;
+
+  const startTitleEl = document.getElementById("startTitle");
+  if (startTitleEl) startTitleEl.textContent = title;
+
+  const startLabelEl = document.getElementById("startLabel");
+  if (startLabelEl) {
+    startLabelEl.textContent = subject
+      ? `${subject} · Flashcards`
+      : "Flashcards";
+  }
 }
 
 // ══════════════════════════════════════════════

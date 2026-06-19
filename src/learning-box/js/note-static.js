@@ -88,7 +88,8 @@ function navigateTo(idx, { updateHash = true } = {}) {
     panel.style.display = panel.dataset.unitId === unit.id ? "block" : "none";
   });
 
-  document.getElementById("headerSub").textContent = `Unit ${unit.num}`;
+  const headerSubEl = document.getElementById("headerSub");
+  if (headerSubEl) headerSubEl.textContent = `Unit ${unit.num}`;
 
   const progress = document.getElementById(`unitProgress-${unit.id}`);
   if (progress) {

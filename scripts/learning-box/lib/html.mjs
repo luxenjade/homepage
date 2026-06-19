@@ -18,23 +18,26 @@ export function renderToolCard(item, { href, badge, color }) {
   const tags = (item.tags || [])
     .map(
       (tag) =>
-        `<span class="tool-card__tag">${escHtml(tag)}</span>`,
+        `<span style="font-size:0.7rem; border:1px solid var(--color-border); border-radius:4px; padding:1px 4px; color:var(--color-text-secondary); background:var(--color-bg);">${escHtml(tag)}</span>`,
     )
     .join("");
 
-  return `<a class="tool-card" href="${escHtml(href)}" data-subject="${escHtml(item.subject)}" style="--card-color:${escHtml(color)}">
-  <div class="tool-card__bar"></div>
-  <div class="tool-card__body">
-    <div class="tool-card__meta">
-      <span class="tool-card__subject">${escHtml(item.subject)}</span>
-      <span class="tool-card__updated">${escHtml(item.updated || "")}</span>
+  const subjectBadge = `<span style="font-size:0.7rem; font-weight:700; background:var(--color-bg); border:1px solid var(--color-border); padding:2px 6px; border-radius:4px; color:var(--color-text-secondary); text-transform:uppercase;">${escHtml(item.subject)}</span>`;
+  const updatedHtml = item.updated
+    ? `<span style="font-size:0.7rem; color:var(--color-text-secondary); margin-left:auto;">${escHtml(item.updated)}</span>`
+    : "";
+
+  return `<a href="${escHtml(href)}" class="site-card text-decoration-none" style="display:flex; flex-direction:column; height:100%; border-top: 4px solid ${escHtml(color)};">
+  <div class="site-card__body" style="flex:1; display:flex; flex-direction:column; gap:0.5rem; padding:1.25rem;">
+    <div style="display:flex; align-items:center; width:100%; gap:0.5rem; margin-bottom:0.1rem;">
+      ${subjectBadge}
+      ${updatedHtml}
     </div>
-    <h3 class="tool-card__title">${escHtml(item.title)}</h3>
-    <div class="tool-card__tags">${tags}</div>
-  </div>
-  <div class="tool-card__footer">
-    <span class="tool-card__badge"><strong>${escHtml(badge)}</strong></span>
-    <span class="tool-card__arrow">→</span>
+    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:${escHtml(color)};">${escHtml(badge)}</div>
+    <h5 class="site-card__title" style="margin:0; font-size:1rem; font-weight:700; line-height:1.4;">${escHtml(item.title)}</h5>
+    <div style="margin-top:auto; display:flex; flex-wrap:wrap; gap:4px; padding-top:0.25rem;">
+      ${tags}
+    </div>
   </div>
 </a>`;
 }
