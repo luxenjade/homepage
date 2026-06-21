@@ -22,6 +22,14 @@ command = "pnpm run build"
   path = "/api/sw"
   function = "sw"
 
+[[edge_functions]]
+  path = "/api/admin/posts"
+  function = "admin-posts"
+
+[[edge_functions]]
+  path = "/api/admin/post"
+  function = "admin-post"
+
 
 [[headers]]
   for = "/service-worker.js"

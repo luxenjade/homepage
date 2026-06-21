@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Post | Docs Admin</title>
+    <link rel="icon" href="/images/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/docs/css/styles.css" />
+    <link rel="stylesheet" href="/docs/css/theme.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+      .admin-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 24px;
+      }
+      .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .admin-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .btn-primary:hover {
+        opacity: 0.9;
+        color: #fff;
+      }
+      .btn-danger {
+        color: #e74c3c;
+        border-color: #e74c3c;
+      }
+      .btn-danger:hover {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-group.full {
+        grid-column: 1 / -1;
+      }
+      .form-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--sub);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 1rem;
+        font-family: inherit;
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .radio-group {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 400;
+        text-transform: none;
+        cursor: pointer;
+      }
+      .editor-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      @media (max-width: 768px) {
+        .editor-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      .editor-box {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .editor-box label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--sub);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      #content-editor {
+        min-height: 500px;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+      #preview-panel {
+        min-height: 500px;
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        overflow-y: auto;
+      }
+      .actions-bar {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .login-overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        z-index: 9999;
+      }
+      .login-box {
+        width: 100%;
+        max-width: 360px;
+        padding: 32px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+      .login-box h2 {
+        margin: 0 0 20px;
+        font-size: 1.3rem;
+      }
+      .login-box input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 1rem;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+      }
+      .login-box .error {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #save-msg {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+      }
+      #save-msg.ok {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      #save-msg.err {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-overlay" class="login-overlay">
+      <div class="login-box">
+        <h2>Docs Admin</h2>
+        <p style="color: var(--sub); font-size: 0.9rem; margin-bottom: 16px">
+          Enter admin password to continue.
+        </p>
+        <input
+          type="password"
+          id="admin-password"
+          placeholder="Password"
+          autocomplete="off"
+        />
+        <div id="login-error" class="error" style="display: none"></div>
+        <button class="btn btn-primary" id="login-btn" style="width: 100%">
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-container" id="editor-panel" style="display: none">
+      <div class="admin-header">
+        <h1 class="admin-title" id="page-title">New Post</h1>
+        <div style="display: flex; gap: 8px">
+          <a href="index.html" class="btn">← Back</a>
+          <span id="save-msg" style="display: none"></span>
+          <button class="btn btn-primary" id="save-btn">Save</button>
+        </div>
+      </div>
+
+      <form id="post-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="p-slug">Slug</label>
+            <input type="text" id="p-slug" placeholder="my-post-slug" required />
+          </div>
+          <div class="form-group">
+            <label for="p-title">Title</label>
+            <input type="text" id="p-title" placeholder="Post Title" required />
+          </div>
+          <div class="form-group">
+            <label for="p-date">Date</label>
+            <input type="date" id="p-date" />
+          </div>
+          <div class="form-group">
+            <label for="p-category">Category</label>
+            <input type="text" id="p-category" placeholder="Tech" />
+          </div>
+          <div class="form-group">
+            <label for="p-tags">Tags (comma separated)</label>
+            <input type="text" id="p-tags" placeholder="JavaScript, Web" />
+          </div>
+          <div class="form-group">
+            <label for="p-thumbnail">Thumbnail URL</label>
+            <input type="text" id="p-thumbnail" placeholder="https://..." />
+          </div>
+          <div class="form-group full">
+            <label>Type</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="p-type" value="public" checked />
+                Public
+              </label>
+              <label>
+                <input type="radio" name="p-type" value="private" />
+                Private (password protected)
+              </label>
+            </div>
+          </div>
+          <div class="form-group full hidden" id="pw-group">
+            <label for="p-password">Password</label>
+            <input type="text" id="p-password" placeholder="password" autocomplete="off" />
+          </div>
+          <div class="form-group full" id="desc-group">
+            <label for="p-description">Description (public)</label>
+            <input type="text" id="p-description" placeholder="Short description for card" />
+          </div>
+          <div class="form-group full hidden" id="excerpt-group">
+            <label for="p-excerpt">Excerpt (private)</label>
+            <input type="text" id="p-excerpt" placeholder="Short excerpt for protected card" />
+          </div>
+        </div>
+
+        <div class="editor-wrap">
+          <div class="editor-box">
+            <label for="content-editor">Markdown Content</label>
+            <textarea id="content-editor" placeholder="# Hello World\n\nWrite your post here..."></textarea>
+          </div>
+          <div class="editor-box">
+            <label>Preview</label>
+            <div id="preview-panel">
+              <p style="color: var(--sub)">Preview will appear here...</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>

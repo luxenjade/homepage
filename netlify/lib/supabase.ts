@@ -100,3 +100,70 @@ export function jsonResponse(data: any, status = 200): Response {
 export function errorResponse(message: string, status = 500): Response {
   return jsonResponse({ error: message }, status);
 }
+
+/* ── Write helpers ─────────────────────────────────────── */
+
+export async function insert(
+  table: string,
+  body: any,
+): Promise<{ data: any; error: any }> {
+  const url = new URL(`/rest/v1/${table}`, SUPABASE_URL);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(body),
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+  if (!response.ok) return { data: null, error: data || { message: response.statusText } };
+  return { data, error: null };
+}
+
+export async function update(
+  table: string,
+  column: string,
+  value: string,
+  body: any,
+): Promise<{ data: any; error: any }> {
+  const url = new URL(`/rest/v1/${table}`, SUPABASE_URL);
+  url.searchParams.set(column, `eq.${value}`);
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(body),
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+  if (!response.ok) return { data: null, error: data || { message: response.statusText } };
+  return { data, error: null };
+}
+
+export async function remove(
+  table: string,
+  column: string,
+  value: string,
+): Promise<{ error: any }> {
+  const url = new URL(`/rest/v1/${table}`, SUPABASE_URL);
+  url.searchParams.set(column, `eq.${value}`);
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+  if (!response.ok) return { error: data || { message: response.statusText } };
+  return { error: null };
+}

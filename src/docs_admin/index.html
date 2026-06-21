@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Docs Admin | luxenjade</title>
+    <link rel="icon" href="/images/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/docs/css/styles.css" />
+    <link rel="stylesheet" href="/docs/css/theme.css" />
+    <style>
+      .admin-container {
+        max-width: 960px;
+        margin: 40px auto;
+        padding: 0 24px;
+      }
+      .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .admin-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .btn-primary:hover {
+        opacity: 0.9;
+      }
+      .btn-danger {
+        color: #e74c3c;
+        border-color: #e74c3c;
+      }
+      .btn-danger:hover {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .btn-sm {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+      }
+      .post-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .post-table th,
+      .post-table td {
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        text-align: left;
+      }
+      .post-table th {
+        background: var(--surface);
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .post-table tr:hover td {
+        background: var(--surface);
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-public {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-private {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .login-overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        z-index: 9999;
+      }
+      .login-box {
+        width: 100%;
+        max-width: 360px;
+        padding: 32px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+      .login-box h2 {
+        margin: 0 0 20px;
+        font-size: 1.3rem;
+      }
+      .login-box input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 1rem;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+      }
+      .login-box .error {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 60px 24px;
+        color: var(--sub);
+      }
+      .slug-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .slug-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-overlay" class="login-overlay">
+      <div class="login-box">
+        <h2>Docs Admin</h2>
+        <p style="color: var(--sub); font-size: 0.9rem; margin-bottom: 16px">
+          Enter admin password to continue.
+        </p>
+        <input
+          type="password"
+          id="admin-password"
+          placeholder="Password"
+          autocomplete="off"
+        />
+        <div id="login-error" class="error" style="display: none"></div>
+        <button class="btn btn-primary" id="login-btn" style="width: 100%">
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-container" id="admin-panel" style="display: none">
+      <div class="admin-header">
+        <h1 class="admin-title">Docs Admin</h1>
+        <div style="display: flex; gap: 8px">
+          <a href="/docs/" class="btn">View Site</a>
+          <a href="edit.html" class="btn btn-primary">+ New Post</a>
+        </div>
+      </div>
+
+      <div id="loading" style="text-align: center; padding: 40px; color: var(--sub)">
+        Loading…
+      </div>
+      <div id="posts-table-wrap" style="display: none">
+        <table class="post-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Slug</th>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th style="text-align: right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="posts-body"></tbody>
+        </table>
+      </div>
+      <div id="empty-state" class="empty-state" style="display: none">
+        No posts found.
+      </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
