@@ -396,3 +396,203 @@ body:has(.back-link) .toc-toggle {
     opacity: 1;
   }
 }
+
+/* =====================
+   PRINT STYLES
+===================== */
+
+@media print {
+  /* Hide interactive / decorative elements */
+  .back-link,
+  .floating-home-link,
+  .toc-toggle,
+  .toc,
+  .overlay,
+  .logo-switches,
+  #theme-toggle,
+  #page-loader,
+  .search-wrap,
+  #active-category-bar,
+  #password-overlay,
+  .password-overlay,
+  #search-clear,
+  #active-category-clear {
+    display: none !important;
+  }
+
+  /* Force light theme for print */
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    --bg: #fff !important;
+    --surface: #f9fafb !important;
+    --text: #222 !important;
+    --sub: #555 !important;
+    --border: #ccc !important;
+    --accent: #b87300 !important;
+    --shadow: none !important;
+  }
+
+  body.dark {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Remove fixed positioning and large margins */
+  .article {
+    margin: 24px auto !important;
+    padding: 0 16px !important;
+    max-width: 100% !important;
+  }
+
+  .post-header {
+    margin: 24px auto 0 !important;
+    padding: 0 16px 24px !important;
+  }
+
+  .profile-hero {
+    margin: 24px auto 0 !important;
+    padding: 24px 16px !important;
+  }
+
+  .posts-section {
+    margin: 0 auto 24px !important;
+    padding: 0 16px !important;
+  }
+
+  /* Remove shadows and backgrounds for ink saving */
+  .card,
+  .profile-link,
+  .back-link,
+  .floating-home-link,
+  .toc-toggle,
+  .toc-box,
+  blockquote,
+  .post-tag,
+  #theme-toggle {
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .card {
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .toc-box {
+    border: 1px solid #ccc !important;
+    background: #f9fafb !important;
+  }
+
+  blockquote {
+    background: #f9fafb !important;
+    border-left: 3px solid #b87300 !important;
+  }
+
+  .post-tag {
+    border: 1px solid #ccc !important;
+  }
+
+  /* Page breaks */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  img, figure, .thumbnail, .card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  pre, code, table, blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Code blocks */
+  pre {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  }
+
+  code {
+    background: #f5f5f5 !important;
+    color: #000 !important;
+  }
+
+  /* Links: show URL after the link text */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555;
+    word-break: break-all;
+  }
+
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: none !important;
+  }
+
+  /* Tables */
+  table {
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    border: 1px solid #ccc !important;
+  }
+
+  th {
+    background: #f5f5f5 !important;
+  }
+
+  /* Footer */
+  .site-footer-bottom {
+    border-top: 1px solid #ccc !important;
+    color: #555 !important;
+    padding: 16px 0 !important;
+  }
+
+  /* Ensure body content is visible */
+  #post-content {
+    display: block !important;
+  }
+
+  #post-loading,
+  #post-error {
+    display: none !important;
+  }
+
+  /* Card layout for index print */
+  .home-container {
+    display: block !important;
+  }
+
+  .card {
+    display: block !important;
+    margin-bottom: 16px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .card-img-wrap {
+    height: auto !important;
+    max-height: 120px !important;
+    overflow: hidden;
+  }
+
+  .card-img-wrap img {
+    max-height: 120px !important;
+    width: auto !important;
+  }
+
+  /* Thumbnail */
+  .thumbnail {
+    max-height: 200px !important;
+    width: auto !important;
+    object-fit: cover;
+  }
+}
