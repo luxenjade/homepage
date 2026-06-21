@@ -48,7 +48,6 @@ command = "pnpm run build"
 package = "netlify-plugin-cloudinary"
   [plugins.inputs]
   cloudName = "dv2sf0nxh"
-  # 指定した拡張子をCloudinaryの置換対象から外す
-  ignoreImages = ["*.svg"]
+  imagesPath = "/images" # /svgs フォルダは含まれないため、SVGは安全に無視される
 
 # Category redirects are generated into dist/_redirects by scripts/build.js.
