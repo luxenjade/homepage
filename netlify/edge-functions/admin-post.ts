@@ -2,28 +2,18 @@
 // POST /api/admin/post  → create
 // PUT  /api/admin/post  → update (delete old + insert new)
 // DELETE /api/admin/post?slug=xxx&type=yyy → delete
-// Requires X-Admin-Password header matching ADMIN_PASSWORD env var.
+// Requires a valid Supabase Auth JWT in the Authorization header.
 
 import {
   TABLES,
   handleOptions,
   jsonResponse,
   errorResponse,
+  verifyAuth,
   insert,
   update as patch,
   remove,
 } from "../lib/supabase.ts";
-
-const ADMIN_PW = Netlify.env.get("ADMIN_PASSWORD") || "";
-
-function checkAuth(request: Request): Response | null {
-  if (request.method === "OPTIONS") return handleOptions(request);
-  const pw = request.headers.get("X-Admin-Password") || "";
-  if (!ADMIN_PW || pw !== ADMIN_PW) {
-    return errorResponse("Unauthorized", 401);
-  }
-  return null;
-}
 
 function isPrivate(type: string) {
   return type === "private";
@@ -90,9 +80,12 @@ async function doUpdateSameTable(slug: string, type: string, body: any) {
   // Update password if private
   if (isPrivate(type) && password !== undefined) {
     // Try to update existing password row
-    const { error: pwErr } = await patch(TABLES.DOCS_PASSWORD, "slug", slug, {
-      password,
-    });
+    const { error: pwErr } = await patch(
+      TABLES.DOCS_PASSWORD,
+      "slug",
+      slug,
+      { password },
+    );
     if (pwErr) {
       // Row may not exist, insert instead
       await insert(TABLES.DOCS_PASSWORD, { slug, password });
@@ -183,8 +176,11 @@ async function handleDelete(request: Request): Promise<Response> {
 /* ── main ────────────────────────────────────────────── */
 
 export default async (request: Request) => {
-  const auth = checkAuth(request);
-  if (auth) return auth;
+  const preflight = handleOptions(request);
+  if (preflight) return preflight;
+
+  const { error: authError } = await verifyAuth(request);
+  if (authError) return authError;
 
   switch (request.method) {
     case "POST":

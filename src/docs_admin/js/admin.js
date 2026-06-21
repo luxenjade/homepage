@@ -1,20 +1,16 @@
 // docs_admin/js/admin.js
 // Shared admin logic for index.html and edit.html
+// Uses Supabase Auth (JWT) for API authentication.
+
+import { db } from "/js/supabase_config.js";
 
 /* ── helpers ─────────────────────────────────────────── */
 
-function getAdminPw() {
-  return sessionStorage.getItem("admin_pw") || "";
-}
-
-function setAdminPw(pw) {
-  if (pw) sessionStorage.setItem("admin_pw", pw);
-  else sessionStorage.removeItem("admin_pw");
-}
-
-function apiFetch(url, opts = {}) {
+async function apiFetch(url, opts = {}) {
+  const { data: { session } } = await db.auth.getSession();
+  const token = session?.access_token;
   const headers = new Headers(opts.headers || {});
-  headers.set("X-Admin-Password", getAdminPw());
+  if (token) headers.set("Authorization", `Bearer ${token}`);
   if (opts.body && typeof opts.body === "string") {
     headers.set("Content-Type", "application/json");
   }
@@ -32,54 +28,58 @@ function escHtml(str) {
 function initLogin() {
   const overlay = document.getElementById("login-overlay");
   const panel = document.getElementById("admin-panel") || document.getElementById("editor-panel");
-  const input = document.getElementById("admin-password");
+  const emailInput = document.getElementById("admin-email");
+  const pwInput = document.getElementById("admin-password");
   const btn = document.getElementById("login-btn");
   const err = document.getElementById("login-error");
 
   if (!overlay || !panel) return;
 
-  // Auto-login if password exists
-  if (getAdminPw()) {
-    overlay.style.display = "none";
-    panel.style.display = "";
-    return true;
-  }
+  // Auto-login if session exists
+  db.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      overlay.style.display = "none";
+      panel.style.display = "";
+      if (document.getElementById("admin-panel")) loadPosts();
+      if (document.getElementById("editor-panel")) initEditor();
+    }
+  });
 
   btn.addEventListener("click", async () => {
     err.style.display = "none";
-    const pw = input.value.trim();
-    if (!pw) {
-      err.textContent = "Password is required";
+    const email = (emailInput?.value || "").trim();
+    const password = (pwInput?.value || "").trim();
+    if (!email || !password) {
+      err.textContent = "Email and password are required";
       err.style.display = "";
       return;
     }
 
-    // Verify with a lightweight ping
-    try {
-      const res = await apiFetch("/api/admin/posts", { method: "HEAD" });
-      if (res.status === 401) throw new Error("Invalid password");
-      // HEAD may not be allowed, try GET
-      if (!res.ok) {
-        const getRes = await apiFetch("/api/admin/posts");
-        if (getRes.status === 401) throw new Error("Invalid password");
-        if (!getRes.ok) throw new Error("Server error");
-      }
-    } catch (e) {
-      err.textContent = e.message || "Invalid password";
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      err.textContent = error.message || "Sign in failed";
       err.style.display = "";
       return;
     }
 
-    setAdminPw(pw);
     overlay.style.display = "none";
     panel.style.display = "";
+    if (document.getElementById("admin-panel")) loadPosts();
+    if (document.getElementById("editor-panel")) initEditor();
   });
 
-  input.addEventListener("keydown", (e) => {
+  pwInput?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") btn.click();
   });
 
-  return false;
+  // Logout
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await db.auth.signOut();
+      location.reload();
+    });
+  }
 }
 
 /* ── list page (index.html) ──────────────────────────── */
@@ -289,9 +289,9 @@ function buildPayload() {
   const tagsRaw = document.getElementById("p-tags").value.trim();
   const tags = tagsRaw
     ? tagsRaw
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean)
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
     : [];
 
   const payload = {
@@ -319,22 +319,7 @@ function buildPayload() {
 /* ── boot ────────────────────────────────────────────── */
 
 function boot() {
-  const loggedIn = initLogin();
-  if (!loggedIn) {
-    // Wait for login before initializing
-    const btn = document.getElementById("login-btn");
-    const onLogin = () => {
-      setTimeout(() => {
-        if (document.getElementById("admin-panel")) loadPosts();
-        if (document.getElementById("editor-panel")) initEditor();
-      }, 50);
-    };
-    if (btn) btn.addEventListener("click", onLogin, { once: true });
-    return;
-  }
-
-  if (document.getElementById("admin-panel")) loadPosts();
-  if (document.getElementById("editor-panel")) initEditor();
+  initLogin();
 }
 
 document.addEventListener("DOMContentLoaded", boot);

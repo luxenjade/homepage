@@ -44,4 +44,11 @@ command = "pnpm run build"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
+[[plugins]]
+package = "netlify-plugin-cloudinary"
+  [plugins.inputs]
+  cloudName = "dv2sf0nxh"
+  # 指定した拡張子をCloudinaryの置換対象から外す
+  ignoreImages = ["*.svg"]
+
 # Category redirects are generated into dist/_redirects by scripts/build.js.

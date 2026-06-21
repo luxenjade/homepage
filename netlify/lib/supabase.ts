@@ -101,6 +101,31 @@ export function errorResponse(message: string, status = 500): Response {
   return jsonResponse({ error: message }, status);
 }
 
+/* ── Auth helpers ──────────────────────────────────────── */
+
+export async function verifyAuth(request: Request): Promise<{ user: any; error: Response | null }> {
+  const authHeader = request.headers.get("Authorization") || "";
+  const jwt = authHeader.replace(/^Bearer\s+/i, "");
+
+  if (!jwt) {
+    return { user: null, error: errorResponse("Unauthorized", 401) };
+  }
+
+  const res = await fetch(new URL("/auth/v1/user", SUPABASE_URL), {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
+  if (!res.ok) {
+    return { user: null, error: errorResponse("Unauthorized", 401) };
+  }
+
+  const user = await res.json();
+  return { user, error: null };
+}
+
 /* ── Write helpers ─────────────────────────────────────── */
 
 export async function insert(

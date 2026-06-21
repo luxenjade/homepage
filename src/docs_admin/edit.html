@@ -232,13 +232,19 @@
       <div class="login-box">
         <h2>Docs Admin</h2>
         <p style="color: var(--sub); font-size: 0.9rem; margin-bottom: 16px">
-          Enter admin password to continue.
+          Sign in with your Supabase account.
         </p>
+        <input
+          type="email"
+          id="admin-email"
+          placeholder="Email"
+          autocomplete="email"
+        />
         <input
           type="password"
           id="admin-password"
           placeholder="Password"
-          autocomplete="off"
+          autocomplete="current-password"
         />
         <div id="login-error" class="error" style="display: none"></div>
         <button class="btn btn-primary" id="login-btn" style="width: 100%">
@@ -325,6 +331,6 @@
       </form>
     </div>
 
-    <script src="js/admin.js"></script>
+    <script type="module" src="js/admin.js"></script>
   </body>
 </html>

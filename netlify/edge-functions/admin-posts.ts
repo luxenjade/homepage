@@ -1,7 +1,7 @@
 // netlify/edge-functions/admin-posts.ts
 // GET /api/admin/posts
 // Returns all posts from both tables with a `type` field.
-// Requires X-Admin-Password header matching ADMIN_PASSWORD env var.
+// Requires a valid Supabase Auth JWT in the Authorization header.
 
 import {
   supabase,
@@ -9,22 +9,15 @@ import {
   handleOptions,
   jsonResponse,
   errorResponse,
+  verifyAuth,
 } from "../lib/supabase.ts";
 
-const ADMIN_PW = Netlify.env.get("ADMIN_PASSWORD") || "";
-
-function checkAuth(request: Request): Response | null {
-  if (request.method === "OPTIONS") return handleOptions(request);
-  const pw = request.headers.get("X-Admin-Password") || "";
-  if (!ADMIN_PW || pw !== ADMIN_PW) {
-    return errorResponse("Unauthorized", 401);
-  }
-  return null;
-}
-
 export default async (request: Request) => {
-  const auth = checkAuth(request);
-  if (auth) return auth;
+  const preflight = handleOptions(request);
+  if (preflight) return preflight;
+
+  const { error: authError } = await verifyAuth(request);
+  if (authError) return authError;
 
   try {
     const [{ data: publicPosts }, { data: privatePosts }] = await Promise.all([
