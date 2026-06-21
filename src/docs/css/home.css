@@ -432,3 +432,47 @@ body {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* =====================
+   FLOATING HOME LINK
+===================== */
+.floating-home-link {
+  position: fixed;
+  top: 20px;
+  left: 20px; /* 必要に応じて位置を調整してください */
+  z-index: 6000;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--sub);
+
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all 0.2s ease;
+}
+
+.floating-home-link svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.floating-home-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--shadow);
+}
+
+/* もし左上に配置する場合、既存の .toc-toggle の位置を右へずらす調整 */
+body:has(.floating-home-link) .toc-toggle {
+  left: 148px;
+}
