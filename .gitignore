@@ -30,3 +30,5 @@ temp/
 .vscode/
 .DS_Store
 Thumbs.db
+
+netlify/functions

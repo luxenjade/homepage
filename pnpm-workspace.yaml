@@ -1,3 +1,7 @@
 allowBuilds:
+  '@parcel/watcher': true
   esbuild: true
   fast-folder-size: true
+  netlify-cli: true
+  sharp: true
+  unix-dgram: true

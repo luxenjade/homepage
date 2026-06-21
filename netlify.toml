@@ -3,6 +3,22 @@ publish = "dist"
 command = "npm run build"
 
 [[edge_functions]]
+  path = "/api/posts"
+  function = "posts"
+
+[[edge_functions]]
+  path = "/api/post"
+  function = "post"
+
+[[edge_functions]]
+  path = "/api/protected-posts"
+  function = "protected-posts"
+
+[[edge_functions]]
+  path = "/api/protected-post"
+  function = "protected-post"
+
+[[edge_functions]]
   path = "/api/sw"
   function = "sw"
 
