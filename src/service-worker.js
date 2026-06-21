@@ -38,6 +38,8 @@ const SHELL_ASSETS = [
   "/images/favicon.ico",
   "/images/favicon.png",
   "/manifest.json",
+  "/docs/",
+  "/learning-box/"
 ];
 
 // ── キャッシュしないドメイン ───────────────────────────────────
