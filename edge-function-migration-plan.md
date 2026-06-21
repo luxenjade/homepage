@@ -42,7 +42,7 @@
 
 #### 1.1 共有ライブラリの作成
 
-**新規**: `netlify/edge-functions/_lib/supabase.ts`
+**新規**: `netlify/lib/supabase.ts`（`netlify/edge-functions/` 外に配置して、Edge Functionとしてバンドルされないようにする）
 
 - 既存の `_lib/config.js` のカスタムPostgRESTラッパーをESM（TypeScript）に移植
 - `fetch` はDenoではグローバルに使用可能なので、実装ロジックはほぼそのまま
@@ -157,7 +157,7 @@ Netlifyにデプロイ後、フロントエンドから以下を確認：
 
 ```typescript
 const SUPABASE_URL = Netlify.env.get("SUPABASE_URL") || "https://tasapyurqvkviblnaymt.supabase.co";
-const SUPABASE_KEY = Netlify.env.get("SUPABASE_SERVICE_ROLE_KEY") || Netlify.env.get("SUPABASE_ANON_KEY") || "";
+const SUPABASE_KEY = Netlify.env.get("SUPABASE_SECRET_KEY") || Netlify.env.get("SUPABASE_PB_KEY") || "";
 ```
 
 **注意**: `Netlify.env.get()` は Edge Functions 専用。Node.js Functions では `process.env` を使用。

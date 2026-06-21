@@ -1,7 +1,7 @@
 // netlify/edge-functions/posts.ts
 // Returns: { posts } — public post list from Supabase
 
-import { supabase, TABLES, handleOptions, jsonResponse, errorResponse } from "./supabase.ts";
+import { supabase, TABLES, handleOptions, jsonResponse, errorResponse } from "../lib/supabase.ts";
 
 export default async (request: Request) => {
   const preflight = handleOptions(request);

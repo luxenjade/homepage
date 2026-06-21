@@ -1,12 +1,10 @@
-// netlify/edge-functions/supabase.ts
+// netlify/lib/supabase.ts
 // Shared lightweight PostgREST client for Edge Functions (Deno)
+// NOTE: This file is intentionally placed OUTSIDE netlify/edge-functions/
+// to avoid being bundled as an Edge Function by Netlify.
 
-const SUPABASE_URL =
-  Netlify.env.get("SUPABASE_URL") || "https://tasapyurqvkviblnaymt.supabase.co";
-const SUPABASE_KEY =
-  Netlify.env.get("SUPABASE_SECRET_KEY") ||
-  Netlify.env.get("SUPABASE_PB_KEY") ||
-  "";
+const SUPABASE_URL = Netlify.env.get("SUPABASE_URL") || "https://tasapyurqvkviblnaymt.supabase.co";
+const SUPABASE_KEY = Netlify.env.get("SUPABASE_SECRET_KEY") || Netlify.env.get("SUPABASE_PB_KEY") || "";
 
 export const TABLES = {
   DOCS_PUBLIC: "posts_public",
@@ -70,9 +68,7 @@ class PostgrestQuery {
       headers: {
         apikey: SUPABASE_KEY,
         Authorization: `Bearer ${SUPABASE_KEY}`,
-        Accept: this.expectSingle
-          ? "application/vnd.pgrst.object+json"
-          : "application/json",
+        Accept: this.expectSingle ? "application/vnd.pgrst.object+json" : "application/json",
       },
     });
 

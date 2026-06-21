@@ -7,7 +7,7 @@ import {
   handleOptions,
   jsonResponse,
   errorResponse,
-} from "./supabase.ts";
+} from "../lib/supabase.ts";
 
 export default async (request: Request) => {
   const preflight = handleOptions(request);

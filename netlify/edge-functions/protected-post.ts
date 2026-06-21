@@ -2,7 +2,7 @@
 // Route: GET /api/protected-post?slug={slug}&password={raw_password}
 // Verifies password server-side against Supabase data
 
-import { supabase, TABLES, handleOptions, jsonResponse, errorResponse } from "./supabase.ts";
+import { supabase, TABLES, handleOptions, jsonResponse, errorResponse } from "../lib/supabase.ts";
 
 const VALID_SLUG = /^[\w][\w\/-]*$/;
 
