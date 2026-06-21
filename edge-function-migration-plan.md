@@ -110,6 +110,8 @@
 
 旧Netlify Functionsのエントリーは削除（または上書き）。
 
+> **注意**: `netlify/edge-functions/` 内のファイルはすべて Edge Function としてバンドルされるため、**共有ライブラリは `netlify/lib/` などの外側に配置**する必要があります。
+
 ### Phase 3: 旧Netlify Functionsの削除
 
 以下を削除：
@@ -207,8 +209,9 @@ const CORS_HEADERS = {
 
 ```
 netlify/
+├── lib/
+│   └── supabase.ts          ← 新規（共有ライブラリ。edge-functions外に配置）
 ├── edge-functions/
-│   ├── supabase.ts          ← 新規（共有ライブラリ）
 │   ├── posts.ts             ← 新規（/api/posts）
 │   ├── post.ts              ← 新規（/api/post）
 │   ├── protected-posts.ts   ← 新規（/api/protected-posts）
@@ -230,7 +233,7 @@ netlify/
 ## 次のアクション
 
 1. 本計画書をレビュー
-2. `netlify/edge-functions/_lib/supabase.ts` から実装開始
+2. `netlify/lib/supabase.ts` から実装開始
 3. `netlify.toml` を更新
 4. 旧 `netlify/functions/` を削除
 5. `netlify dev` でローカルテスト
