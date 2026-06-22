@@ -37,6 +37,13 @@
           "description": "戦後のアフリカの独立と旧宗主国に関するクイズ",
           "icon": "bi-compass",
           "target": "_blank"
+        },
+        {
+          "title": "世界の気候クイズ",
+          "link": "/geography/climate-flashcards.html",
+          "titleEN": "World Climate Flashcards",
+          "description": "世界の様々な気候区分をフラッシュカード形式で学ぶツールです。",
+          "icon": "bi-brightness-alt-high-fill"
         }
       ]
     }

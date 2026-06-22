@@ -1,0 +1,1917 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>地理総合 世界の気候 | フラッシュカード</title>
+    <style>
+      /* ══════════════════════════════════════
+       CSS Variables & Theme
+       ══════════════════════════════════════ */
+      :root {
+        --hue: 140;
+        --hue-sub: 40;
+        --accent: hsl(var(--hue), 42%, 32%);
+        --accent-mid: hsl(var(--hue), 48%, 44%);
+        --accent-sub: hsl(var(--hue-sub), 52%, 48%);
+        --accent-bg: hsl(var(--hue), 30%, 96%);
+        --accent-border: hsl(var(--hue), 20%, 82%);
+        --bg: #f7f7f5;
+        --surface: #ffffff;
+        --border: #e2e2de;
+        --border-2: #d0d0cb;
+        --text: #1a1a18;
+        --text-2: #5a5a55;
+        --text-3: #9a9a94;
+        --shadow: rgba(0, 0, 0, 0.1);
+        --c-knew: #3a7d44;
+        --c-unsure: #c8922a;
+        --c-forgot: #c0392b;
+        --font-serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+        --font-sans: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+        --header-h: 52px;
+        --card-max: 580px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-serif);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 39px,
+          rgba(0, 0, 0, 0.018) 40px
+        );
+      }
+
+      /* ── Header ── */
+      .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 8px var(--shadow);
+        height: var(--header-h);
+      }
+      .header-inner {
+        height: 100%;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .header-icon {
+        font-size: 1.3rem;
+        color: var(--accent);
+      }
+      .header-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: 0.1em;
+      }
+      .header-sub {
+        font-size: 0.72rem;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        margin-left: 4px;
+      }
+
+      /* ── Mode panels ── */
+      .mode-panel {
+        display: none;
+      }
+      .mode-panel.active {
+        display: block;
+      }
+
+      /* ── Start overlay ── */
+      .start-overlay {
+        position: fixed;
+        top: var(--header-h);
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 120;
+        background: rgba(247, 247, 245, 0.94);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px 16px 40px;
+        overflow-y: auto;
+      }
+      .title-block {
+        margin: 24px 0 20px;
+        text-align: center;
+      }
+      .title-kana {
+        font-size: 0.75rem;
+        letter-spacing: 0.4em;
+        color: var(--text-3);
+        margin-bottom: 6px;
+        font-family: var(--font-sans);
+      }
+      .title-main {
+        font-size: clamp(2rem, 6vw, 3rem);
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.15em;
+      }
+      .title-divider {
+        width: 60px;
+        height: 2px;
+        margin: 14px auto 12px;
+        background: linear-gradient(to right, var(--accent), var(--accent-sub));
+      }
+      .title-sub {
+        font-size: 0.8rem;
+        color: var(--text-3);
+        letter-spacing: 0.25em;
+        font-family: var(--font-sans);
+      }
+      .start-card {
+        width: min(600px, 100%);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 8px 28px var(--shadow);
+        padding: 22px;
+      }
+      .start-title {
+        font-size: 1.1rem;
+        color: var(--text);
+        margin-bottom: 4px;
+        letter-spacing: 0.06em;
+      }
+      .start-desc {
+        color: var(--text-3);
+        font-size: 0.8rem;
+        font-family: var(--font-sans);
+        margin-bottom: 14px;
+      }
+      .start-block + .start-block {
+        margin-top: 12px;
+      }
+      .start-label {
+        display: block;
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        margin-bottom: 6px;
+      }
+      .start-cats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+      @media (max-width: 400px) {
+        .start-cats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      .start-cat {
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        background: var(--bg);
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        font-size: 0.8rem;
+        padding: 9px 10px;
+        cursor: pointer;
+        transition: all 0.14s;
+        text-align: center;
+      }
+      .start-cat:hover {
+        border-color: var(--accent-border);
+        color: var(--accent);
+        background: var(--accent-bg);
+      }
+      .start-cat.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .start-count {
+        width: 100%;
+        padding: 9px 11px;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-family: var(--font-serif);
+        font-size: 0.88rem;
+        background: var(--bg);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .start-count:focus {
+        border-color: var(--accent);
+        background: var(--surface);
+      }
+      .start-meta {
+        margin-top: 12px;
+        font-size: 0.78rem;
+        color: var(--accent);
+        font-family: var(--font-sans);
+      }
+      .start-btn {
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      /* ── Study area ── */
+      #mode-study {
+        min-height: 100vh;
+        padding: calc(var(--header-h) + 16px) 20px 32px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      #mode-study.active {
+        display: flex;
+      }
+
+      /* Progress */
+      .progress-strip {
+        width: 100%;
+        max-width: var(--card-max);
+        height: 3px;
+        background: var(--border);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, var(--accent), var(--accent-sub));
+        border-radius: 2px;
+        transition: width 0.35s ease;
+      }
+
+      /* Nav row */
+      .deck-nav-row {
+        width: 100%;
+        max-width: var(--card-max);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .deck-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        flex: 1;
+      }
+      .deck-indicator {
+        font-size: 0.86rem;
+        font-weight: 500;
+        color: var(--text-2);
+        font-family: var(--font-sans);
+      }
+      .mastery-dots {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        flex-wrap: wrap;
+        min-height: 8px;
+      }
+      .m-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--border-2);
+        transition: background 0.22s;
+      }
+      .m-dot.knew {
+        background: var(--c-knew);
+      }
+      .m-dot.unsure {
+        background: var(--c-unsure);
+      }
+      .m-dot.forgot {
+        background: var(--c-forgot);
+      }
+      .m-dot.current {
+        background: var(--accent);
+        box-shadow: 0 0 0 2px var(--accent-bg);
+      }
+      .nav-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        font-size: 1.15rem;
+        color: var(--text-2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 4px var(--shadow);
+        flex-shrink: 0;
+        transition: all 0.14s;
+      }
+      .nav-btn:hover {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .nav-btn:disabled {
+        opacity: 0.2;
+        cursor: default;
+      }
+
+      /* Flip card */
+      .card-scene {
+        width: 100%;
+        max-width: var(--card-max);
+        aspect-ratio: 8/5;
+        perspective: 1100px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .card-scene.is-swapping {
+        pointer-events: none;
+      }
+      .card-scene.swap-out-left {
+        animation: swapOutL 140ms ease forwards;
+      }
+      .card-scene.swap-out-right {
+        animation: swapOutR 140ms ease forwards;
+      }
+      .card-scene.swap-in-right {
+        animation: swapInR 180ms ease forwards;
+      }
+      .card-scene.swap-in-left {
+        animation: swapInL 180ms ease forwards;
+      }
+      @keyframes swapOutL {
+        to {
+          opacity: 0;
+          transform: translateX(-14px) scale(0.986);
+        }
+      }
+      @keyframes swapOutR {
+        to {
+          opacity: 0;
+          transform: translateX(14px) scale(0.986);
+        }
+      }
+      @keyframes swapInR {
+        from {
+          opacity: 0;
+          transform: translateX(14px) scale(0.986);
+        }
+      }
+      @keyframes swapInL {
+        from {
+          opacity: 0;
+          transform: translateX(-14px) scale(0.986);
+        }
+      }
+
+      .card-body {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.52s cubic-bezier(0.4, 0.2, 0.2, 1);
+        border-radius: 8px;
+      }
+      .card-body.no-flip-transition {
+        transition: none !important;
+      }
+      .card-body.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .card-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow:
+          0 4px 20px var(--shadow),
+          0 1px 4px rgba(0, 0, 0, 0.06);
+      }
+      .card-face-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 22px;
+        position: relative;
+      }
+      .card-front {
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+      .card-front::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(to right, var(--accent), var(--accent-sub));
+      }
+      .card-back {
+        background: var(--accent);
+        transform: rotateY(180deg);
+      }
+      .card-back::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          circle at 75% 20%,
+          rgba(255, 255, 255, 0.08),
+          transparent 55%
+        );
+      }
+      .card-back::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          to right,
+          var(--accent-sub),
+          var(--accent-mid)
+        );
+        opacity: 0.6;
+      }
+
+      .face-top {
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        right: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .face-hint {
+        margin-left: auto;
+        font-size: 0.62rem;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        letter-spacing: 0.06em;
+      }
+      .face-badge {
+        font-size: 0.64rem;
+        letter-spacing: 0.1em;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-family: var(--font-sans);
+        font-weight: 500;
+      }
+      .back-badge {
+        background: rgba(255, 255, 255, 0.12) !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      }
+      .card-question {
+        font-size: clamp(0.86rem, 2.2vw, 1.05rem);
+        line-height: 1.9;
+        color: var(--text);
+        text-align: center;
+        white-space: pre-wrap;
+        max-height: 130px;
+        overflow-y: auto;
+      }
+      .card-answer {
+        font-size: clamp(1rem, 2.7vw, 1.35rem);
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        line-height: 1.45;
+        margin-bottom: 6px;
+        letter-spacing: 0.03em;
+      }
+      .card-sub {
+        font-size: 0.72rem;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.65);
+        text-align: center;
+        max-height: 60px;
+        overflow-y: auto;
+        padding: 0 4px;
+      }
+      .card-watermark {
+        position: absolute;
+        bottom: 8px;
+        right: 12px;
+        font-size: 0.58rem;
+        letter-spacing: 0.3em;
+        color: rgba(0, 0, 0, 0.06);
+      }
+      .back-wm {
+        color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Mastery buttons */
+      .mastery-row {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        max-width: var(--card-max);
+      }
+      .mastery-btn {
+        flex: 1;
+        padding: 10px 4px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        box-shadow: 0 1px 5px var(--shadow);
+        opacity: 0.28;
+        pointer-events: none;
+        transform: translateY(5px);
+        transition: all 0.18s;
+      }
+      .mastery-btn.active {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+      .mi {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .ml {
+        font-size: 0.66rem;
+        font-family: var(--font-sans);
+        color: var(--text-3);
+      }
+      .m-forgot {
+        border-color: rgba(192, 57, 43, 0.2);
+      }
+      .m-forgot .mi {
+        color: var(--c-forgot);
+      }
+      .m-unsure {
+        border-color: rgba(200, 146, 42, 0.2);
+      }
+      .m-unsure .mi {
+        color: var(--c-unsure);
+      }
+      .m-knew {
+        border-color: rgba(58, 125, 68, 0.2);
+      }
+      .m-knew .mi {
+        color: var(--c-knew);
+      }
+      .m-forgot:hover {
+        background: var(--c-forgot);
+        border-color: var(--c-forgot);
+      }
+      .m-unsure:hover {
+        background: var(--c-unsure);
+        border-color: var(--c-unsure);
+      }
+      .m-knew:hover {
+        background: var(--c-knew);
+        border-color: var(--c-knew);
+      }
+      .m-forgot:hover .mi,
+      .m-forgot:hover .ml,
+      .m-unsure:hover .mi,
+      .m-unsure:hover .ml,
+      .m-knew:hover .mi,
+      .m-knew:hover .ml {
+        color: #fff;
+      }
+
+      .kb-hint {
+        font-size: 0.65rem;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        letter-spacing: 0.05em;
+      }
+      kbd {
+        display: inline-block;
+        padding: 1px 5px;
+        border: 1px solid var(--border-2);
+        border-radius: 3px;
+        font-size: 0.62rem;
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--text-2);
+      }
+
+      /* Complete overlay */
+      .complete-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: rgba(247, 247, 245, 0.88);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .complete-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 36px 28px;
+        max-width: 400px;
+        width: calc(100% - 32px);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 36px rgba(0, 0, 0, 0.14);
+      }
+      .complete-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          to right,
+          var(--accent),
+          var(--accent-sub),
+          var(--c-forgot)
+        );
+      }
+      .complete-icon {
+        font-size: 2rem;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .complete-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.18em;
+        margin-bottom: 16px;
+      }
+      .complete-stats {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .stat-pill {
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .sp-n {
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: var(--font-sans);
+        line-height: 1;
+      }
+      .sp-l {
+        font-size: 0.64rem;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        margin-top: 3px;
+      }
+      .sp-knew {
+        border-color: rgba(58, 125, 68, 0.25);
+        background: rgba(58, 125, 68, 0.04);
+      }
+      .sp-knew .sp-n {
+        color: var(--c-knew);
+      }
+      .sp-unsure {
+        border-color: rgba(200, 146, 42, 0.25);
+        background: rgba(200, 146, 42, 0.04);
+      }
+      .sp-unsure .sp-n {
+        color: var(--c-unsure);
+      }
+      .sp-forgot {
+        border-color: rgba(192, 57, 43, 0.25);
+        background: rgba(192, 57, 43, 0.04);
+      }
+      .sp-forgot .sp-n {
+        color: var(--c-forgot);
+      }
+      .complete-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Side list */
+      .list-toggle {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--accent);
+        color: #fff;
+        padding: 12px 5px;
+        border-radius: 6px 0 0 6px;
+        cursor: pointer;
+        font-size: 0.68rem;
+        font-family: var(--font-serif);
+        letter-spacing: 0.2em;
+        writing-mode: vertical-lr;
+        z-index: 80;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        transition: background 0.15s;
+      }
+      .list-toggle:hover {
+        background: var(--accent-mid);
+      }
+      #listArrow {
+        writing-mode: horizontal-tb;
+        font-size: 0.82rem;
+      }
+      .list-panel {
+        position: fixed;
+        right: -256px;
+        top: 0;
+        bottom: 0;
+        width: 240px;
+        background: var(--surface);
+        border-left: 1px solid var(--border);
+        z-index: 85;
+        transition: right 0.24s ease;
+        overflow-y: auto;
+        box-shadow: -3px 0 16px var(--shadow);
+      }
+      .list-panel.open {
+        right: 0;
+      }
+      .list-head {
+        padding: calc(var(--header-h) + 6px) 14px 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--accent);
+        letter-spacing: 0.12em;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .list-close {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-2);
+        border-radius: 4px;
+        padding: 3px 7px;
+        font-size: 0.66rem;
+        cursor: pointer;
+        transition: background 0.13s;
+        font-family: var(--font-sans);
+      }
+      .list-close:hover {
+        background: var(--bg);
+      }
+      .list-body {
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .list-item {
+        padding: 7px 9px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75rem;
+        line-height: 1.45;
+        color: var(--text-2);
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        border: 1px solid transparent;
+        transition: background 0.12s;
+      }
+      .list-item:hover {
+        background: var(--bg);
+      }
+      .list-item.current {
+        background: var(--accent-bg);
+        border-color: var(--accent-border);
+      }
+      .li-n {
+        font-size: 0.64rem;
+        color: var(--text-3);
+        font-family: var(--font-sans);
+        min-width: 16px;
+        margin-top: 2px;
+      }
+      .li-d {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--border-2);
+        flex-shrink: 0;
+        margin-top: 4px;
+      }
+      .li-d.knew {
+        background: var(--c-knew);
+      }
+      .li-d.unsure {
+        background: var(--c-unsure);
+      }
+      .li-d.forgot {
+        background: var(--c-forgot);
+      }
+      .li-t {
+        flex: 1;
+      }
+
+      /* Buttons */
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 11px 32px;
+        font-family: var(--font-serif);
+        font-size: 0.88rem;
+        letter-spacing: 0.15em;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.16s;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+      }
+      .btn-primary:hover {
+        background: var(--accent-mid);
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        padding: 8px 22px;
+        font-family: var(--font-serif);
+        font-size: 0.84rem;
+        letter-spacing: 0.12em;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.16s;
+      }
+      .btn-secondary:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text);
+        color: #fff;
+        padding: 7px 16px;
+        border-radius: 16px;
+        font-size: 0.78rem;
+        font-family: var(--font-sans);
+        z-index: 300;
+        opacity: 0;
+        transition: opacity 0.25s;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .toast.visible {
+        opacity: 1;
+      }
+
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-2);
+        border-radius: 3px;
+      }
+
+      @media (max-width: 560px) {
+        .card-scene {
+          aspect-ratio: 3/2;
+        }
+        .mastery-btn {
+          padding: 9px 3px;
+        }
+        .ml {
+          font-size: 0.6rem;
+        }
+        .kb-hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-inner">
+        <span class="header-icon">🌍</span>
+        <span class="header-title">世界の気候と人々の生活</span>
+        <span class="header-sub">地理総合</span>
+      </div>
+    </header>
+
+    <!-- Start overlay -->
+    <div class="start-overlay" id="startOverlay">
+      <div class="title-block">
+        <p class="title-kana">ちりそうごう · せかいのきこう</p>
+        <h1 class="title-main">世界の気候</h1>
+        <div class="title-divider"></div>
+        <p class="title-sub">地理総合 第2部 第1章 2節</p>
+      </div>
+      <div class="start-card">
+        <h2 class="start-title">学習スタート</h2>
+        <p class="start-desc">カテゴリと問題数を選んでください</p>
+        <div class="start-block">
+          <span class="start-label">カテゴリ</span>
+          <div class="start-cats" id="startCats"></div>
+        </div>
+        <div class="start-block">
+          <span class="start-label">問題数</span>
+          <select id="startCount" class="start-count">
+            <option value="10">10問</option>
+            <option value="20" selected>20問</option>
+            <option value="30">30問</option>
+            <option value="all">全問</option>
+          </select>
+        </div>
+        <p class="start-meta" id="startMeta"></p>
+        <button class="btn-primary start-btn" onclick="startStudy()">
+          Tap to Start
+        </button>
+      </div>
+    </div>
+
+    <!-- Study mode -->
+    <div class="mode-panel" id="mode-study">
+      <div
+        style="
+          width: 100%;
+          max-width: var(--card-max);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        "
+      >
+        <div class="progress-strip">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="deck-nav-row">
+          <button class="nav-btn" id="prevBtn" onclick="prevCard()" disabled>
+            &#x2039;
+          </button>
+          <div class="deck-center">
+            <span class="deck-indicator" id="deckIndicator">1 / --</span>
+            <div class="mastery-dots" id="masteryDots"></div>
+          </div>
+          <button class="nav-btn" id="nextBtn" onclick="nextCard()">
+            &#x203A;
+          </button>
+        </div>
+        <div class="card-scene" id="cardScene" onclick="flipCard()">
+          <div class="card-body" id="cardBody">
+            <div class="card-face card-front">
+              <div class="card-face-inner">
+                <div class="face-top">
+                  <span class="face-badge" id="frontBadge"></span>
+                  <span class="face-hint"
+                    >Tap / <kbd>Space</kbd> to reveal answer</span
+                  >
+                </div>
+                <p class="card-question" id="cardQuestion"></p>
+                <span class="card-watermark">Question</span>
+              </div>
+            </div>
+            <div class="card-face card-back" id="cardBack">
+              <div class="card-face-inner">
+                <div class="face-top">
+                  <span class="face-badge back-badge" id="backBadge"></span>
+                </div>
+                <p class="card-answer" id="cardAnswer"></p>
+                <p class="card-sub" id="cardSub"></p>
+                <span class="card-watermark back-wm">Answer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mastery-row">
+          <button
+            class="mastery-btn m-forgot"
+            id="btnForgot"
+            onclick="markCard('forgot')"
+          >
+            <span class="mi">✗</span><span class="ml">わからない</span>
+          </button>
+          <button
+            class="mastery-btn m-unsure"
+            id="btnUnsure"
+            onclick="markCard('unsure')"
+          >
+            <span class="mi">△</span><span class="ml">あやふや</span>
+          </button>
+          <button
+            class="mastery-btn m-knew"
+            id="btnKnew"
+            onclick="markCard('knew')"
+          >
+            <span class="mi">✓</span><span class="ml">わかった</span>
+          </button>
+        </div>
+        <p class="kb-hint">
+          <kbd>←</kbd><kbd>→</kbd> 移動 &nbsp;|&nbsp; <kbd>Space</kbd> 裏返す
+          &nbsp;|&nbsp; <kbd>1</kbd>✗ <kbd>2</kbd>△ <kbd>3</kbd>✓
+        </p>
+      </div>
+    </div>
+
+    <!-- Complete overlay -->
+    <div class="complete-overlay" id="completeOverlay" style="display: none">
+      <div class="complete-card">
+        <div class="complete-icon">◐</div>
+        <h2 class="complete-title">一周完了</h2>
+        <div class="complete-stats" id="completeStats"></div>
+        <div class="complete-actions">
+          <button class="btn-secondary" onclick="reviewWeak()">
+            ✗ △ のみ復習
+          </button>
+          <button class="btn-secondary" onclick="openStartScreen()">
+            設定に戻る
+          </button>
+          <button class="btn-primary" onclick="restartDeck()">もう一度</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side list -->
+    <div class="list-toggle" onclick="toggleList()">
+      <span>一覧</span>
+      <span id="listArrow">›</span>
+    </div>
+    <div class="list-panel" id="listPanel">
+      <div class="list-head">
+        <span>カード一覧</span>
+        <button class="list-close" onclick="toggleList()">閉じる</button>
+      </div>
+      <div class="list-body" id="listBody"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      /* ══════════════════════════════════════
+       DATA
+       ══════════════════════════════════════ */
+      const DECK_META = {
+        title: "世界の気候と人々の生活",
+        subject: "地理総合",
+      };
+
+      const CATEGORY_STYLES = {
+        default: { text: "#2d6a4f", bg: "#e8f5e9", card: "#2d6a4f" },
+        basic: { text: "#0f6e44", bg: "#e6f4ee", card: "#1a7a4a" },
+        koppen: { text: "#1565c0", bg: "#e3f2fd", card: "#1565c0" },
+        tropical: { text: "#c26b00", bg: "#fff3e0", card: "#c26b00" },
+        dryland: { text: "#8b4513", bg: "#fdf0e0", card: "#8b4513" },
+        temperate: { text: "#5e35b1", bg: "#ede7f6", card: "#5e35b1" },
+      };
+
+      const FILTER_DEFS = [
+        { id: "all", label: "すべて", match: () => true },
+        {
+          id: "basic",
+          label: "基本概念",
+          match: (c) => c.category === "basic",
+        },
+        {
+          id: "koppen",
+          label: "ケッペン",
+          match: (c) => c.category === "koppen",
+        },
+        {
+          id: "tropical",
+          label: "熱帯",
+          match: (c) => c.category === "tropical",
+        },
+        {
+          id: "dryland",
+          label: "乾燥帯",
+          match: (c) => c.category === "dryland",
+        },
+        {
+          id: "temperate",
+          label: "温帯",
+          match: (c) => c.category === "temperate",
+        },
+      ];
+
+      const CARDS = [
+        // ── 基本概念 ──
+        {
+          category: "basic",
+          q: "「気候」とは何か？",
+          a: "長期にわたって毎年繰り返される大気の総合的な状態",
+          sub: "気温・降水・風などの気候要素からなる。",
+        },
+        {
+          category: "basic",
+          q: "「気象」とは何か？",
+          a: "気温・気圧などで示される大気の状態や、風・雨などさまざまな大気現象",
+          sub: "気候とは区別する。",
+        },
+        {
+          category: "basic",
+          q: "「気候要素」とは何か？",
+          a: "気候を構成する気温・降水・風などの要素",
+          sub: "これらが組み合わさって気候が決まる。",
+        },
+        {
+          category: "basic",
+          q: "「気候因子」とは何か？",
+          a: "気候要素の地理的な分布に影響を与える要因",
+          sub: "緯度・海抜高度・海からの距離・海流など。",
+        },
+        {
+          category: "basic",
+          q: "年平均気温は緯度とどのような関係があるか？",
+          a: "低緯度ほど高く、高緯度ほど低い",
+          sub: "低緯度では太陽エネルギーをより多く受け取るため。",
+        },
+        {
+          category: "basic",
+          q: "標高が100m上がると気温はどう変化するか？",
+          a: "約0.65℃下がる",
+          sub: "山岳地域では標高が高いほど気温が低くなる。",
+        },
+        {
+          category: "basic",
+          q: "「日較差」とは何か？",
+          a: "1日の最高気温と最低気温の差",
+          sub: "内陸や乾燥地域で大きく、海沿いで小さい。",
+        },
+        {
+          category: "basic",
+          q: "「年較差」とは何か？",
+          a: "最暖月平均気温と最寒月平均気温の差",
+          sub: "海に近いほど小さく、大陸内部ほど大きい。",
+        },
+        {
+          category: "basic",
+          q: "「海洋性気候」の特徴は？",
+          a: "海に近く年較差が小さい気候",
+          sub: "水は温まりにくく冷めにくいため、気温の変動が緩やか。",
+        },
+        {
+          category: "basic",
+          q: "「大陸性気候」の特徴は？",
+          a: "大陸内部で年較差が大きい気候",
+          sub: "陸地は温まりやすく冷めやすいため、季節差が大きい。",
+        },
+        {
+          category: "basic",
+          q: "降水が多い地域はどのような場所か？",
+          a: "上昇気流が発生しやすい低圧帯・山脈の風上側・暖流の流れる沿岸",
+          sub: "湿った空気が冷やされて雲・降水が生じる。",
+        },
+        {
+          category: "basic",
+          q: "降水が少ない地域はどのような場所か？",
+          a: "下降気流が発生しやすい高圧帯・山脈の風下側・寒流の流れる沿岸",
+        },
+        {
+          category: "basic",
+          q: "「大気大循環」とは何か？",
+          a: "全地球的な規模で高圧部から低圧部へ向かう風の流れ",
+          sub: "低緯度から高緯度へ熱が輸送され、地球全体の気温差が小さくなる。",
+        },
+        {
+          category: "basic",
+          q: "「熱帯収束帯」はどこにできるか？",
+          a: "赤道付近（緯度10度前後）",
+          sub: "太陽エネルギーを多く受け取り、常に上昇気流が生じる。",
+        },
+        {
+          category: "basic",
+          q: "「亜熱帯高圧帯」はどこにできるか？",
+          a: "緯度30度付近",
+          sub: "赤道で上昇した大気が下降気流となる。砂漠が多い。",
+        },
+        {
+          category: "basic",
+          q: "「貿易風」はどこで吹くか？",
+          a: "亜熱帯高圧帯の低緯度側で、東寄りに吹く恒常風",
+        },
+        {
+          category: "basic",
+          q: "「偏西風」はどこで吹くか？",
+          a: "亜熱帯高圧帯と亜寒帯低圧帯の間で、西から東へ吹く恒常風",
+          sub: "蛇行により低緯度から高緯度へ温かい大気を運ぶ。",
+        },
+        {
+          category: "basic",
+          q: "「亜寒帯低圧帯」は緯度何度付近か？",
+          a: "緯度60度付近",
+        },
+        {
+          category: "basic",
+          q: "「恒常風」とは何か？",
+          a: "一年中ほぼ同じ方向に吹く風",
+          sub: "偏西風・貿易風などが該当する。",
+        },
+        {
+          category: "basic",
+          q: "「雨季」と「乾季」が生じる原因は？",
+          a: "気圧帯が季節によって南北に移動するため、影響を受ける降水量が変化する",
+        },
+        {
+          category: "basic",
+          q: "「季節風（モンスーン）」が夏に海から陸へ吹く理由は？",
+          a: "夏は大陸が温められ低気圧が生じるため、海から湿った風が吹き込む",
+          sub: "東アジア〜南アジアに大量の降水をもたらす。",
+        },
+        {
+          category: "basic",
+          q: "「季節風（モンスーン）」が冬に陸から海へ吹く理由は？",
+          a: "冬は大陸が冷やされ高気圧が生じるため、陸から乾いた風が吹き出す",
+        },
+
+        // ── ケッペンの気候区分 ──
+        {
+          category: "koppen",
+          q: "ケッペンの気候区分の「基準」と「指標」は何か？",
+          a: "基準：植生の分布　指標：気温と降水量",
+        },
+        {
+          category: "koppen",
+          q: "ケッペンの気候帯は何種類に分類されるか？",
+          a: "5つの気候帯（A〜E）",
+          sub: "さらに13の気候区に細分される。",
+        },
+        {
+          category: "koppen",
+          q: "熱帯（A気候）の定義は？",
+          a: "最寒月平均気温が18℃以上",
+        },
+        {
+          category: "koppen",
+          q: "温帯（C気候）の定義は？",
+          a: "最寒月平均気温が−3℃以上18℃未満",
+        },
+        {
+          category: "koppen",
+          q: "亜寒帯（D気候）の定義は？",
+          a: "最寒月平均気温が−3℃未満で最暖月平均気温が10℃以上",
+          sub: "南半球には存在しない。",
+        },
+        {
+          category: "koppen",
+          q: "寒帯（E気候）の定義は？",
+          a: "最暖月平均気温が10℃未満",
+        },
+        {
+          category: "koppen",
+          q: "乾燥帯（B気候）の定義は？",
+          a: "年降水量が乾燥限界未満",
+          sub: "他の気候帯の条件を満たしていても降水量が少なければB気候になる。",
+        },
+        {
+          category: "koppen",
+          q: "乾燥型の判別で「夏季乾燥型（s）」の式は？",
+          a: "乾燥限界 r = 20t（t は年平均気温）",
+        },
+        {
+          category: "koppen",
+          q: "乾燥型の判別で「冬季乾燥型（w）」の式は？",
+          a: "乾燥限界 r = 20(t + 14)",
+        },
+        {
+          category: "koppen",
+          q: "乾燥型の判別で「年中湿潤型（f）」の式は？",
+          a: "乾燥限界 r = 20(t + 7)",
+        },
+        {
+          category: "koppen",
+          q: "砂漠気候（BW）とステップ気候（BS）の判別方法は？",
+          a: "年降水量が乾燥限界の1/2未満→砂漠気候　1/2以上→ステップ気候",
+        },
+        {
+          category: "koppen",
+          q: "ケッペンの気候区分の利点は？",
+          a: "気温と降水量という世界共通のデータを使うため、各地の気候と比較しやすい",
+        },
+        {
+          category: "koppen",
+          q: "ケッペンの気候区分の限界は？",
+          a: "日本国内のような比較的狭い地域の気候判定には適さず、気候差が生じる原因も説明できない",
+        },
+        {
+          category: "koppen",
+          q: "ケッペンの気候記号で A → E の並び方の意味は？",
+          a: "低緯度から高緯度に向かって A → B → C → D → E と並ぶ",
+        },
+
+        // ── 熱帯 ──
+        {
+          category: "tropical",
+          q: "熱帯雨林気候（Af）の降水条件は？",
+          a: "最少雨月降水量が60mm以上",
+          sub: "一年中高温多湿で、午後にスコールが発生しやすい。",
+        },
+        {
+          category: "tropical",
+          q: "熱帯の植生「熱帯雨林」はどのような森林か？",
+          a: "マホガニーなど多種類の常緑広葉樹からなる密林で、高さの異なる樹木が層をなす",
+        },
+        {
+          category: "tropical",
+          q: "熱帯雨林の土壌の特徴は？",
+          a: "ラトソル（ラテライト）と呼ばれ栄養が少なく酸性",
+          sub: "養分が雨水で流されやすいため痩せた土壌になる。",
+        },
+        {
+          category: "tropical",
+          q: "熱帯雨林気候で伝統的に行われてきた農業は何か？",
+          a: "焼き畑農業と狩猟・採集",
+          sub: "現在はプランテーションが広くみられる。",
+        },
+        {
+          category: "tropical",
+          q: "熱帯雨林気候の伝統的な住居の特徴は？",
+          a: "高床式住居。風通しを良くするための高床と、急激な雨を流す急傾斜の屋根",
+          sub: "雨が多く蒸し暑い気候に適応した形。",
+        },
+        {
+          category: "tropical",
+          q: "熱帯モンスーン気候（Am）の特徴は？",
+          a: "弱い乾季のある熱帯雨林気候。モンスーンの影響を受ける海岸部に分布し、夏は雨季・冬は乾季",
+        },
+        {
+          category: "tropical",
+          q: "熱帯モンスーン気候（Am）の降水条件は？",
+          a: "最少雨月降水量が60mm未満かつ（100−0.04×年降水量）mm以上",
+        },
+        {
+          category: "tropical",
+          q: "サバナ気候（Aw）の降水条件は？",
+          a: "最少雨月降水量が60mm未満かつ（100−0.04×年降水量）mm未満",
+        },
+        {
+          category: "tropical",
+          q: "サバナ気候の雨季・乾季の原因は？",
+          a: "夏：熱帯収束帯の影響→雨季　冬：亜熱帯高圧帯の影響→乾季",
+          sub: "熱帯雨林気候より高緯度側に分布する。",
+        },
+        {
+          category: "tropical",
+          q: "サバナ気候の植生は？",
+          a: "丈の長い草原（サバナ）の中に樹木（アカシア・バオバブなど）が点在する",
+          sub: "アフリカでは大型の草食動物が多く生息する。",
+        },
+        {
+          category: "tropical",
+          q: "インドのデカン高原の肥沃な黒土を何というか？",
+          a: "レグール",
+          sub: "玄武岩が風化してできた土壌。綿花の栽培に適する。",
+        },
+        {
+          category: "tropical",
+          q: "ブラジル高原の肥沃な土壌を何というか？",
+          a: "テラローシャ",
+          sub: "玄武岩が風化してできた土壌。コーヒー・サトウキビの栽培に適する。",
+        },
+        {
+          category: "tropical",
+          q: "サバナ気候の伝統的な住居の特徴は？",
+          a: "土（日干しレンガ）でできた家。断熱性の高い土壁で強い日差しを防ぐ",
+        },
+        {
+          category: "tropical",
+          q: "熱帯の主食は何か？",
+          a: "米のほか、キャッサバ・タロイモなどのイモ類",
+        },
+
+        // ── 乾燥帯 ──
+        {
+          category: "dryland",
+          q: "乾燥帯（B気候）は陸地の何分の１を占めるか？",
+          a: "4分の1（約25%）",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候（BW）の年降水量はどれくらいか？",
+          a: "ほとんどが年降水量250mm未満",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候が多く分布する緯度帯は？",
+          a: "北・南回帰線周辺（緯度20〜30度）と大陸内部",
+          sub: "亜熱帯高圧帯の下降気流により降水が少ない。",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候で気温の日較差が大きい理由は？",
+          a: "昼は日射で温められ、夜は放射冷却で急激に冷えるため",
+          sub: "雲や水分が少なく、熱が逃げやすい。",
+        },
+        {
+          category: "dryland",
+          q: "「外来河川」とは何か？",
+          a: "砂漠地域を流れる河川で、水源が別の湿潤地域にある川",
+          sub: "砂漠に流れ込んでも枯れずに流れ続ける。例：ナイル川。",
+        },
+        {
+          category: "dryland",
+          q: "「ワジ」とは何か？",
+          a: "乾燥地域に見られる涸れ川（ふだんは水が流れていない谷）",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候で行われる農業は？",
+          a: "オアシス農業（地下水路などを利用した灌漑農業）",
+        },
+        {
+          category: "dryland",
+          q: "イランの地下水路を何というか？",
+          a: "カナート",
+          sub: "地下に掘られたトンネル状の水路で、蒸発を防ぎながら水を運ぶ。",
+        },
+        {
+          category: "dryland",
+          q: "アフガニスタンの地下水路を何というか？",
+          a: "カレーズ",
+          sub: "イランのカナートと同様の仕組みの地下水路。",
+        },
+        {
+          category: "dryland",
+          q: "北アフリカの地下水路を何というか？",
+          a: "フォガラ",
+          sub: "カナート・カレーズと同類の地下水路システム。",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候の衣服の特徴は？",
+          a: "直射日光・砂から身を守るため、風通しの良い長袖の衣服を着る",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候の住居の特徴は？",
+          a: "日干しレンガで作られた四角い形の住居。窓が小さく、断熱性が高い",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候の食生活の特徴は？",
+          a: "乾燥させた豆と香辛料の煮込み料理、小麦の薄焼きパン、家畜の肉・乳製品",
+        },
+        {
+          category: "dryland",
+          q: "砂漠気候で行われる牧畜は何か？",
+          a: "乾燥に適応した家畜（ラクダ・ヤギなど）による遊牧",
+        },
+        {
+          category: "dryland",
+          q: "ステップ気候（BS）の降水条件は？",
+          a: "乾燥限界の1/2以上の降水（砂漠気候より降水が多い）",
+          sub: "砂漠を取り囲むように分布する。",
+        },
+        {
+          category: "dryland",
+          q: "「チェルノーゼム」とは何か？",
+          a: "ステップ気候地域に形成される肥沃な黒土",
+          sub: "ウクライナなどの草原地帯で見られ、小麦の栽培に適する。",
+        },
+        {
+          category: "dryland",
+          q: "ステップ気候の植生は？",
+          a: "樹木はほとんど見られず、背丈の低い草本植物（ステップ）が一面に広がる",
+        },
+        {
+          category: "dryland",
+          q: "ステップ気候で行われる農牧業は？",
+          a: "ヒツジ・ヤギ・馬などの放牧・遊牧と、肥沃な黒土での小麦栽培",
+        },
+        {
+          category: "dryland",
+          q: "モンゴルの遊牧民が使う移動式住居を何というか？",
+          a: "ゲル（パオ）",
+          sub: "円形で組み立て・解体が容易な移動式テント。",
+        },
+        {
+          category: "dryland",
+          q: "アフリカのサヘルとは何か？",
+          a: "サハラ砂漠の南縁に広がる地域で、砂漠化が深刻に進行している地帯",
+        },
+
+        // ── 温帯 ──
+        {
+          category: "temperate",
+          q: "温帯（C気候）の定義は？",
+          a: "最寒月平均気温が−3℃以上18℃未満",
+        },
+        {
+          category: "temperate",
+          q: "地中海性気候（Cs）の特徴は？",
+          a: "中緯度の大陸西岸に分布。夏は高温乾燥、冬に降水が集中する",
+          sub: "地中海沿岸・カリフォルニア・チリ中部・南ア西岸など。",
+        },
+        {
+          category: "temperate",
+          q: "地中海性気候（Cs）の農業・食生活の特徴は？",
+          a: "オリーブ・野菜・果物・魚介類・全粒穀物が中心",
+        },
+        {
+          category: "temperate",
+          q: "地中海性気候（Cs）の住居の特徴は？",
+          a: "レンガ・石造りで、石灰を使って白く塗装された住居",
+          sub: "日差しを反射し室内を涼しく保つための工夫。",
+        },
+        {
+          category: "temperate",
+          q: "西岸海洋性気候（Cfb）の特徴は？",
+          a: "年中湿潤型で最暖月平均気温が22℃未満。偏西風と暖流の影響で温和",
+        },
+        {
+          category: "temperate",
+          q: "温暖湿潤気候（Cfa）の特徴は？",
+          a: "年中湿潤型で最暖月平均気温が22℃以上。日本の太平洋側・東アジアに分布",
+        },
+        {
+          category: "temperate",
+          q: "温暖冬季少雨気候（Cw）の特徴は？",
+          a: "冬季乾燥型の温帯気候。東アジアのモンスーン地域（中国南部など）に多い",
+        },
+      ];
+
+      /* ══════════════════════════════════════
+       APP LOGIC
+       ══════════════════════════════════════ */
+      let deck = [];
+      let current = 0;
+      let mastery = {};
+      let isFlipped = false;
+      let selectedFilter = "all";
+      let isListOpen = false;
+
+      // カテゴリボタン描画
+      function renderStartCats() {
+        const el = document.getElementById("startCats");
+        el.innerHTML = FILTER_DEFS.map(
+          (f) =>
+            `<button class="start-cat${f.id === selectedFilter ? " active" : ""}"
+           onclick="selectFilter('${f.id}')">${f.label}</button>`,
+        ).join("");
+        updateMeta();
+      }
+
+      function selectFilter(id) {
+        selectedFilter = id;
+        renderStartCats();
+      }
+
+      function updateMeta() {
+        const filter = FILTER_DEFS.find((f) => f.id === selectedFilter);
+        const count = CARDS.filter(filter.match).length;
+        document.getElementById("startMeta").textContent =
+          `該当カード数：${count}枚`;
+      }
+
+      function startStudy() {
+        const filter = FILTER_DEFS.find((f) => f.id === selectedFilter);
+        let pool = CARDS.filter(filter.match);
+        // シャッフル
+        pool = pool.sort(() => Math.random() - 0.5);
+        // 枚数制限
+        const countVal = document.getElementById("startCount").value;
+        if (countVal !== "all") pool = pool.slice(0, parseInt(countVal));
+        deck = pool;
+        mastery = {};
+        deck.forEach((_, i) => (mastery[i] = null));
+        current = 0;
+
+        document.getElementById("startOverlay").style.display = "none";
+        document.getElementById("completeOverlay").style.display = "none";
+        document.getElementById("mode-study").classList.add("active");
+        renderCard(false);
+        renderDots();
+        renderList();
+      }
+
+      function renderCard(animate) {
+        if (deck.length === 0) return;
+        const card = deck[current];
+
+        // カードのカテゴリスタイル
+        const style = CATEGORY_STYLES[card.category] || CATEGORY_STYLES.default;
+        const filter = FILTER_DEFS.find((f) => f.id === card.category);
+        const label = filter ? filter.label : card.category;
+
+        // 表面
+        document.getElementById("frontBadge").textContent = label;
+        document.getElementById("frontBadge").style.background = style.bg;
+        document.getElementById("frontBadge").style.color = style.text;
+        document.getElementById("frontBadge").style.border =
+          `1px solid ${style.text}33`;
+        document.getElementById("cardQuestion").textContent = card.q;
+
+        // 裏面
+        document.getElementById("backBadge").textContent = label;
+        document.getElementById("cardAnswer").textContent = card.a;
+        document.getElementById("cardSub").textContent = card.sub || "";
+
+        // 裏面カード色
+        document.getElementById("cardBack").style.background = style.card;
+
+        // 進捗
+        document.getElementById("progressFill").style.width =
+          ((current + 1) / deck.length) * 100 + "%";
+        document.getElementById("deckIndicator").textContent =
+          `${current + 1} / ${deck.length}`;
+
+        // フリップリセット
+        if (!animate) {
+          const body = document.getElementById("cardBody");
+          body.classList.add("no-flip-transition");
+          body.classList.remove("flipped");
+          isFlipped = false;
+          setTimeout(() => body.classList.remove("no-flip-transition"), 50);
+        }
+
+        // 習得ボタン
+        setMasteryBtnsActive(false);
+
+        // ナビ
+        document.getElementById("prevBtn").disabled = current === 0;
+        document.getElementById("nextBtn").disabled =
+          current === deck.length - 1;
+      }
+
+      function flipCard() {
+        const body = document.getElementById("cardBody");
+        body.classList.toggle("flipped");
+        isFlipped = !isFlipped;
+        if (isFlipped) setMasteryBtnsActive(true);
+      }
+
+      function setMasteryBtnsActive(on) {
+        ["btnForgot", "btnUnsure", "btnKnew"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (on) el.classList.add("active");
+          else el.classList.remove("active");
+        });
+      }
+
+      function markCard(status) {
+        mastery[current] = status;
+        renderDots();
+        renderList();
+        if (current < deck.length - 1) {
+          animateNext("right");
+        } else {
+          showComplete();
+        }
+      }
+
+      function animateNext(dir) {
+        const scene = document.getElementById("cardScene");
+        scene.classList.add("is-swapping", `swap-out-${dir}`);
+        setTimeout(() => {
+          scene.classList.remove(`swap-out-${dir}`);
+          current++;
+          renderCard(false);
+          renderDots();
+          renderList();
+          scene.classList.add(`swap-in-${dir === "right" ? "right" : "left"}`);
+          setTimeout(() => {
+            scene.classList.remove(
+              "is-swapping",
+              `swap-in-${dir === "right" ? "right" : "left"}`,
+            );
+          }, 200);
+        }, 150);
+      }
+
+      function animatePrev(dir) {
+        const scene = document.getElementById("cardScene");
+        scene.classList.add("is-swapping", `swap-out-${dir}`);
+        setTimeout(() => {
+          scene.classList.remove(`swap-out-${dir}`);
+          current--;
+          renderCard(false);
+          renderDots();
+          renderList();
+          scene.classList.add(`swap-in-${dir === "left" ? "left" : "right"}`);
+          setTimeout(() => {
+            scene.classList.remove(
+              "is-swapping",
+              `swap-in-${dir === "left" ? "left" : "right"}`,
+            );
+          }, 200);
+        }, 150);
+      }
+
+      function nextCard() {
+        if (current < deck.length - 1) animateNext("right");
+      }
+
+      function prevCard() {
+        if (current > 0) animatePrev("left");
+      }
+
+      function renderDots() {
+        const el = document.getElementById("masteryDots");
+        el.innerHTML = deck
+          .map((_, i) => {
+            const s = mastery[i];
+            let cls = "m-dot";
+            if (i === current) cls += " current";
+            else if (s) cls += ` ${s}`;
+            return `<div class="${cls}"></div>`;
+          })
+          .join("");
+      }
+
+      function renderList() {
+        const el = document.getElementById("listBody");
+        el.innerHTML = deck
+          .map((card, i) => {
+            const s = mastery[i];
+            return `<div class="list-item${i === current ? " current" : ""}" onclick="jumpTo(${i})">
+          <span class="li-n">${i + 1}</span>
+          <div class="li-d${s ? " " + s : ""}"></div>
+          <span class="li-t">${card.q}</span>
+        </div>`;
+          })
+          .join("");
+      }
+
+      function jumpTo(i) {
+        current = i;
+        renderCard(false);
+        renderDots();
+        renderList();
+        if (isListOpen) toggleList();
+      }
+
+      function showComplete() {
+        const knew = Object.values(mastery).filter((v) => v === "knew").length;
+        const unsure = Object.values(mastery).filter(
+          (v) => v === "unsure",
+        ).length;
+        const forgot = Object.values(mastery).filter(
+          (v) => v === "forgot",
+        ).length;
+        const unmarked = Object.values(mastery).filter(
+          (v) => v === null,
+        ).length;
+
+        document.getElementById("completeStats").innerHTML = `
+        <div class="stat-pill sp-knew"><span class="sp-n">${knew}</span><span class="sp-l">わかった</span></div>
+        <div class="stat-pill sp-unsure"><span class="sp-n">${unsure}</span><span class="sp-l">あやふや</span></div>
+        <div class="stat-pill sp-forgot"><span class="sp-n">${forgot + unmarked}</span><span class="sp-l">わからない</span></div>
+      `;
+        document.getElementById("completeOverlay").style.display = "flex";
+      }
+
+      function reviewWeak() {
+        const weak = deck.filter(
+          (_, i) =>
+            mastery[i] === "forgot" ||
+            mastery[i] === "unsure" ||
+            mastery[i] === null,
+        );
+        if (weak.length === 0) {
+          showToast("復習対象のカードがありません");
+          return;
+        }
+        deck = weak.sort(() => Math.random() - 0.5);
+        mastery = {};
+        deck.forEach((_, i) => (mastery[i] = null));
+        current = 0;
+        document.getElementById("completeOverlay").style.display = "none";
+        renderCard(false);
+        renderDots();
+        renderList();
+      }
+
+      function restartDeck() {
+        deck = deck.sort(() => Math.random() - 0.5);
+        mastery = {};
+        deck.forEach((_, i) => (mastery[i] = null));
+        current = 0;
+        document.getElementById("completeOverlay").style.display = "none";
+        renderCard(false);
+        renderDots();
+        renderList();
+      }
+
+      function openStartScreen() {
+        document.getElementById("completeOverlay").style.display = "none";
+        document.getElementById("mode-study").classList.remove("active");
+        document.getElementById("startOverlay").style.display = "flex";
+      }
+
+      function toggleList() {
+        isListOpen = !isListOpen;
+        document
+          .getElementById("listPanel")
+          .classList.toggle("open", isListOpen);
+        document.getElementById("listArrow").textContent = isListOpen
+          ? "›"
+          : "‹";
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("visible");
+        setTimeout(() => t.classList.remove("visible"), 2000);
+      }
+
+      // Keyboard
+      document.addEventListener("keydown", (e) => {
+        if (
+          document.getElementById("startOverlay").style.display !== "none" &&
+          document.getElementById("startOverlay").style.display !== ""
+        )
+          return;
+        if (document.getElementById("completeOverlay").style.display === "flex")
+          return;
+        switch (e.key) {
+          case " ":
+            e.preventDefault();
+            flipCard();
+            break;
+          case "ArrowLeft":
+            prevCard();
+            break;
+          case "ArrowRight":
+            nextCard();
+            break;
+          case "1":
+            if (isFlipped) markCard("forgot");
+            break;
+          case "2":
+            if (isFlipped) markCard("unsure");
+            break;
+          case "3":
+            if (isFlipped) markCard("knew");
+            break;
+        }
+      });
+
+      // Init
+      renderStartCats();
+    </script>
+  </body>
+</html>
