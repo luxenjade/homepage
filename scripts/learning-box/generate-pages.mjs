@@ -68,10 +68,10 @@ export async function generateSubjectColorsCss(sourceDir, outputDir) {
   return subjectColors;
 }
 
-export async function generateIndex(sourceDir, outputDir, subjectColors) {
+export async function generateIndex(sourceDir, outputDir, subjectColors, contentSourceDir) {
   const [notes, flashcards] = await Promise.all([
-    collectNotes(sourceDir),
-    collectFlashcards(sourceDir),
+    collectNotes(contentSourceDir || sourceDir),
+    collectFlashcards(contentSourceDir || sourceDir),
   ]);
 
   const template = await fs.readFile(path.join(sourceDir, "index.html"), "utf8");
@@ -107,8 +107,8 @@ export async function generateIndex(sourceDir, outputDir, subjectColors) {
   return { notes: notes.length, flashcards: flashcards.length };
 }
 
-export async function generateNotePages(sourceDir, outputDir, subjectColors, templateDir) {
-  const notes = await collectNotes(sourceDir);
+export async function generateNotePages(sourceDir, outputDir, subjectColors, templateDir, contentSourceDir) {
+  const notes = await collectNotes(contentSourceDir || sourceDir);
   const template = await fs.readFile(
     path.join(templateDir, "note-page.html"),
     "utf8",
@@ -142,8 +142,8 @@ export async function generateNotePages(sourceDir, outputDir, subjectColors, tem
   return notes.length;
 }
 
-export async function generateFlashcardPages(sourceDir, outputDir, subjectColors, templateDir) {
-  const decks = await collectFlashcards(sourceDir);
+export async function generateFlashcardPages(sourceDir, outputDir, subjectColors, templateDir, contentSourceDir) {
+  const decks = await collectFlashcards(contentSourceDir || sourceDir);
   const template = await fs.readFile(
     path.join(templateDir, "flashcard-page.html"),
     "utf8",

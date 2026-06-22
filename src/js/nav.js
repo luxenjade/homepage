@@ -30,6 +30,22 @@
       <line x1="2" y1="13.5" x2="16" y2="13.5"/>
     </svg>`;
 
+  // ── ナビリンク設定 ───────────────────────────────────────
+  // デフォルト値（開発時用）。ビルド時に src/nav-config.json から上書きされる。
+  const NAV_LINKS = [
+    { href: "/history/", label: "歴史" },
+    { href: "/geography/", label: "地理" },
+    { href: "/seikei/", label: "政治・経済" },
+    { href: "/miscellaneous/", label: "その他" },
+    { href: "/links/", label: "リンク集" },
+  ];
+
+  const navLinksHtml = NAV_LINKS
+    .map(
+      (link) => `<li><a class="site-nav__link" href="${link.href}">${link.label}</a></li>`,
+    )
+    .join("\n");
+
   // ── ナビバー HTML ────────────────────────────────────────
   const NAV_HTML = `
     <nav id="site-nav" aria-label="サイトナビゲーション">
@@ -46,11 +62,7 @@
 
         <div class="site-nav__menu" id="site-nav-menu">
           <ul class="site-nav__links">
-            <li><a class="site-nav__link" href="/history/">歴史</a></li>
-            <li><a class="site-nav__link" href="/geography/">地理</a></li>
-            <li><a class="site-nav__link" href="/seikei/">政治・経済</a></li>
-            <li><a class="site-nav__link" href="/miscellaneous/">その他</a></li>
-            <li><a class="site-nav__link" href="/links/">リンク集</a></li>
+            ${navLinksHtml}
           </ul>
 
           <div class="site-nav__actions">

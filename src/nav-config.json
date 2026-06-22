@@ -1,0 +1,9 @@
+{
+  "links": [
+    { "label": "歴史", "href": "/history/" },
+    { "label": "地理", "href": "/geography/" },
+    { "label": "政治・経済", "href": "/seikei/" },
+    { "label": "その他", "href": "/miscellaneous/" },
+    { "label": "リンク集", "href": "/links/" }
+  ]
+}

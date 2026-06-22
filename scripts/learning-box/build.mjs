@@ -5,6 +5,11 @@ import { minify } from "html-minifier-terser";
 import esbuild from "esbuild";
 import { fileURLToPath } from "node:url";
 import {
+  pathExists,
+  listFiles,
+  formatBytes,
+} from "../lib/build-common.js";
+import {
   generateFlashcardPages,
   generateIndex,
   generateNotePages,
@@ -13,54 +18,29 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, "../..");
-const sourceDir = path.join(projectRoot, "src/learning-box");
+const staticSourceDir = path.join(projectRoot, "src/learning-box");
+const contentSourceDir = path.join(projectRoot, "learning-box-source");
 const outputDir = path.join(projectRoot, "dist/learning-box");
 const templateDir = path.join(projectRoot, "template/learning-box");
 
 const requiredEntries = ["index.html"];
 
-/** Paths under src/ that are published to dist/ (content sources are excluded). */
+/** Paths under src/learning-box that are published to dist/ (content sources are excluded). */
 const DEPLOY_DIRS = ["css", "images"];
 const DEPLOY_ROOT_FILES = [];
 const DEPLOY_JS_FILES = ["note-static.js", "flashcard-app.js"];
 
-async function pathExists(targetPath) {
-  try {
-    await fs.access(targetPath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function listFiles(dir) {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  const files = await Promise.all(
-    entries.map(async (entry) => {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        return listFiles(fullPath);
-      }
-      return [fullPath];
-    }),
-  );
-  return files.flat();
-}
-
-function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 async function validateSource() {
-  if (!(await pathExists(sourceDir))) {
-    throw new Error(`Source directory not found: ${sourceDir}`);
+  if (!(await pathExists(staticSourceDir))) {
+    throw new Error(`Source directory not found: ${staticSourceDir}`);
+  }
+  if (!(await pathExists(contentSourceDir))) {
+    throw new Error(`Content source directory not found: ${contentSourceDir}`);
   }
 
   await Promise.all(
     requiredEntries.map(async (relativePath) => {
-      const fullPath = path.join(sourceDir, relativePath);
+      const fullPath = path.join(staticSourceDir, relativePath);
       if (!(await pathExists(fullPath))) {
         throw new Error(`Missing required source file: ${relativePath}`);
       }
@@ -71,9 +51,6 @@ async function validateSource() {
 function isLeakedDeployPath(relativePath) {
   if (relativePath.endsWith(".md")) return true;
   if (relativePath.endsWith("content.json")) return true;
-  if (relativePath === "subject-colors.json") return true;
-  if (/^notes\/[^/]+\/.+/.test(relativePath)) return true;
-  if (/^flashcards\/[^/]+\.js$/.test(relativePath)) return true;
   if (relativePath === "js/note-app.js") return true;
   if (relativePath === "note.html" || relativePath === "flashcard.html") return true;
   return false;
@@ -94,7 +71,7 @@ async function assertNoSourceLeakage() {
 
 async function copyDeployableAssets() {
   for (const dir of DEPLOY_DIRS) {
-    const from = path.join(sourceDir, dir);
+    const from = path.join(staticSourceDir, dir);
     if (!(await pathExists(from))) continue;
     await fs.cp(from, path.join(outputDir, dir), { recursive: true });
   }
@@ -102,15 +79,15 @@ async function copyDeployableAssets() {
   const jsOut = path.join(outputDir, "js");
   await fs.mkdir(jsOut, { recursive: true });
   for (const file of DEPLOY_JS_FILES) {
-    const from = path.join(sourceDir, "js", file);
+    const from = path.join(staticSourceDir, "js", file);
     if (!(await pathExists(from))) {
-      throw new Error(`Missing deployable script: src/js/${file}`);
+      throw new Error(`Missing deployable script: src/learning-box/js/${file}`);
     }
     await fs.copyFile(from, path.join(jsOut, file));
   }
 
   for (const file of DEPLOY_ROOT_FILES) {
-    const from = path.join(sourceDir, file);
+    const from = path.join(staticSourceDir, file);
     if (!(await pathExists(from))) continue;
     await fs.copyFile(from, path.join(outputDir, file));
   }
@@ -195,16 +172,28 @@ export async function build() {
   await copyDeployableAssets();
 
   console.log("[2/5] Generating subject colors CSS...");
-  const subjectColors = await generateSubjectColorsCss(sourceDir, outputDir);
+  const subjectColors = await generateSubjectColorsCss(contentSourceDir, outputDir);
 
   console.log("[3/5] Generating index and content pages...");
-  const indexStats = await generateIndex(sourceDir, outputDir, subjectColors);
-  const noteCount = await generateNotePages(sourceDir, outputDir, subjectColors, templateDir);
-  const flashcardCount = await generateFlashcardPages(
-    sourceDir,
+  const indexStats = await generateIndex(
+    staticSourceDir,
     outputDir,
     subjectColors,
-    templateDir
+    contentSourceDir,
+  );
+  const noteCount = await generateNotePages(
+    staticSourceDir,
+    outputDir,
+    subjectColors,
+    templateDir,
+    contentSourceDir,
+  );
+  const flashcardCount = await generateFlashcardPages(
+    staticSourceDir,
+    outputDir,
+    subjectColors,
+    templateDir,
+    contentSourceDir,
   );
   console.log(
     `  → index (${indexStats.flashcards} flashcards, ${indexStats.notes} notes), ${noteCount} note pages, ${flashcardCount} flashcard pages`,
@@ -242,10 +231,11 @@ export async function build() {
   console.log(
     `Built ${files.length} files from ${path.relative(
       projectRoot,
-      sourceDir,
-    )} to ${path.relative(projectRoot, outputDir)} (${formatBytes(
-      totalBytes,
-    )} total).`,
+      staticSourceDir,
+    )} + ${path.relative(projectRoot, contentSourceDir)} to ${path.relative(
+      projectRoot,
+      outputDir,
+    )} (${formatBytes(totalBytes)} total).`,
   );
 
   console.log("[5/5] Minifying HTML...");

@@ -23,7 +23,6 @@
     "globals": "^17.6.0",
     "html-minifier-terser": "^7.2.0",
     "marked": "^18.0.5",
-    "netlify-cli": "^26.1.0",
     "serve": "^14.2.6",
     "vitest": "^4.1.9",
     "zod": "^4.4.3"
