@@ -93,6 +93,26 @@
           "target": "_blank"
         }
       ]
+    },
+    {
+      "title": "utilities",
+      "desc": "Useful tools and resources for students.",
+      "items": [
+        {
+          "title": "席替え用ランダム抽選ツール",
+          "link": "/miscellaneous/sekiage/",
+          "titleEN": "Seat Change Random Selection Tool",
+          "description": "席替え用のランダム抽選ツールです。",
+          "icon": "bi-shuffle"
+        },
+        {
+          "title": "共通テスト地歴公民ルーレット",
+          "link": "/miscellaneous/dnc-roulette/",
+          "titleEN": "DNC Social Studies Roulette",
+          "description": "共通テスト地歴公民科目の決定に悩んでいる理系の方のためのルーレットです。",
+          "icon": "bi-dice-3"
+        }
+      ]
     }
   ]
 }
