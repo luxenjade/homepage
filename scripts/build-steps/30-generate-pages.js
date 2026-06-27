@@ -16,7 +16,7 @@ import {
   escapeRegExp,
   isAbsolutePath,
 } from "../utils.js";
-import { injectPwaHeadSnippetIntoDir } from "../lib/build-common.js";
+import { injectBuildSnippetsIntoDir } from "../lib/build-common.js";
 
 export async function run() {
   console.log("[2/5] Generating link-driven pages...");
@@ -57,7 +57,7 @@ export async function run() {
   const quizList = renderQuizPages();
   renderQuizIndex(quizList);
 
-  await injectPwaHeadSnippetIntoDir("dist");
+  await injectBuildSnippetsIntoDir("dist");
 }
 
 // ── Quiz pages ──────────────────────────────────────────

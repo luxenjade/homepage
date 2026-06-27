@@ -1,6 +1,7 @@
 // build-common.js — ビルドパイプライン共通ユーティリティ
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { minify } from "html-minifier-terser";
 import esbuild from "esbuild";
 
@@ -74,6 +75,47 @@ export async function injectPwaHeadSnippetIntoFiles(filePaths) {
 export async function injectPwaHeadSnippetIntoDir(dir) {
   const htmlFiles = (await listFiles(dir)).filter((file) => file.endsWith(".html"));
   return injectPwaHeadSnippetIntoFiles(htmlFiles);
+}
+
+// ── Access-log snippet injection ───────────────────────
+
+const SNIPPET_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "snippet.js");
+
+export function injectAccessLogSnippet(html, snippetSource = "") {
+  if (!html.includes("<body")) return html;
+  if (html.includes("window.hasSentAccessLog")) return html;
+
+  const snippet = snippetSource || "";
+  if (!snippet) {
+    return html;
+  }
+
+  return html.replace(/<\/body>/i, `\n<script>\n${snippet}\n</script>\n</body>`);
+}
+
+export async function injectAccessLogSnippetIntoFiles(filePaths, snippetSource = "") {
+  const source = snippetSource || (await fs.readFile(SNIPPET_PATH, "utf8"));
+
+  for (const file of filePaths) {
+    const input = await fs.readFile(file, "utf8");
+    const output = injectAccessLogSnippet(input, source);
+    if (output !== input) {
+      await fs.writeFile(file, output, "utf8");
+    }
+  }
+
+  return filePaths.length;
+}
+
+export async function injectAccessLogSnippetIntoDir(dir) {
+  const htmlFiles = (await listFiles(dir)).filter((file) => file.endsWith(".html"));
+  return injectAccessLogSnippetIntoFiles(htmlFiles);
+}
+
+export async function injectBuildSnippetsIntoDir(dir) {
+  await injectPwaHeadSnippetIntoDir(dir);
+  await injectAccessLogSnippetIntoDir(dir);
+  return true;
 }
 
 // ── HTML minify ─────────────────────────────────────────
