@@ -16,6 +16,7 @@ import {
   escapeRegExp,
   isAbsolutePath,
 } from "../utils.js";
+import { injectPwaHeadSnippetIntoDir } from "../lib/build-common.js";
 
 export async function run() {
   console.log("[2/5] Generating link-driven pages...");
@@ -55,6 +56,8 @@ export async function run() {
   renderExternalLinks();
   const quizList = renderQuizPages();
   renderQuizIndex(quizList);
+
+  await injectPwaHeadSnippetIntoDir("dist");
 }
 
 // ── Quiz pages ──────────────────────────────────────────
@@ -105,16 +108,16 @@ function renderQuizIndex(quizzes) {
     </div>
     <div class="index-card-grid">
       ${quizzes
-        .map(
-          (q) => `
+      .map(
+        (q) => `
         <a href="/quiz/${escapeHtml(q.slug)}/" class="index-card">
           <i class="bi bi-question-circle index-card__bi-icon" aria-hidden="true"></i>
           <span class="index-card__title">${escapeHtml(q.title)}</span>
           ${q.subtitle ? `<p class="index-card__desc">${escapeHtml(q.subtitle)}</p>` : ""}
         </a>
       `,
-        )
-        .join("")}
+      )
+      .join("")}
     </div>
   `;
 

@@ -35,6 +35,47 @@ export function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// ── PWA head snippet injection ─────────────────────────
+
+const PWA_HEAD_SNIPPET_TAGS = [
+  '<link rel="manifest" href="/manifest.json" />',
+  '<meta name="theme-color" content="#faba40" />',
+  '<meta name="mobile-web-app-capable" content="yes" />',
+  '<meta name="apple-mobile-web-app-status-bar-style" content="default" />',
+  '<meta name="apple-mobile-web-app-title" content="luxenjade" />',
+  '<link rel="icon" type="image/png" href="/images/favicon.png" />',
+  '<link rel="apple-touch-icon" href="/images/favicon.png" />',
+];
+
+export function injectPwaHeadSnippet(html) {
+  if (!html.includes("<head")) return html;
+
+  let output = html;
+  for (const tag of PWA_HEAD_SNIPPET_TAGS) {
+    if (output.includes(tag)) continue;
+    output = output.replace(/<\/head>/i, `    ${tag}\n</head>`);
+  }
+
+  return output;
+}
+
+export async function injectPwaHeadSnippetIntoFiles(filePaths) {
+  for (const file of filePaths) {
+    const input = await fs.readFile(file, "utf8");
+    const output = injectPwaHeadSnippet(input);
+    if (output !== input) {
+      await fs.writeFile(file, output, "utf8");
+    }
+  }
+
+  return filePaths.length;
+}
+
+export async function injectPwaHeadSnippetIntoDir(dir) {
+  const htmlFiles = (await listFiles(dir)).filter((file) => file.endsWith(".html"));
+  return injectPwaHeadSnippetIntoFiles(htmlFiles);
+}
+
 // ── HTML minify ─────────────────────────────────────────
 
 const DEFAULT_HTML_MINIFY_OPTIONS = {
