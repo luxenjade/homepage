@@ -22,8 +22,8 @@ function isPrivate(type: string) {
 /* ── helpers ─────────────────────────────────────────── */
 
 async function doInsert(table: string, body: any) {
-  // Strip password field before inserting into post table
-  const { password, ...rest } = body;
+  // Strip password and type fields before inserting into post table
+  const { password, type, ...rest } = body;
   return insert(table, rest);
 }
 
@@ -80,12 +80,9 @@ async function doUpdateSameTable(slug: string, type: string, body: any) {
   // Update password if private
   if (isPrivate(type) && password !== undefined) {
     // Try to update existing password row
-    const { error: pwErr } = await patch(
-      TABLES.DOCS_PASSWORD,
-      "slug",
-      slug,
-      { password },
-    );
+    const { error: pwErr } = await patch(TABLES.DOCS_PASSWORD, "slug", slug, {
+      password,
+    });
     if (pwErr) {
       // Row may not exist, insert instead
       await insert(TABLES.DOCS_PASSWORD, { slug, password });
