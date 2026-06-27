@@ -128,21 +128,38 @@
         text-transform: none;
         cursor: pointer;
       }
-      .editor-wrap {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+      .editor-toggle {
+        display: flex;
+        gap: 8px;
         margin-bottom: 16px;
       }
-      @media (max-width: 768px) {
-        .editor-wrap {
-          grid-template-columns: 1fr;
-        }
+      .tab-btn {
+        padding: 10px 16px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.15s ease;
+      }
+      .tab-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .editor-wrap {
+        display: block;
+        gap: 16px;
+        margin-bottom: 16px;
       }
       .editor-box {
         display: flex;
         flex-direction: column;
         gap: 6px;
+      }
+      .editor-box.hidden {
+        display: none !important;
       }
       .editor-box label {
         font-size: 0.8rem;
@@ -267,7 +284,12 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="p-slug">Slug</label>
-            <input type="text" id="p-slug" placeholder="my-post-slug" required />
+            <input
+              type="text"
+              id="p-slug"
+              placeholder="my-post-slug"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="p-title">Title</label>
@@ -304,24 +326,64 @@
           </div>
           <div class="form-group full hidden" id="pw-group">
             <label for="p-password">Password</label>
-            <input type="text" id="p-password" placeholder="password" autocomplete="off" />
+            <input
+              type="text"
+              id="p-password"
+              placeholder="password"
+              autocomplete="off"
+            />
           </div>
           <div class="form-group full" id="desc-group">
             <label for="p-description">Description (public)</label>
-            <input type="text" id="p-description" placeholder="Short description for card" />
+            <input
+              type="text"
+              id="p-description"
+              placeholder="Short description for card"
+            />
           </div>
           <div class="form-group full hidden" id="excerpt-group">
             <label for="p-excerpt">Excerpt (private)</label>
-            <input type="text" id="p-excerpt" placeholder="Short excerpt for protected card" />
+            <input
+              type="text"
+              id="p-excerpt"
+              placeholder="Short excerpt for protected card"
+            />
           </div>
         </div>
 
+        <div
+          class="editor-toggle"
+          role="tablist"
+          aria-label="Editor view toggle"
+        >
+          <button
+            type="button"
+            class="tab-btn active"
+            data-view="editor"
+            role="tab"
+            aria-selected="true"
+          >
+            Markdown
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            data-view="preview"
+            role="tab"
+            aria-selected="false"
+          >
+            Preview
+          </button>
+        </div>
         <div class="editor-wrap">
-          <div class="editor-box">
+          <div class="editor-box editor-panel" data-view="editor">
             <label for="content-editor">Markdown Content</label>
-            <textarea id="content-editor" placeholder="# Hello World\n\nWrite your post here..."></textarea>
+            <textarea
+              id="content-editor"
+              placeholder="# Hello World\n\nWrite your post here..."
+            ></textarea>
           </div>
-          <div class="editor-box">
+          <div class="editor-box preview-panel hidden" data-view="preview">
             <label>Preview</label>
             <div id="preview-panel">
               <p style="color: var(--sub)">Preview will appear here...</p>

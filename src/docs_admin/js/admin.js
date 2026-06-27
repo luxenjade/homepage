@@ -164,6 +164,9 @@ function initEditor() {
   const excerptGroup = document.getElementById("excerpt-group");
   const editor = document.getElementById("content-editor");
   const preview = document.getElementById("preview-panel");
+  const viewButtons = document.querySelectorAll(".tab-btn");
+  const editorPanel = document.querySelector(".editor-panel");
+  const previewPanel = document.querySelector(".preview-panel");
   const saveBtn = document.getElementById("save-btn");
   const saveMsg = document.getElementById("save-msg");
 
@@ -188,6 +191,25 @@ function initEditor() {
       ? marked.parse(md, { mangle: false, headerIds: false })
       : '<p style="color: var(--sub)">Preview will appear here...</p>';
   }
+
+  function setEditorView(view) {
+    const isPreview = view === "preview";
+    editorPanel.classList.toggle("hidden", isPreview);
+    previewPanel.classList.toggle("hidden", !isPreview);
+    viewButtons.forEach((button) => {
+      const buttonView = button.dataset.view;
+      const active = buttonView === view;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    if (isPreview) renderPreview();
+  }
+
+  viewButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setEditorView(button.dataset.view);
+    });
+  });
 
   editor.addEventListener("input", () => {
     clearTimeout(window._previewTimer);
@@ -251,7 +273,7 @@ function initEditor() {
   });
 
   updateTypeUI();
-  renderPreview();
+  setEditorView("editor");
 }
 
 async function loadPostForEdit(slug, type) {
@@ -289,9 +311,9 @@ function buildPayload() {
   const tagsRaw = document.getElementById("p-tags").value.trim();
   const tags = tagsRaw
     ? tagsRaw
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean)
     : [];
 
   const payload = {
