@@ -3,7 +3,7 @@
 // NOTE: This file is intentionally placed OUTSIDE netlify/edge-functions/
 // to avoid being bundled as an Edge Function by Netlify.
 
-const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
+export const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
 const SUPABASE_KEY = Netlify.env.get("SUPABASE_SECRET_KEY");
 export const TABLES = {
   DOCS_PUBLIC: "posts_public",
@@ -103,7 +103,9 @@ export function errorResponse(message: string, status = 500): Response {
 
 /* ── Auth helpers ──────────────────────────────────────── */
 
-export async function verifyAuth(request: Request): Promise<{ user: any; error: Response | null }> {
+export async function verifyAuth(
+  request: Request,
+): Promise<{ user: any; error: Response | null }> {
   const authHeader = request.headers.get("Authorization") || "";
   const jwt = authHeader.replace(/^Bearer\s+/i, "");
 
@@ -145,7 +147,8 @@ export async function insert(
   });
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
-  if (!response.ok) return { data: null, error: data || { message: response.statusText } };
+  if (!response.ok)
+    return { data: null, error: data || { message: response.statusText } };
   return { data, error: null };
 }
 
@@ -169,7 +172,8 @@ export async function update(
   });
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
-  if (!response.ok) return { data: null, error: data || { message: response.statusText } };
+  if (!response.ok)
+    return { data: null, error: data || { message: response.statusText } };
   return { data, error: null };
 }
 

@@ -7,7 +7,7 @@
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
 // ============================================================
 
-const CACHE_VERSION = "v6";
+const CACHE_VERSION = "__BUILD_VERSION__";
 const SHELL_CACHE = `luxenjade-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `luxenjade-runtime-${CACHE_VERSION}`;
 

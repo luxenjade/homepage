@@ -45,7 +45,6 @@ Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 
 - `src/timeline/admin/wh-admin-legacy.html` is still kept as a legacy admin page.
 - `archives/` stores retired scripts/assets that are no longer part of the active runtime.
-- Old `netlify/functions/` implementations coexist with the Edge Function rewrites; cleanup is tracked in `edge-function-migration-plan.md`.
 
 ---
 

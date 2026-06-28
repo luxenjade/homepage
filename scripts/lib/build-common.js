@@ -204,9 +204,56 @@ export async function minifyAssetsInDir(dir) {
   return minifyAssets(assetFiles);
 }
 
+// ── Service Worker バージョン置換 ──────────────────────
+
+/**
+ * Replace the `__BUILD_VERSION__` placeholder in `service-worker.js` with a
+ * build-time stamp so cache names invalidate automatically on each build.
+ *
+ * Default stamp format: `v<unix-ms-base36>`. Pass `version` to override.
+ */
+export async function injectServiceWorkerVersion({
+  filePath = "dist/service-worker.js",
+  version,
+} = {}) {
+  if (!(await pathExists(filePath))) return null;
+
+  const stamp =
+    version ||
+    `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+  const source = await fs.readFile(filePath, "utf8");
+  if (!source.includes("__BUILD_VERSION__")) return null;
+
+  const output = source.replace(/__BUILD_VERSION__/g, stamp);
+  await fs.writeFile(filePath, output, "utf8");
+  return stamp;
+}
+
 // ── ディレクトリ同期（clean & copy）────────────────────
 
-export async function cleanAndCopy(source, destination) {
+/**
+ * Copy `source` to `destination`. Optionally skip entries listed in
+ * `options.exclude` (matched against entry names, anywhere in the tree).
+ *
+ * Implementation: enumerate the source tree and `fs.cp` each kept entry.
+ * Skipped subtrees are never traversed or copied, which avoids the
+ * "copy then delete" anti-pattern used by older builds.
+ */
+export async function cleanAndCopy(source, destination, options = {}) {
+  const exclude = new Set(options.exclude || []);
+
   await fs.rm(destination, { recursive: true, force: true });
-  await fs.cp(source, destination, { recursive: true });
+  await fs.mkdir(destination, { recursive: true });
+
+  const entries = await fs.readdir(source, { withFileTypes: true });
+  await Promise.all(
+    entries
+      .filter((entry) => !exclude.has(entry.name))
+      .map((entry) =>
+        fs.cp(path.join(source, entry.name), path.join(destination, entry.name), {
+          recursive: true,
+        }),
+      ),
+  );
 }

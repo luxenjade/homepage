@@ -4,7 +4,9 @@
 
 `docs/` セクションの記事読み込み（一覧・詳細・保護記事）を、**Netlify Functions（Node.js Serverless）** から **Netlify Edge Functions（Deno）** に移行する。
 
-現在のリポジトリには、Edge Function 実装が既に存在しています。残る作業は旧 `netlify/functions/` のクリーンアップと動作確認です。
+リポジトリには Edge Function 実装のみが残っており、旧 `netlify/functions/` のクリーンアップも完了済み。本ドキュメントは移行完了の記録として残している。
+
+## 移行の理由
 
 ## 移行の理由
 
@@ -17,15 +19,15 @@
 
 ### 実装済みのEdge Functions
 
-| ファイル                                    | パス                                        | 役割                                   |
-| ------------------------------------------- | ------------------------------------------- | -------------------------------------- |
-| `netlify/edge-functions/posts.ts`           | `/api/posts`                                | 公開記事一覧取得                       |
-| `netlify/edge-functions/post.ts`            | `/api/post?slug=xxx`                        | 単一公開記事取得                       |
-| `netlify/edge-functions/protected-posts.ts` | `/api/protected-posts`                      | 保護記事一覧取得                       |
-| `netlify/edge-functions/protected-post.ts`  | `/api/protected-post?slug=xxx&password=xxx` | 保護記事取得+パスワード認証            |
-| `netlify/edge-functions/sw.js`              | `/api/sw`                                   | アクセスログ（Supabaseに直接書き込み） |
-| `netlify/edge-functions/admin-posts.ts`     | `/api/admin/posts`                          | 管理画面向け全記事取得                 |
-| `netlify/edge-functions/admin-post.ts`      | `/api/admin/post`                           | 管理画面向け作成・更新・削除           |
+| ファイル                                    | パス                                        | 役割                                                    |
+| ------------------------------------------- | ------------------------------------------- | ------------------------------------------------------- |
+| `netlify/edge-functions/posts.ts`           | `/api/posts`                                | 公開記事一覧取得                                        |
+| `netlify/edge-functions/post.ts`            | `/api/post?slug=xxx`                        | 単一公開記事取得                                        |
+| `netlify/edge-functions/protected-posts.ts` | `/api/protected-posts`                      | 保護記事一覧取得                                        |
+| `netlify/edge-functions/protected-post.ts`  | `/api/protected-post?slug=xxx&password=xxx` | 保護記事取得+パスワード認証                             |
+| `netlify/edge-functions/sw.ts`              | `/api/sw`                                   | アクセスログ（service role key で Supabase に書き込み） |
+| `netlify/edge-functions/admin-posts.ts`     | `/api/admin/posts`                          | 管理画面向け全記事取得                                  |
+| `netlify/edge-functions/admin-post.ts`      | `/api/admin/post`                           | 管理画面向け作成・更新・削除                            |
 
 ### 共有ライブラリ
 
@@ -35,18 +37,9 @@
 
 `netlify/lib/supabase.ts` は `netlify/edge-functions/` の外側に置かれ、Edge Function としてバンドルされないように設計されています。
 
-### 旧 Netlify Functions も残存
+### 旧 Netlify Functions
 
-| ファイル                                | 役割                           |
-| --------------------------------------- | ------------------------------ |
-| `netlify/functions/posts.js`            | 旧 `/api/posts` 実装           |
-| `netlify/functions/post.js`             | 旧 `/api/post` 実装            |
-| `netlify/functions/protected-posts.js`  | 旧 `/api/protected-posts` 実装 |
-| `netlify/functions/protected-post.js`   | 旧 `/api/protected-post` 実装  |
-| `netlify/functions/_lib/config.js`      | 旧 Supabase 設定               |
-| `netlify/functions/_lib/cors.js`        | 旧 CORS ヘッダー               |
-| `netlify/functions/_lib/frontmatter.js` | 未使用                         |
-| `netlify/functions/package.json`        | CommonJS 指定                  |
+✅ **削除済み（2026-06-28）**。`netlify/functions/` 配下の全ファイル（旧 `.js` 実装・`_lib/*`・`package.json`）を削除し、Edge Function に統一した。
 
 ### フロントエンド（変更不要）
 
@@ -171,7 +164,7 @@ const CORS_HEADERS = {
 | `@supabase/supabase-js` を Edge Functions で使わない | 既存の fetch ベース PostgREST ラッパーを使う               |
 | 環境変数が未設定                                     | `Netlify.env.get()` を使用し、Netlify ダッシュボードを確認 |
 | CORS エラー                                          | 共有 `CORS_HEADERS` と `OPTIONS` ハンドラーで対応          |
-| 旧 Node.js Functions の重複                          | 旧 `netlify/functions/` を削除して冗長性を解消             |
+| 旧 Node.js Functions の重複                          | ✅ 旧 `netlify/functions/` を削除済み                      |
 
 ## 実装後のファイル構成
 
@@ -179,26 +172,26 @@ const CORS_HEADERS = {
 netlify/
 ├── lib/
 │   └── supabase.ts          ← 共有ライブラリ。edge-functions 外部に配置
-├── edge-functions/
-│   ├── posts.ts             ← `/api/posts`
-│   ├── post.ts              ← `/api/post`
-│   ├── protected-posts.ts   ← `/api/protected-posts`
-│   ├── protected-post.ts    ← `/api/protected-post`
-│   ├── sw.ts                ← `/api/sw`
-│   ├── admin-posts.ts       ← `/api/admin/posts`
-│   └── admin-post.ts        ← `/api/admin/post`
-└── functions/               ← 旧実装。削除対象
+└── edge-functions/
+    ├── posts.ts             ← `/api/posts`
+    ├── post.ts              ← `/api/post`
+    ├── protected-posts.ts   ← `/api/protected-posts`
+    ├── protected-post.ts    ← `/api/protected-post`
+    ├── sw.ts                ← `/api/sw` (service role key 使用)
+    ├── admin-posts.ts       ← `/api/admin/posts`
+    └── admin-post.ts        ← `/api/admin/post`
 ```
 
-## タイムライン
+## ステータス
 
-| フェーズ | 作業                           | 見積時間    |
-| -------- | ------------------------------ | ----------- |
-| Phase 1  | 現状確認と実装差分レビュー     | 15分        |
-| Phase 2  | 旧 `netlify/functions/` の削除 | 10分        |
-| Phase 3  | ローカルテスト                 | 15分        |
-| Phase 4  | デプロイ検証                   | 20分        |
-| **合計** |                                | **約1時間** |
+| フェーズ | 内容                                | 状態        |
+| -------- | ----------------------------------- | ----------- |
+| Phase 1  | Edge Functions 実装・共有 lib 整備  | ✅ 完了     |
+| Phase 2  | 旧 `netlify/functions/` の削除      | ✅ 完了     |
+| Phase 3  | `/api/sw` の service role 移行      | ✅ 完了     |
+| Phase 4  | Service Worker キャッシュの自動更新 | ✅ 完了     |
+| Phase 5  | ローカルテスト・本番デプロイ検証    | ⏳ 継続     |
+| **合計** |                                     | **約1時間** |
 
 ## 次のアクション
 
