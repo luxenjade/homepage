@@ -13,7 +13,7 @@
     "validate:data": "node scripts/validate-data.mjs",
     "test": "vitest run",
     "tree": "node scripts/tree.mjs",
-    "build": "pnpm validate:data && node scripts/build.js",
+    "build": "pnpm validate:data && node --env-file=.env scripts/build.js",
     "dev": "serve dist"
   },
   "devDependencies": {

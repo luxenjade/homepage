@@ -29,7 +29,8 @@ Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 - **Pre-rendered Top Page**: Content links are directly inserted into `index.html` at build time for better search engine discovery.
 - **Data Validation**: All JSON configs in `inner_links/` and `external_links/` are strictly validated using Zod schemas before building (`scripts/validate-data.mjs` + `scripts/schemas.js`).
 - **Refactored Configuration**: Build-time constants (site URL, category slugs, etc.) are centralized in `scripts/config.js` for better maintainability.
-- **Step-based Build Pipeline**: `scripts/build.js` orchestrates discrete steps under `scripts/build-steps/` (`10-clean-copy`, `20-sub-projects`, `25-nav-config`, `30-generate-pages`, `40-minify-assets`, `50-minify-html`), with shared helpers in `scripts/lib/`.
+- **Step-based Build Pipeline**: `scripts/build.js` orchestrates discrete steps under `scripts/build-steps/` (`10-clean-copy`, `20-sub-projects`, `25-nav-config`, `30-generate-pages`, `40-minify-assets`, `55-generate-cache-manifest`, `50-minify-html`, `60-sw-version`), with shared helpers in `scripts/lib/`.
+- **Auto-generated SW Precache Manifest**: `55-generate-cache-manifest.js` walks `dist/` after minify, collects all cacheable HTML/CSS/JS/images/fonts into `dist/cache-manifest.js`, and inlines the URL list into `dist/service-worker.js`. New assets are picked up automatically — no manual SW editing required.
 - **Learning Box Pipeline**: A separate generator under `scripts/learning-box/` (`build.mjs` + `generate-pages.mjs`) produces flashcards / notes / subject-color pages from `learning-box-source/` into `dist/learning-box/`, reusing the same `scripts/lib/build-common.js` utilities as the main site.
 - **Netlify Edge Functions**: `docs` listing / detail, protected docs, the docs admin, and the access-log service worker are implemented as Deno-based Edge Functions under `netlify/edge-functions/` and share `netlify/lib/supabase.ts`.
 - **Modern Tooling**:
@@ -96,7 +97,29 @@ Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 - `archives/` — archived scripts/assets kept for reference.
 - `archives/lbox-samples/` — archived learning-box sample apps.
 - `archives/pdf/`, `archives/docs-components.html`, `archives/timeline/` — historical artifacts.
-- `edge-function-migration-plan.md` — ongoing migration notes from `netlify/functions/` to Edge Functions.
+- `edge-function-migration-plan.md` — completed migration notes from `netlify/functions/` to Edge Functions.
+
+---
+
+## Environment Variables
+
+Build-time configuration is sourced from `.env` (gitignored) and validated by `scripts/config.js`.
+
+| Variable                   | Required               | Purpose                                                                                                                   |
+| -------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_URL`             | ✅                     | Project URL injected into `dist/js/supabase_config.js`                                                                    |
+| `SUPABASE_PUBLISHABLE_KEY` | ✅                     | Browser publishable key (`sb_publishable_*`) injected into `dist/js/supabase_config.js`                                   |
+| `SUPABASE_SECRET_KEY`      | ⚠️ Edge Functions only | Service-role key read inside `netlify/lib/supabase.ts` via `Netlify.env.get()` (NOT in `.env` — set in Netlify dashboard) |
+
+Setup:
+
+```bash
+cp .env.example .env
+# edit .env with real values
+pnpm run build
+```
+
+Build fails fast with a clear error if either required variable is missing.
 
 ---
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import {
@@ -7,6 +7,9 @@ import {
   injectPwaHeadSnippetIntoFiles,
   injectAccessLogSnippet,
   injectAccessLogSnippetIntoFiles,
+  collectPrecacheEntries,
+  writePrecacheManifest,
+  injectShellAssetsList,
 } from "./build-common.js";
 
 describe("build-common", () => {
@@ -52,5 +55,100 @@ describe("build-common", () => {
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
+  });
+
+  describe("precache manifest", () => {
+    async function setupFixture() {
+      const tempDir = await mkdtemp(path.join(tmpdir(), "precache-"));
+      await mkdir(path.join(tempDir, "css"), { recursive: true });
+      await mkdir(path.join(tempDir, "images"), { recursive: true });
+      await mkdir(path.join(tempDir, "api"), { recursive: true });
+
+      await writeFile(path.join(tempDir, "index.html"), "<html></html>");
+      await writeFile(path.join(tempDir, "manifest.json"), "{}");
+      await writeFile(path.join(tempDir, "css", "base.css"), "body{}");
+      await writeFile(path.join(tempDir, "images", "favicon.png"), "png");
+      await writeFile(
+        path.join(tempDir, "api", "posts.js"),
+        "should-be-skipped",
+      );
+      await writeFile(path.join(tempDir, "notes.txt"), "not precacheable");
+
+      return tempDir;
+    }
+
+    it("collects cacheable assets from a dist tree and skips api/ and unknown extensions", async () => {
+      const tempDir = await setupFixture();
+      try {
+        const urls = await collectPrecacheEntries(tempDir);
+
+        // Required roots
+        expect(urls).toContain("/");
+        expect(urls).toContain("/index.html");
+        expect(urls).toContain("/manifest.json");
+        // Walked assets
+        expect(urls).toContain("/css/base.css");
+        expect(urls).toContain("/images/favicon.png");
+        // Skipped
+        expect(urls).not.toContain("/api/posts.js");
+        expect(urls).not.toContain("/notes.txt");
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it("writes a cache-manifest.js exporting PRECACHE_URLS", async () => {
+      const tempDir = await setupFixture();
+      const outputPath = path.join(tempDir, "cache-manifest.js");
+      try {
+        const urls = await writePrecacheManifest({
+          distDir: tempDir,
+          outputPath,
+        });
+        const content = await readFile(outputPath, "utf8");
+
+        expect(content).toContain("AUTO-GENERATED");
+        expect(content).toMatch(/export const PRECACHE_URLS =/);
+        expect(urls.length).toBeGreaterThan(0);
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it("injects SHELL_ASSETS placeholder into the service worker source", async () => {
+      const tempDir = await mkdtemp(path.join(tmpdir(), "sw-inject-"));
+      const swPath = path.join(tempDir, "service-worker.js");
+      try {
+        await writeFile(
+          swPath,
+          'const SHELL_ASSETS = __SHELL_ASSETS__;\nself.addEventListener("install", () => {});',
+        );
+
+        const ok = await injectShellAssetsList({
+          swPath,
+          urls: ["/", "/index.html", "/css/base.css"],
+        });
+        const content = await readFile(swPath, "utf8");
+
+        expect(ok).toBe(true);
+        expect(content).not.toContain("__SHELL_ASSETS__");
+        expect(content).toContain('"/"');
+        expect(content).toContain('"/css/base.css"');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it("returns false when the placeholder is missing", async () => {
+      const tempDir = await mkdtemp(path.join(tmpdir(), "sw-inject-"));
+      const swPath = path.join(tempDir, "service-worker.js");
+      try {
+        await writeFile(swPath, "const SHELL_ASSETS = ['/'];");
+        const ok = await injectShellAssetsList({ swPath, urls: ["/"] });
+        expect(ok).toBe(false);
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
   });
 });

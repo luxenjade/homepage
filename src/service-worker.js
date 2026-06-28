@@ -2,9 +2,21 @@
 // service-worker.js
 // App Shell キャッシュ戦略
 //
-// - SHELL_ASSETS: 静的アセット → Cache First（即時表示）
-// - Supabase / Raindrop API → Network Only（キャッシュしない）
+// - PRECACHE_URLS: ビルド時に dist/ から自動収集された静的アセット
+//   → Cache First（即時表示）
+// - Supabase / Netlify Functions → Network Only（キャッシュしない）
 // - その他すべて → Network First（通常はネット、失敗時はキャッシュ）
+//
+// ビルドフロー:
+//   1. scripts/build-steps/55-generate-cache-manifest.js が dist/ を走査して
+//      dist/cache-manifest.js を生成する (PRECACHE_URLS を export)
+//   2. 同ステップが dist/service-worker.js の __SHELL_ASSETS__ プレースホルダを
+//      PRECACHE_URLS の JSON リテラルに置換する
+//   3. scripts/build-steps/60-sw-version.js が __BUILD_VERSION__ を
+//      ビルドスタンプに置換する
+//
+// ランタイムでは本 SW 内に SHELL_ASSETS がインライン展開されるため、
+// 追加 fetch は発生しない（重要: SW は外部リソースを import できない）。
 // ============================================================
 
 const CACHE_VERSION = "__BUILD_VERSION__";
@@ -12,35 +24,9 @@ const SHELL_CACHE = `luxenjade-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `luxenjade-runtime-${CACHE_VERSION}`;
 
 // ── App Shell: Cache First で返す静的アセット ──────────────────
-const SHELL_ASSETS = [
-  "/",
-  "/index.html",
-  "/history/",
-  "/geography/",
-  "/seikei/",
-  "/miscellaneous/",
-  "/links/",
-  "/projects/",
-  "/quiz/capitals/",
-  "/quiz/wh-year-to-event/",
-  "/quiz/wh-event-to-year/",
-  "/quiz/china-era/",
-  "/quiz/seikei/",
-  "/quiz/jodoushi-typing/",
-  "/quiz/jodoushi-table/",
-  "/quiz/idiom/",
-  "/quiz/hex/",
-  "/css/base.css",
-  "/js/icons.js",
-  "/js/nav.js",
-  "/js/theme-toggle.js",
-  "/js/wh-utils.js",
-  "/images/favicon.ico",
-  "/images/favicon.png",
-  "/manifest.json",
-  "/docs/",
-  "/learning-box/"
-];
+// ビルド時に dist/cache-manifest.js の PRECACHE_URLS から自動注入される。
+// 新しい画像/CSS/JS を追加しても手動でここを編集する必要はない。
+const SHELL_ASSETS = __SHELL_ASSETS__;
 
 // ── キャッシュしないドメイン ───────────────────────────────────
 const BYPASS_ORIGINS = [

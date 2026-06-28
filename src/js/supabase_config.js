@@ -1,12 +1,15 @@
 // ============================================================
 // js/supabase_config.js
 // Supabase 共通設定 (CDN version)
+//
+// SUPABASE_URL / SUPABASE_KEY はビルド時に scripts/build-steps/ から
+// .env (scripts/config.js) から注入される。ソースに直接キーは書かない。
 // ============================================================
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/+esm";
 
-const SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
-const SUPABASE_KEY = "sb_publishable_E056pt4Dp5w3nTBEkYpRSA_scTTtrfa";
+const SUPABASE_URL = "__SUPABASE_URL__";
+const SUPABASE_KEY = "__SUPABASE_PUBLISHABLE_KEY__";
 
 // ── テーブル名定数 ───────────────────────────────────────────
 export const tables = {
