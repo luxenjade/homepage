@@ -39,9 +39,10 @@ export const SITEMAP_CATEGORIES = [
 //
 // ⚠️ Edge Functions 側で必要な service role key は
 // `netlify/lib/supabase.ts` で `Netlify.env.get("SUPABASE_SECRET_KEY")` を
-// 介して取得する。SUPABASE_SECRET_KEY はこのファイルから一切 export しない。
-// さらに process.env に存在したらビルドを停止する安全装置を入れて、
-// クライアント bundle への混入を防ぐ。
+// 介して取得する。このファイルから export することは一切ない。
+// 漏洩防止は出力ファイルに対する混入チェック (scripts/build-steps/65-*.js) で
+// 行う。 process.env の値そのものはここでは検査しない。
+// (Netlify はビルド環境と Edge Functions 環境で同じ env を共有するため)
 
 const DEFAULT_SUPABASE_URL = "https://tasapyurqvkviblnaymt.supabase.co";
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
@@ -53,20 +54,6 @@ function readEnv(name, aliases = []) {
     if (value && value.trim()) return value.trim();
   }
   return undefined;
-}
-
-// ── 重要: SUPABASE_SECRET_KEY が process.env にある時点で失敗 ──
-//
-// service role key は絶対にブラウザ bundle に含めてはいけない。
-// クライアント用 config.js がこれを import する経路があるため、
-// ここに設定があればビルドを即停止する。
-if (process.env.SUPABASE_SECRET_KEY) {
-  throw new Error(
-    "SUPABASE_SECRET_KEY is set in the build environment. " +
-    "This is the Supabase SERVICE ROLE key and must NEVER reach the " +
-    "client bundle. Remove it from .env / Netlify build env vars and " +
-    "configure it only inside Netlify Edge Functions environment.",
-  );
 }
 
 export const SUPABASE_URL =

@@ -10,15 +10,17 @@ import { run as stepMinifyAssets } from "./build-steps/40-minify-assets.js";
 import { run as stepCacheManifest } from "./build-steps/55-generate-cache-manifest.js";
 import { run as stepMinifyHtml } from "./build-steps/50-minify-html.js";
 import { run as stepSwVersion } from "./build-steps/60-sw-version.js";
+import { run as stepVerifyNoLeak } from "./build-steps/65-verify-no-secret-leak.js";
 
 await stepCleanCopy();
-await stepInjectSupabase(); // ← src/.env の値を dist/js/supabase_config.js に注入
+await stepInjectSupabase();
 await stepSubProjects();
 await stepNavConfig();
 await stepGeneratePages();
 await stepMinifyAssets();
-await stepCacheManifest(); // ← SW にプリキャッシュ配列を注入。HTML minify より前
+await stepCacheManifest();
 await stepMinifyHtml();
-await stepSwVersion(); // ← 最後に SW キャッシュ名バージョンを確定
+await stepSwVersion();
+await stepVerifyNoLeak(); // ← クライアント bundle に service role key が混入していないか最終チェック
 
 console.log("\nBuild complete.");
