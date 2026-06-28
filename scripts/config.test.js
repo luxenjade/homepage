@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 
 const URL_KEYS = ["SUPABASE_URL"];
 const KEY_KEYS = ["SUPABASE_PUBLISHABLE_KEY", "SUPABASE_PB_KEY"];
+const SECRET_KEYS = ["SUPABASE_SECRET_KEY"];
 
 function snapshot(keys) {
   const out = {};
@@ -16,29 +17,30 @@ function restore(keys, snap) {
   }
 }
 
-// Ensure both required vars exist before the module is loaded anywhere.
-const originalSnapshot = snapshot([...URL_KEYS, ...KEY_KEYS]);
-process.env.SUPABASE_URL ??= "https://test.supabase.co";
-process.env.SUPABASE_PUBLISHABLE_KEY ??= "sb_publishable_test_key";
-
 async function loadConfig() {
+  // Force a fresh import so process.env changes are reflected.
   const url = `./config.js?cb=${Date.now()}-${Math.random()}`;
   return import(url);
 }
 
+const originalSnapshot = snapshot([...URL_KEYS, ...KEY_KEYS, ...SECRET_KEYS]);
+
 describe("scripts/config.js", () => {
   let urlSnap;
   let keySnap;
+  let secretSnap;
 
   beforeAll(() => {
     urlSnap = snapshot(URL_KEYS);
     keySnap = snapshot(KEY_KEYS);
+    secretSnap = snapshot(SECRET_KEYS);
   });
 
   afterAll(() => {
     restore(URL_KEYS, urlSnap);
     restore(KEY_KEYS, keySnap);
-    restore([...URL_KEYS, ...KEY_KEYS], originalSnapshot);
+    restore(SECRET_KEYS, secretSnap);
+    restore([...URL_KEYS, ...KEY_KEYS, ...SECRET_KEYS], originalSnapshot);
   });
 
   it("uses the default Supabase URL when SUPABASE_URL is not set", async () => {
@@ -68,4 +70,19 @@ describe("scripts/config.js", () => {
     const mod = await loadConfig();
     expect(mod.SUPABASE_PUBLISHABLE_KEY).toBe("sb_publishable_new");
   });
+
+  it("uses the production publishable key when no env override is set", async () => {
+    delete process.env.SUPABASE_PUBLISHABLE_KEY;
+    delete process.env.SUPABASE_PB_KEY;
+    const mod = await loadConfig();
+    expect(mod.SUPABASE_PUBLISHABLE_KEY).toBe(
+      "sb_publishable_E056pt4Dp5w3nTBEkYpRSA_scTTtrfa",
+    );
+  });
+
+  it("aborts loading when SUPABASE_SECRET_KEY leaks into the build environment", async () => {
+    process.env.SUPABASE_SECRET_KEY = "sb_secret_should_never_appear_here";
+    await expect(loadConfig()).rejects.toThrow(/SUPABASE_SECRET_KEY/);
+  });
 });
+

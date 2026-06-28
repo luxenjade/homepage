@@ -105,21 +105,28 @@ Production: [luxenjade.netlify.app](https://luxenjade.netlify.app)
 
 Build-time configuration is sourced from `.env` (gitignored) and validated by `scripts/config.js`.
 
-| Variable                   | Required               | Purpose                                                                                                                   |
-| -------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `SUPABASE_URL`             | ✅                     | Project URL injected into `dist/js/supabase_config.js`                                                                    |
-| `SUPABASE_PUBLISHABLE_KEY` | ✅                     | Browser publishable key (`sb_publishable_*`) injected into `dist/js/supabase_config.js`                                   |
-| `SUPABASE_SECRET_KEY`      | ⚠️ Edge Functions only | Service-role key read inside `netlify/lib/supabase.ts` via `Netlify.env.get()` (NOT in `.env` — set in Netlify dashboard) |
+| Variable                   | Required               | Purpose                                                                                                                                                                                                                                     |
+| -------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Variable                   | Required               | Purpose                                                                                                                                                                                                                                     |
+| ---                        | ---                    | ---                                                                                                                                                                                                                                         |
+| `SUPABASE_URL`             | optional               | Project URL. Defaults to the production URL in `scripts/config.js` if unset. Override to point at a different Supabase project.                                                                                                             |
+| `SUPABASE_PUBLISHABLE_KEY` | optional               | Browser publishable key (`sb_publishable_*`). Defaults to the production key in `scripts/config.js`. Override for staging/local-only projects.                                                                                              |
+| `SUPABASE_PB_KEY`          | optional               | Legacy alias for `SUPABASE_PUBLISHABLE_KEY`. Still accepted.                                                                                                                                                                                |
+| `SUPABASE_SECRET_KEY`      | ❌ NEVER at build time | Service-role key. Read inside `netlify/lib/supabase.ts` via `Netlify.env.get()` in Edge Functions only. If this leaks into the **build** environment, the build aborts immediately to prevent it from being inlined into the client bundle. |
 
-Setup:
+Setup locations (in priority order):
 
-```bash
-cp .env.example .env
-# edit .env with real values
-pnpm run build
-```
+1. **Netlify**: Site settings → Environment variables
+2. **CI**: project secret variables
+3. **Local dev shell**:
 
-Build fails fast with a clear error if either required variable is missing.
+   ```bash
+   export SUPABASE_URL=https://your-project.supabase.co
+   export SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
+   pnpm run build
+   ```
+
+`.env` files are intentionally **not used** in this project.
 
 ---
 

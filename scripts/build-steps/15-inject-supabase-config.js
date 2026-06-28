@@ -36,5 +36,7 @@ export async function run() {
   }
 
   await fs.writeFile(TARGET, output, "utf8");
-  console.log("  -> Injected Supabase URL + publishable key from .env.");
+  console.log(
+    "  -> Injected Supabase URL + publishable key from environment (Netlify env / shell / default).",
+  );
 }
