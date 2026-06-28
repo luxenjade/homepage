@@ -140,7 +140,27 @@ function extractQuizConfig(content) {
     backLink: getString("backLink") || "/",
     backLabel: getString("backLabel") || "戻る",
     accentColor: getString("accentColor"),
+    tutorialMd: getString("tutorialMd"),
   };
+}
+
+// `tutorialMd` (e.g. "../quiz/tutorial/idiom.md") を `dist/<slug>/index.html`
+// を起点として解決し、ファイル本文を文字列で返す。見つからなければ null。
+function readTutorialMarkdown(tutorialMd, slug) {
+  if (!tutorialMd || !tutorialMd.endsWith(".md")) return null;
+
+  // 先頭の "./" や "../" を除去して絶対パス風に揃える
+  const cleaned = tutorialMd.replace(/^(\.\/|\.\.\/)+/, "");
+  // project root からの絶対パス（dist/ から遡って src/ を見る）
+  const candidate = path.join("src", cleaned);
+
+  if (!fs.existsSync(candidate)) {
+    console.warn(
+      `  -> tutorialMd not found for /${slug}/: ${candidate} (skipping inline)`,
+    );
+    return null;
+  }
+  return fs.readFileSync(candidate, "utf8");
 }
 
 function renderQuizHtml(template, config, slug) {
@@ -176,6 +196,17 @@ function renderQuizHtml(template, config, slug) {
     "</head>",
     `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />\n</head>`,
   );
+
+  // Inline tutorial markdown at build time so the runtime doesn't need to
+  // fetch("../quiz/tutorial/...md") — eliminates a class of 404s caused by
+  // stale SW / CDN caches or sub-path mis-resolution.
+  const tutorialBody = readTutorialMarkdown(config.tutorialMd, slug);
+  if (tutorialBody) {
+    html = html.replace(
+      '<script src="/quiz/boot.js"></script>',
+      `<script type="text/markdown" id="qz-tutorial-md">${escapeHtml(tutorialBody)}</script>\n    <script src="/quiz/boot.js"></script>`,
+    );
+  }
 
   return html;
 }

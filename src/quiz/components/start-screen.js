@@ -331,21 +331,30 @@
     const content = panel.querySelector(".qz-tutorial-content");
 
     // Markdown 読み込み（marked.js があれば使う）
-    fetch(mdUrl)
-      .then((r) => r.text())
-      .then((md) => {
-        if (!content) return;
-        if (typeof marked !== "undefined") {
-          content.innerHTML = marked.parse(md);
-        } else {
-          // marked がなければ <pre> で表示
-          content.innerHTML = `<pre style="white-space:pre-wrap;font-size:0.85rem;">${_esc(md)}</pre>`;
-        }
-      })
-      .catch(() => {
-        if (content)
-          content.innerHTML = `<p style="color:var(--qz-text-sub)">チュートリアルを読み込めませんでした。</p>`;
-      });
+    // ビルド時にインライン化された #qz-tutorial-md を最優先で使う。
+    // それがない場合のみ従来どおり mdUrl を fetch する（後方互換）。
+    const inline = document.getElementById("qz-tutorial-md");
+    const renderMd = (md) => {
+      if (!content) return;
+      if (typeof marked !== "undefined") {
+        content.innerHTML = marked.parse(md);
+      } else {
+        // marked がなければ <pre> で表示
+        content.innerHTML = `<pre style="white-space:pre-wrap;font-size:0.85rem;">${_esc(md)}</pre>`;
+      }
+    };
+
+    if (inline && inline.textContent) {
+      renderMd(inline.textContent);
+    } else {
+      fetch(mdUrl)
+        .then((r) => r.text())
+        .then(renderMd)
+        .catch(() => {
+          if (content)
+            content.innerHTML = `<p style="color:var(--qz-text-sub)">チュートリアルを読み込めませんでした。</p>`;
+        });
+    }
 
     // 開閉
     function open() {
