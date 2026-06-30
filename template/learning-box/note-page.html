@@ -72,6 +72,47 @@
         align-items: center;
         gap: 1rem;
       }
+
+      /* Unit dropdown trigger (visible on mobile, hidden on desktop) */
+      .unit-dropdown-trigger {
+        display: none;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 6px;
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+      .unit-dropdown-trigger:hover {
+        background: var(--color-bg);
+      }
+      .unit-dropdown-trigger .unit-num {
+        margin: 0;
+        background: transparent;
+        color: var(--color-text-primary);
+        padding: 0;
+        font-size: 0.85rem;
+        letter-spacing: 0;
+      }
+      .unit-dropdown-chevron {
+        transition: transform 0.2s ease;
+      }
+      body.nav-open .unit-dropdown-chevron {
+        transform: rotate(180deg);
+      }
+      @media (max-width: 900px) {
+        .unit-dropdown-trigger {
+          display: inline-flex;
+        }
+      }
     </style>
   </head>
   <body data-subject="{{SUBJECT}}">
@@ -99,17 +140,77 @@
               穴埋め
             </button>
           </div>
+          <button
+            class="unit-dropdown-trigger"
+            id="unitDropdownTrigger"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="unitNav"
+          >
+            <span class="unit-num" id="headerUnitNum">Unit —</span>
+            <svg
+              class="unit-dropdown-chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
           <div class="logo-switches">
             <button id="theme-toggle" title="Toggle Theme">
-              <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-              <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <svg
+                id="moon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path>
+              </svg>
+              <svg
+                id="sun"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
             </button>
           </div>
         </div>
       </div>
+      <nav class="unit-nav" id="unitNav">{{NAV_BUTTONS}}</nav>
     </header>
-
-    <nav class="unit-nav" id="unitNav">{{NAV_BUTTONS}}</nav>
 
     <main class="main" id="main">
       {{UNIT_PANELS}}
@@ -131,12 +232,6 @@
         <p class="quiz-kb-hint">語句をクリックして表示 / 再クリックで隠す</p>
       </div>
     </main>
-
-    <div class="nav-overlay" id="navOverlay"></div>
-    <button class="nav-toggle" id="navToggle" aria-label="ナビを開く">
-      <span class="nav-toggle-icon">☰</span>
-      <span>Units</span>
-    </button>
 
     <div class="toast" id="toast"></div>
 

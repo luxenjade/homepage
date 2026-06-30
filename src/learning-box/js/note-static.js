@@ -41,21 +41,52 @@ function isMobileNav() {
 }
 
 function bindNavControls() {
-  const toggle = document.getElementById("navToggle");
+  const trigger = document.getElementById("unitDropdownTrigger");
   const overlay = document.getElementById("navOverlay");
   const sidebar = document.getElementById("unitNav");
 
-  toggle.addEventListener("click", () =>
-    document.body.classList.toggle("nav-open"),
-  );
-  overlay.addEventListener("click", () =>
-    document.body.classList.remove("nav-open"),
-  );
+  // Backward-compat: if the older floating toggle still exists, wire it up.
+  const legacyToggle = document.getElementById("navToggle");
 
-  sidebar.addEventListener("click", (event) => {
-    if (event.target.closest(".nav-unit-btn") && isMobileNav()) {
-      document.body.classList.remove("nav-open");
+  const setOpen = (open) => {
+    document.body.classList.toggle("nav-open", open);
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", open ? "true" : "false");
     }
+  };
+
+  if (trigger) {
+    trigger.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const willOpen = !document.body.classList.contains("nav-open");
+      setOpen(willOpen);
+    });
+  }
+  if (legacyToggle) {
+    legacyToggle.addEventListener("click", () => {
+      setOpen(!document.body.classList.contains("nav-open"));
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener("click", () => setOpen(false));
+  }
+
+  // Close dropdown when a unit is selected on mobile.
+  if (sidebar) {
+    sidebar.addEventListener("click", (event) => {
+      if (event.target.closest(".nav-unit-btn") && isMobileNav()) {
+        setOpen(false);
+      }
+    });
+  }
+
+  // Click outside the trigger / sidebar closes the dropdown on mobile.
+  document.addEventListener("click", (event) => {
+    if (!isMobileNav()) return;
+    if (!document.body.classList.contains("nav-open")) return;
+    if (trigger && trigger.contains(event.target)) return;
+    if (sidebar && sidebar.contains(event.target)) return;
+    setOpen(false);
   });
 
   // Keep nav-open state consistent with the responsive breakpoint:
@@ -64,7 +95,7 @@ function bindNavControls() {
   // to avoid an inconsistent state on the next resize.
   window.addEventListener("resize", () => {
     if (!isMobileNav()) {
-      document.body.classList.remove("nav-open");
+      setOpen(false);
     }
   });
 }
@@ -84,7 +115,11 @@ function bindKeyboard() {
     }
     if (event.key === "s") switchTab("summary");
     if (event.key === "q") switchTab("quiz");
-    if (event.key === "Escape") document.body.classList.remove("nav-open");
+    if (event.key === "Escape") {
+      document.body.classList.remove("nav-open");
+      const trigger = document.getElementById("unitDropdownTrigger");
+      if (trigger) trigger.setAttribute("aria-expanded", "false");
+    }
   });
 }
 
@@ -108,6 +143,9 @@ function navigateTo(idx, { updateHash = true } = {}) {
 
   const headerSubEl = document.getElementById("headerSub");
   if (headerSubEl) headerSubEl.textContent = `Unit ${unit.num}`;
+
+  const headerUnitNumEl = document.getElementById("headerUnitNum");
+  if (headerUnitNumEl) headerUnitNumEl.textContent = `Unit ${unit.num}`;
 
   const progress = document.getElementById(`unitProgress-${unit.id}`);
   if (progress) {
