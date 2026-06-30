@@ -1,0 +1,35 @@
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: 30px auto;
+}
+
+label {
+  display: block;
+  margin: 5px 0;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.choice {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.choice:hover {
+  background: #f5f5f5;
+}
+
+.correct {
+  background: #c8f7c5;
+}
+
+.wrong {
+  background: #f7c5c5;
+}

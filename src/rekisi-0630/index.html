@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>世界史クイズシステム</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>世界史クイズ</h1>
+
+    <div id="selector">
+      <h2>出題カテゴリ選択</h2>
+
+      <label><input type="checkbox" value="america" /> アメリカ</label>
+      <label><input type="checkbox" value="china_1" /> 中国①</label>
+      <label><input type="checkbox" value="china_2" /> 中国②</label>
+      <label><input type="checkbox" value="china_3" /> 中国③</label>
+      <label><input type="checkbox" value="e_europe" /> 東欧</label>
+      <label><input type="checkbox" value="italy" /> イタリア</label>
+      <label><input type="checkbox" value="japan" /> 日本</label>
+      <label><input type="checkbox" value="treaty" /> 条約</label>
+      <label><input type="checkbox" value="timeline" /> 年代</label>
+
+      <br /><br />
+      <button onclick="startQuiz()">開始</button>
+    </div>
+
+    <div id="quiz" style="display: none">
+      <div class="card">
+        <div id="question"></div>
+        <div id="choices"></div>
+        <div id="feedback"></div>
+        <button onclick="nextQuestion()">次へ</button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
