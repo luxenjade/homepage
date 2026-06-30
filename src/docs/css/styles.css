@@ -146,6 +146,24 @@ body.toc-open .toc {
   margin-bottom: 40px;
 }
 
+/* ================= Markdown body images =================
+   md 内の画像を画面幅(viewport)に合わせて表示する。
+   .article の max-width (720px) を超えて全幅に伸長し、
+   中央寄せにすることで PC でもスマホでも画面幅に合わせる。 */
+#post-body img {
+  display: block;
+  width: 100vw;
+  max-width: 100vw;
+  height: auto;
+  /* 親要素(.article = max-width:720px, padding:0 24px)の
+     中央位置から左右にビューポート半分ずつ広げる */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: 24px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+}
+
 #post-title {
   font-size: 2.2rem;
   line-height: 1.3;
@@ -495,17 +513,28 @@ body:has(.back-link) .toc-toggle {
   }
 
   /* Page breaks */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     page-break-after: avoid;
     break-after: avoid;
   }
 
-  img, figure, .thumbnail, .card {
+  img,
+  figure,
+  .thumbnail,
+  .card {
     page-break-inside: avoid;
     break-inside: avoid;
   }
 
-  pre, code, table, blockquote {
+  pre,
+  code,
+  table,
+  blockquote {
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -541,7 +570,8 @@ body:has(.back-link) .toc-toggle {
     font-size: 0.9rem;
   }
 
-  th, td {
+  th,
+  td {
     border: 1px solid #ccc !important;
   }
 

@@ -32,6 +32,14 @@ function hashToUnitIndex(hash) {
   return UNITS.findIndex((unit) => unit.id === id);
 }
 
+// Must match the @media (max-width: ...) breakpoint in note-style.css
+// where the sidebar is hidden off-screen and the nav-toggle is shown.
+const MOBILE_NAV_BREAKPOINT_PX = 900;
+
+function isMobileNav() {
+  return window.innerWidth <= MOBILE_NAV_BREAKPOINT_PX;
+}
+
 function bindNavControls() {
   const toggle = document.getElementById("navToggle");
   const overlay = document.getElementById("navOverlay");
@@ -45,7 +53,17 @@ function bindNavControls() {
   );
 
   sidebar.addEventListener("click", (event) => {
-    if (event.target.closest(".nav-unit-btn") && window.innerWidth <= 768) {
+    if (event.target.closest(".nav-unit-btn") && isMobileNav()) {
+      document.body.classList.remove("nav-open");
+    }
+  });
+
+  // Keep nav-open state consistent with the responsive breakpoint:
+  // if the viewport grows past the breakpoint while the menu is open,
+  // the sidebar is rendered in its normal position, so reset the class
+  // to avoid an inconsistent state on the next resize.
+  window.addEventListener("resize", () => {
+    if (!isMobileNav()) {
       document.body.classList.remove("nav-open");
     }
   });
