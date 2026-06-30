@@ -182,6 +182,26 @@
         background: var(--bg);
         overflow-y: auto;
       }
+      /* プレビュー内の画像はレスポンシブ:
+         - PC: 親カラム幅に合わせる
+         - スマホ(≤768px): viewport 全幅に伸長 */
+      #preview-panel img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin-top: 24px;
+        margin-bottom: 24px;
+        border-radius: 8px;
+      }
+      @media (max-width: 768px) {
+        #preview-panel img {
+          width: 100vw;
+          max-width: 100vw;
+          margin-left: calc(50% - 50vw);
+          margin-right: calc(50% - 50vw);
+        }
+      }
       .actions-bar {
         display: flex;
         gap: 10px;
