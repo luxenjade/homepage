@@ -23,15 +23,8 @@
   fill: none;
 }
 
-/* 月アイコンは内側を塗りつぶして三日月のくり抜きを表現する。
-   ライト時は var(--text) にして背景の白に黒く見えるようする */
-#moon {
-  fill: var(--text);
-}
-
 body.dark #sun {
   display: block;
-  /* 太陽は内側(stroke + 円)を塗りつぶさない */
 }
 body:not(.dark) #moon {
   display: block;
