@@ -147,18 +147,14 @@ body.toc-open .toc {
 }
 
 /* ================= Markdown body images =================
-   md 内の画像を画面幅(viewport)に合わせて表示する。
-   .article の max-width (720px) を超えて全幅に伸長し、
-   中央寄せにすることで PC でもスマホでも画面幅に合わせる。 */
+   md 内の画像をレスポンシブに表示する。
+   - PC: 記事カラム幅(.article の max-width: 720px)に従う
+   - スマホ(≤768px): 画面幅(viewport)いっぱいまで伸長 */
 #post-body img {
   display: block;
-  width: 100vw;
-  max-width: 100vw;
+  width: 100%;
+  max-width: 100%;
   height: auto;
-  /* 親要素(.article = max-width:720px, padding:0 24px)の
-     中央位置から左右にビューポート半分ずつ広げる */
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
   margin-top: 24px;
   margin-bottom: 24px;
   border-radius: 8px;
@@ -258,6 +254,14 @@ body.toc-open .toc {
 @media (max-width: 768px) {
   .toc {
     width: 85%;
+  }
+
+  /* スマホでは画像を viewport 全幅に伸長して画面端まで広げる */
+  #post-body img {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
 }
 
