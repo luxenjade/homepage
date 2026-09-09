@@ -159,26 +159,28 @@ body.dark .nav-unit-btn.active .nav-label {
 ══════════════════════════════════════ */
 
 .main {
+  margin-left: var(--nav-w);
   padding-top: 2rem;
   padding-bottom: 4rem;
   padding-left: 2.5rem;
   padding-right: 2.5rem;
   max-width: calc(var(--nav-w) + var(--content-max));
+  box-sizing: border-box;
 }
 
-/* PC */
-@media (min-width: 901px) {
-  .main {
-    margin-left: var(--nav-w);
-  }
-}
-
-/* モバイル */
 @media (max-width: 900px) {
   .main {
     margin-left: 0;
-    padding: 1.5rem;
+    width: 100%;
     max-width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 901px) {
+  .main {
+    margin-left: var(--nav-w);
   }
 }
 

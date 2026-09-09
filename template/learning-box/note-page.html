@@ -1,31 +1,38 @@
 <!doctype html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{{TITLE}} | learning box</title>
+    <title>{{TITLE}} | {{SUBJECT}}</title>
+
     <meta name="description" content="{{DESCRIPTION}}" />
 
-    <link rel="icon" href="/images/favicon.ico" />
-
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#faba40" />
+    <link rel="icon" href="../favicon.ico" />
+    <link rel="manifest" href="../manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
 
     <!--
-      フラッシュ防止：
-      CSSが読み込まれる前にテーマを適用
-    -->
+    初期テーマのフラッシュ防止
+  -->
     <script>
-      (function () {
-        const t = localStorage.getItem("pref-theme");
+      (() => {
+        try {
+          const theme = localStorage.getItem("theme");
 
-        if (
-          t === "dark" ||
-          (!t && matchMedia("(prefers-color-scheme: dark)").matches)
-        ) {
-          document.documentElement.classList.add("dark");
+          if (
+            theme === "dark" ||
+            (theme === null &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches)
+          ) {
+            document.documentElement.classList.add("dark");
+            document.body?.classList.add("dark");
+          }
+        } catch (e) {
+          // localStorage が使えない環境では何もしない
         }
       })();
     </script>
@@ -37,52 +44,66 @@
     <link rel="stylesheet" href="../css/note-style.css" />
 
     <style>
-      /* ══════════════════════════════════════
-         DARK MODE
-      ══════════════════════════════════════ */
-
-      html.dark body {
-        background-color: var(--color-bg);
-        color: var(--color-text-primary);
-      }
-
-      /* ══════════════════════════════════════
-         HEADER — COMMON
-      ══════════════════════════════════════ */
+      /* ==================================================
+       HEADER
+       ================================================== */
 
       .app-header {
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
         position: sticky;
         top: 0;
         z-index: 100;
-        box-sizing: border-box;
+        width: 100%;
+        background: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
       }
+
+      /*
+      PC:
+      ┌───────────────────────────────────────────────┐
+      │ 戻る タイトル      まとめ 穴埋め Unit ▼   ☾ │
+      └───────────────────────────────────────────────┘
+
+      Mobile:
+      ┌───────────────────────────────────────────────┐
+      │ 戻る タイトル                              ☾ │
+      ├───────────────────────────────────────────────┤
+      │       まとめ     穴埋め     Unit ▼            │
+      └───────────────────────────────────────────────┘
+    */
 
       .app-header__inner {
-        max-width: var(--container-max);
-        min-height: var(--header-h);
-        margin: 0 auto;
-        padding: 0 var(--container-pad);
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-
+        min-height: 64px;
+        width: 100%;
         box-sizing: border-box;
+
+        display: grid;
+
+        /*
+        左：タイトル
+        中：まとめ/穴埋め
+        右中：Unit
+        右：テーマ
+      */
+        grid-template-columns:
+          minmax(0, 1fr)
+          auto
+          auto
+          auto;
+
+        align-items: center;
+        gap: 0.75rem;
+
+        padding: 0 1.25rem;
       }
 
-      /* ──────────────────────────────────────
-         Left side
-      ────────────────────────────────────── */
+      /* ---------- 左側 ---------- */
 
       .app-header__left {
         min-width: 0;
 
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.75rem;
       }
 
       .app-header__title-group {
@@ -90,259 +111,293 @@
 
         display: flex;
         flex-direction: column;
-
-        line-height: 1.2;
+        justify-content: center;
       }
 
       .app-header__title {
+        display: block;
+
+        min-width: 0;
+
         font-size: 0.95rem;
         font-weight: 700;
+        line-height: 1.3;
+
+        color: var(--color-text-primary);
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .app-header__subject {
-        font-size: 0.75rem;
+        display: block;
+
+        font-size: 0.7rem;
+        line-height: 1.3;
+
         color: var(--color-text-secondary);
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      /* ──────────────────────────────────────
-         Right side
-      ────────────────────────────────────── */
+      /* ---------- 戻るボタン ---------- */
 
-      .app-header__right {
-        display: flex;
+      .back-link {
+        flex-shrink: 0;
+
+        display: inline-flex;
         align-items: center;
-        gap: 1rem;
-        flex-shrink: 0;
+        justify-content: center;
+
+        width: 36px;
+        height: 36px;
+
+        border-radius: 8px;
+
+        color: var(--color-text-primary);
+        text-decoration: none;
+
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
       }
 
-      .logo-switches {
-        flex-shrink: 0;
+      .back-link:hover {
+        background: var(--color-bg);
+        color: var(--color-accent);
       }
 
-      /* ══════════════════════════════════════
-         TABS + UNIT
-      ══════════════════════════════════════ */
+      .back-link__icon {
+        font-size: 1.25rem;
+        line-height: 1;
+      }
 
-      /*
-        PCでは header-tabs は
-        app-header__right の中で表示される。
-        Mobileでは2段目に移動。
-      */
+      /* ==================================================
+       TAB BUTTONS
+       ================================================== */
 
       .header-tabs {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.35rem;
+
+        min-width: 0;
       }
 
-      /* ══════════════════════════════════════
-         UNIT DROPDOWN
-      ══════════════════════════════════════ */
-
-      /* PCでは非表示 */
-      .unit-dropdown-trigger {
-        display: none;
-
+      .tab-btns {
+        display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
 
-        padding: 0.3rem 0.7rem;
-
-        border-radius: 6px;
+        background: var(--color-bg);
         border: 1px solid var(--color-border);
+        border-radius: 8px;
+
+        padding: 2px;
+        gap: 2px;
+
+        white-space: nowrap;
+      }
+
+      .tab-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
         background: transparent;
-        color: var(--color-text-primary);
+        border: none;
+        border-radius: 6px;
 
-        font: inherit;
+        padding: 0.4rem 0.85rem;
+
         font-size: 0.85rem;
-        font-weight: 700;
+        font-weight: 600;
+
+        color: var(--color-text-secondary);
 
         cursor: pointer;
 
         transition:
           background 0.15s ease,
-          border-color 0.15s ease;
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .tab-btn:hover {
+        color: var(--color-text-primary);
+      }
+
+      .tab-btn.active {
+        background: var(--color-surface);
+        color: var(--color-accent-text);
+
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      body.dark .tab-btn.active {
+        color: var(--color-accent);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      /* ==================================================
+       UNIT DROPDOWN
+       ================================================== */
+
+      .unit-dropdown-trigger {
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+
+        min-height: 36px;
+
+        padding: 0.4rem 0.7rem;
+
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+
+        color: var(--color-text-primary);
+
+        font-size: 0.8rem;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        white-space: nowrap;
       }
 
       .unit-dropdown-trigger:hover {
-        background: var(--color-bg);
-      }
-
-      .unit-dropdown-trigger .unit-num {
-        margin: 0;
-        padding: 0;
-
-        background: transparent;
-        color: var(--color-text-primary);
-
-        font-size: 0.85rem;
-        letter-spacing: 0;
+        border-color: var(--color-accent);
       }
 
       .unit-dropdown-chevron {
-        transition: transform 0.2s ease;
+        font-size: 0.9rem;
+        line-height: 1;
       }
 
-      body.nav-open .unit-dropdown-chevron {
-        transform: rotate(180deg);
-      }
+      /* ==================================================
+       THEME SWITCH
+       ================================================== */
 
-      /* ══════════════════════════════════════
-         THEME TOGGLE
-      ══════════════════════════════════════ */
-
-      .logo-switches button {
+      .logo-switches {
         display: flex;
         align-items: center;
         justify-content: center;
-
-        padding: 0;
-        border: none;
-        background: transparent;
-
-        color: var(--color-text-primary);
-
-        cursor: pointer;
       }
 
-      /* ══════════════════════════════════════
-         MOBILE
-      ══════════════════════════════════════ */
+      #theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 36px;
+        height: 36px;
+
+        padding: 0;
+
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+
+        color: var(--color-text-secondary);
+
+        cursor: pointer;
+
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      #theme-toggle:hover {
+        background: var(--color-bg);
+        color: var(--color-text-primary);
+      }
+
+      #theme-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ==================================================
+       MOBILE HEADER
+       ================================================== */
 
       @media (max-width: 900px) {
-        /* ────────────────────────────────────
-           Header
-        ──────────────────────────────────── */
+        .app-header__inner {
+          min-height: 0;
 
-        .app-header {
+          grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
+          grid-template-areas:
+            "left theme"
+            "tabs tabs";
+
+          gap: 0;
+
           padding: 0;
         }
 
-        /*
-          モバイルではヘッダーを2段構造にする。
-          min-heightだけにして、
-          2段目が自然に高さを持てるようにする。
-        */
-        .app-header__inner {
-          min-height: 56px;
-
-          padding: 0 1rem;
-
-          gap: 0.5rem;
-        }
-
-        /* ────────────────────────────────────
-           Header left
-        ──────────────────────────────────── */
-
+        /* 1段目 左 */
         .app-header__left {
+          grid-area: left;
+
           min-width: 0;
-          flex: 1;
 
-          gap: 0.5rem;
+          padding: 0.6rem 0.75rem;
         }
 
-        .app-header__title-group {
-          min-width: 0;
-        }
+        /* 1段目 右 */
+        .logo-switches {
+          grid-area: theme;
 
-        .app-header__title,
-        .app-header__subject {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        /* ────────────────────────────────────
-           Header right
-        ──────────────────────────────────── */
-
-        .app-header__right {
-          flex-shrink: 0;
-
-          display: flex;
-          align-items: center;
-
-          gap: 0;
+          padding: 0.6rem 0.75rem;
         }
 
         /*
-          PCでは right 内にあった header-tabs を
-          モバイルでは header 直下の2段目として扱う。
-        */
-        .app-header__right .header-tabs {
-          position: absolute;
-
-          left: 0;
-          right: 0;
-
-          top: 56px;
+        2段目。
+        PCでは横並びだったものを、
+        スマホでは画面幅いっぱいにする。
+      */
+        .header-tabs {
+          grid-area: tabs;
 
           width: 100%;
-
           box-sizing: border-box;
 
-          padding: 0.4rem 1rem;
+          display: flex;
+          align-items: stretch;
 
-          background: var(--color-bg);
+          padding: 0.45rem 0.6rem;
 
           border-top: 1px solid var(--color-border);
-          border-bottom: 1px solid var(--color-border);
 
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          gap: 0.75rem;
-
-          z-index: 101;
+          gap: 0.35rem;
         }
-
-        /* ────────────────────────────────────
-           Tabs
-        ──────────────────────────────────── */
 
         .tab-btns {
-          flex-shrink: 0;
+          flex: 1;
+          min-width: 0;
+
+          display: flex;
         }
 
-        /* ────────────────────────────────────
-           Unit dropdown
-        ──────────────────────────────────── */
+        .tab-btn {
+          flex: 1;
+          min-width: 0;
+
+          padding: 0.5rem 0.4rem;
+        }
 
         .unit-dropdown-trigger {
           display: inline-flex;
+
           flex-shrink: 0;
-        }
-
-        /* ────────────────────────────────────
-           Main
-        ──────────────────────────────────── */
-
-        .main {
-          margin-left: 0 !important;
-
-          width: 100%;
-          max-width: 100%;
-
-          box-sizing: border-box;
-
-          padding: 1.5rem;
-        }
-      }
-
-      /* ══════════════════════════════════════
-         VERY SMALL MOBILE
-      ══════════════════════════════════════ */
-
-      @media (max-width: 480px) {
-        .app-header__inner {
-          padding: 0 0.75rem;
-        }
-
-        .app-header__left {
-          gap: 0.4rem;
         }
 
         .app-header__title {
@@ -350,36 +405,59 @@
         }
 
         .app-header__subject {
-          font-size: 0.7rem;
+          font-size: 0.65rem;
         }
 
-        .app-header__right .header-tabs {
-          padding-left: 0.75rem;
-          padding-right: 0.75rem;
+        .back-link {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      /* ==================================================
+       VERY SMALL MOBILE
+       ================================================== */
+
+      @media (max-width: 420px) {
+        .header-tabs {
+          padding-left: 0.45rem;
+          padding-right: 0.45rem;
         }
 
-        .main {
-          padding: 1rem;
+        .tab-btn {
+          font-size: 0.78rem;
+          padding-left: 0.25rem;
+          padding-right: 0.25rem;
+        }
+
+        .unit-dropdown-trigger {
+          font-size: 0.75rem;
+          padding-left: 0.55rem;
+          padding-right: 0.55rem;
+        }
+
+        .app-header__left {
+          gap: 0.4rem;
+        }
+
+        .app-header__title {
+          font-size: 0.82rem;
         }
       }
     </style>
   </head>
 
   <body data-subject="{{SUBJECT}}">
-    <!-- ══════════════════════════════════════
-         HEADER
-    ══════════════════════════════════════ -->
+    <!-- ==================================================
+       HEADER
+       ================================================== -->
 
     <header class="app-header">
-      <!--
-        1段目：
-        Back / Title / Theme
-      -->
       <div class="app-header__inner">
+        <!-- 左：戻る + タイトル -->
         <div class="app-header__left">
-          <a href="../index.html" class="back-link">
-            <i class="bi bi-chevron-left"></i>
-            Back
+          <a href="../index.html" class="back-link" aria-label="戻る">
+            <span class="back-link__icon">←</span>
           </a>
 
           <div class="app-header__title-group">
@@ -392,136 +470,119 @@
         </div>
 
         <!--
-          右上：
-          Theme toggle
-        -->
-        <div class="app-header__right">
-          <div class="logo-switches">
-            <button id="theme-toggle" title="Toggle Theme" type="button">
-              <!-- Moon -->
-              <svg
-                id="moon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M21 12.79A9 9 0 1 1 11.21 3
-                     7 7 0 0 0 21 12.79z"
-                ></path>
-              </svg>
+        まとめ / 穴埋め / Unit
 
-              <!-- Sun -->
-              <svg
-                id="sun"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="5"></circle>
+        PC：
+        そのままヘッダー右側に表示
 
-                <line x1="12" y1="1" x2="12" y2="3"></line>
+        Mobile：
+        CSS Grid により2段目へ移動
+      -->
+        <div class="header-tabs">
+          <div class="tab-btns">
+            <button class="tab-btn active" type="button" data-mode="summary">
+              まとめ
+            </button>
 
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
+            <button class="tab-btn" type="button" data-mode="fill">
+              穴埋め
             </button>
           </div>
-        </div>
-      </div>
 
-      <!--
-        2段目：
-        まとめ / 穴埋め / Unit
-      -->
-      <div class="header-tabs">
-        <div class="tab-btns">
+          <!--
+          モバイル専用Unitドロップダウン
+          PCでは非表示。
+        -->
           <button
-            class="tab-btn active"
-            id="tabSummary"
-            onclick="switchTab('summary')"
+            class="unit-dropdown-trigger"
+            id="unitDropdownTrigger"
+            type="button"
+            aria-label="Unitを選択"
+            aria-expanded="false"
+            aria-controls="unitNav"
           >
-            まとめ
-          </button>
-
-          <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
-            穴埋め
+            <span id="unitDropdownLabel">Unit</span>
+            <span class="unit-dropdown-chevron">⌄</span>
           </button>
         </div>
 
-        <!-- Mobile Unit selector -->
-        <button
-          class="unit-dropdown-trigger"
-          id="unitDropdownTrigger"
-          type="button"
-          aria-haspopup="listbox"
-          aria-expanded="false"
-          aria-controls="unitNav"
-        >
-          <span class="unit-num" id="headerUnitNum"> Unit — </span>
-
-          <svg
-            class="unit-dropdown-chevron"
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+        <!-- テーマ切替 -->
+        <div class="logo-switches">
+          <button
+            id="theme-toggle"
+            type="button"
+            aria-label="テーマを切り替える"
           >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
+            <!--
+            icons.js / theme-toggle.js 側で使用する
+            既存のSVG構造をここに入れてください。
+          -->
+
+            <svg
+              class="icon-moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 12.79A9 9 0 1 1 11.21 3
+                     7 7 0 0 0 21 12.79z"
+              ></path>
+            </svg>
+
+            <svg
+              class="icon-sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              style="display: none"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!--
-        Unit navigation
-      -->
-      <nav class="unit-nav" id="unitNav">{{NAV_BUTTONS}}</nav>
+      <!-- ==================================================
+         UNIT NAVIGATION
+         ================================================== -->
+
+      <nav class="unit-nav" id="unitNav" aria-label="Unit navigation">
+        {{NAV_BUTTONS}}
+      </nav>
     </header>
 
-    <!-- ══════════════════════════════════════
-         MAIN
-    ══════════════════════════════════════ -->
+    <!-- ==================================================
+       MAIN
+       ================================================== -->
 
     <main class="main" id="main">
       {{UNIT_PANELS}}
 
-      <!-- Quiz controls -->
-      <div id="quizChrome" style="display: none">
-        <div class="quiz-header-row">
-          <div class="quiz-score-display">
-            <strong id="quizScoreBig"> — / — </strong>
+      <!-- ==================================================
+         QUIZ CHROME
+         ================================================== -->
 
-            <span> 表示済み </span>
-          </div>
+      <div id="quizChrome" style="display: none">
+        <div class="quiz-score-display">
+          <strong id="quizScore">0</strong>
+          <span>score</span>
         </div>
 
         <div class="quiz-progress-bar">
@@ -529,42 +590,52 @@
         </div>
 
         <div class="quiz-controls">
-          <button class="btn-primary" onclick="revealAll()">全て表示</button>
+          <button type="button" class="btn-primary" id="quizCheck">
+            答えを確認
+          </button>
 
-          <button class="btn-ghost" onclick="hideAll()">全て隠す</button>
-
-          <button class="btn-ghost" onclick="resetQuiz()">リセット</button>
+          <button type="button" class="btn-ghost" id="quizNext">次へ</button>
         </div>
 
-        <p class="quiz-kb-hint">語句をクリックして表示 / 再クリックで隠す</p>
+        <div class="quiz-kb-hint">キーボードでも操作できます。</div>
       </div>
     </main>
 
-    <!-- ══════════════════════════════════════
-         TOAST
-    ══════════════════════════════════════ -->
-
-    <div class="toast" id="toast"></div>
-
-    <!-- ══════════════════════════════════════
-         DATA
-    ══════════════════════════════════════ -->
+    <!-- ==================================================
+       DATA
+       ================================================== -->
 
     <script type="application/json" id="noteUnitsData">
       {{UNITS_JSON}}
     </script>
 
-    <!-- ══════════════════════════════════════
-         SCRIPTS
-    ══════════════════════════════════════ -->
+    <!-- ==================================================
+       SCRIPTS
+       ================================================== -->
 
     <script src="/js/icons.js"></script>
     <script src="/js/theme-toggle.js"></script>
 
+    <!--
+    body.dark と html.dark の同期
+  -->
     <script>
-      if (document.documentElement.classList.contains("dark")) {
-        document.body.classList.add("dark");
-      }
+      (() => {
+        const syncDarkClass = () => {
+          const isDark = document.documentElement.classList.contains("dark");
+
+          document.body.classList.toggle("dark", isDark);
+        };
+
+        syncDarkClass();
+
+        const observer = new MutationObserver(syncDarkClass);
+
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+      })();
     </script>
 
     <script src="../js/note-static.js"></script>
