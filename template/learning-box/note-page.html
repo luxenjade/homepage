@@ -3,17 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>{{TITLE}} | learning box</title>
     <meta name="description" content="{{DESCRIPTION}}" />
+
     <link rel="icon" href="/images/favicon.ico" />
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#faba40" />
 
-    <!-- フラッシュ防止：テーマをCSSより前に適用 -->
+    <!--
+      フラッシュ防止：
+      CSSが読み込まれる前にテーマを適用
+    -->
     <script>
       (function () {
         const t = localStorage.getItem("pref-theme");
+
         if (
           t === "dark" ||
           (!t && matchMedia("(prefers-color-scheme: dark)").matches)
@@ -22,127 +29,217 @@
         }
       })();
     </script>
+
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/utils.css" />
     {{SUBJECT_STYLE}}
     <link rel="stylesheet" href="../css/subject-colors.css" />
     <link rel="stylesheet" href="../css/note-style.css" />
+
     <style>
+      /* ══════════════════════════════════════
+         DARK MODE
+      ══════════════════════════════════════ */
+
       html.dark body {
         background-color: var(--color-bg);
         color: var(--color-text-primary);
       }
-      /* Individual page header adjustment */
-      /* 追加：ヘッダー高を --header-h に固定し、内容が変わっても崩れないようにする */
+
+      /* ══════════════════════════════════════
+         HEADER — COMMON
+      ══════════════════════════════════════ */
 
       .app-header {
         background: var(--color-bg);
         border-bottom: 1px solid var(--color-border);
-        padding: 0.75rem 0;
         position: sticky;
         top: 0;
         z-index: 100;
-        min-height: var(--header-h);
         box-sizing: border-box;
       }
+
       .app-header__inner {
         max-width: var(--container-max);
+        min-height: var(--header-h);
         margin: 0 auto;
         padding: 0 var(--container-pad);
+
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 1rem;
+
+        box-sizing: border-box;
       }
+
+      /* ──────────────────────────────────────
+         Left side
+      ────────────────────────────────────── */
+
       .app-header__left {
+        min-width: 0;
+
         display: flex;
         align-items: center;
         gap: 1rem;
       }
+
       .app-header__title-group {
+        min-width: 0;
+
         display: flex;
         flex-direction: column;
+
         line-height: 1.2;
       }
+
       .app-header__title {
         font-size: 0.95rem;
         font-weight: 700;
       }
+
       .app-header__subject {
         font-size: 0.75rem;
         color: var(--color-text-secondary);
       }
+
+      /* ──────────────────────────────────────
+         Right side
+      ────────────────────────────────────── */
+
       .app-header__right {
         display: flex;
         align-items: center;
         gap: 1rem;
-      }
-
-      /* Unit dropdown trigger (visible on mobile, hidden on desktop) */
-      .unit-dropdown-trigger {
-        display: none;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.3rem 0.7rem;
-        border-radius: 6px;
-        background: transparent;
-        border: 1px solid var(--color-border);
-        color: var(--color-text-primary);
-        font: inherit;
-        font-size: 0.85rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition:
-          background 0.15s ease,
-          border-color 0.15s ease;
-      }
-      .unit-dropdown-trigger:hover {
-        background: var(--color-bg);
-      }
-      .unit-dropdown-trigger .unit-num {
-        margin: 0;
-        background: transparent;
-        color: var(--color-text-primary);
-        padding: 0;
-        font-size: 0.85rem;
-        letter-spacing: 0;
-      }
-      .unit-dropdown-chevron {
-        transition: transform 0.2s ease;
-      }
-      body.nav-open .unit-dropdown-chevron {
-        transform: rotate(180deg);
-      }
-      @media (max-width: 900px) {
-        .unit-dropdown-trigger {
-          display: inline-flex;
-        }
-      }
-
-      /* PC */
-      .header-tabs {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        flex-shrink: 0;
       }
 
       .logo-switches {
         flex-shrink: 0;
       }
 
-      /* Mobile */
+      /* ══════════════════════════════════════
+         TABS + UNIT
+      ══════════════════════════════════════ */
+
+      /*
+        PCでは header-tabs は
+        app-header__right の中で表示される。
+        Mobileでは2段目に移動。
+      */
+
+      .header-tabs {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      /* ══════════════════════════════════════
+         UNIT DROPDOWN
+      ══════════════════════════════════════ */
+
+      /* PCでは非表示 */
+      .unit-dropdown-trigger {
+        display: none;
+
+        align-items: center;
+        gap: 0.4rem;
+
+        padding: 0.3rem 0.7rem;
+
+        border-radius: 6px;
+        border: 1px solid var(--color-border);
+
+        background: transparent;
+        color: var(--color-text-primary);
+
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .unit-dropdown-trigger:hover {
+        background: var(--color-bg);
+      }
+
+      .unit-dropdown-trigger .unit-num {
+        margin: 0;
+        padding: 0;
+
+        background: transparent;
+        color: var(--color-text-primary);
+
+        font-size: 0.85rem;
+        letter-spacing: 0;
+      }
+
+      .unit-dropdown-chevron {
+        transition: transform 0.2s ease;
+      }
+
+      body.nav-open .unit-dropdown-chevron {
+        transform: rotate(180deg);
+      }
+
+      /* ══════════════════════════════════════
+         THEME TOGGLE
+      ══════════════════════════════════════ */
+
+      .logo-switches button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+        border: none;
+        background: transparent;
+
+        color: var(--color-text-primary);
+
+        cursor: pointer;
+      }
+
+      /* ══════════════════════════════════════
+         MOBILE
+      ══════════════════════════════════════ */
+
       @media (max-width: 900px) {
+        /* ────────────────────────────────────
+           Header
+        ──────────────────────────────────── */
+
         .app-header {
           padding: 0;
         }
 
+        /*
+          モバイルではヘッダーを2段構造にする。
+          min-heightだけにして、
+          2段目が自然に高さを持てるようにする。
+        */
         .app-header__inner {
           min-height: 56px;
+
           padding: 0 1rem;
+
+          gap: 0.5rem;
         }
+
+        /* ────────────────────────────────────
+           Header left
+        ──────────────────────────────────── */
 
         .app-header__left {
           min-width: 0;
           flex: 1;
+
           gap: 0.5rem;
         }
 
@@ -157,98 +254,151 @@
           text-overflow: ellipsis;
         }
 
+        /* ────────────────────────────────────
+           Header right
+        ──────────────────────────────────── */
+
         .app-header__right {
+          flex-shrink: 0;
+
           display: flex;
           align-items: center;
+
           gap: 0;
         }
 
-        /* タブ＋Unitを2段目にする */
-        .header-tabs {
+        /*
+          PCでは right 内にあった header-tabs を
+          モバイルでは header 直下の2段目として扱う。
+        */
+        .app-header__right .header-tabs {
+          position: absolute;
+
+          left: 0;
+          right: 0;
+
+          top: 56px;
+
           width: 100%;
+
           box-sizing: border-box;
+
           padding: 0.4rem 1rem;
+
+          background: var(--color-bg);
+
           border-top: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-border);
 
           display: flex;
           align-items: center;
           justify-content: space-between;
+
           gap: 0.75rem;
+
+          z-index: 101;
         }
+
+        /* ────────────────────────────────────
+           Tabs
+        ──────────────────────────────────── */
 
         .tab-btns {
           flex-shrink: 0;
         }
+
+        /* ────────────────────────────────────
+           Unit dropdown
+        ──────────────────────────────────── */
 
         .unit-dropdown-trigger {
           display: inline-flex;
           flex-shrink: 0;
         }
 
-        .logo-switches {
-          flex-shrink: 0;
+        /* ────────────────────────────────────
+           Main
+        ──────────────────────────────────── */
+
+        .main {
+          margin-left: 0 !important;
+
+          width: 100%;
+          max-width: 100%;
+
+          box-sizing: border-box;
+
+          padding: 1.5rem;
+        }
+      }
+
+      /* ══════════════════════════════════════
+         VERY SMALL MOBILE
+      ══════════════════════════════════════ */
+
+      @media (max-width: 480px) {
+        .app-header__inner {
+          padding: 0 0.75rem;
+        }
+
+        .app-header__left {
+          gap: 0.4rem;
+        }
+
+        .app-header__title {
+          font-size: 0.9rem;
+        }
+
+        .app-header__subject {
+          font-size: 0.7rem;
+        }
+
+        .app-header__right .header-tabs {
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+        }
+
+        .main {
+          padding: 1rem;
         }
       }
     </style>
   </head>
+
   <body data-subject="{{SUBJECT}}">
+    <!-- ══════════════════════════════════════
+         HEADER
+    ══════════════════════════════════════ -->
+
     <header class="app-header">
+      <!--
+        1段目：
+        Back / Title / Theme
+      -->
       <div class="app-header__inner">
         <div class="app-header__left">
           <a href="../index.html" class="back-link">
-            <i class="bi bi-chevron-left"></i> Back
+            <i class="bi bi-chevron-left"></i>
+            Back
           </a>
+
           <div class="app-header__title-group">
-            <span class="app-header__title" id="headerTitle">{{TITLE}}</span>
-            <span class="app-header__subject" id="headerSub">{{SUBJECT}}</span>
+            <span class="app-header__title" id="headerTitle"> {{TITLE}} </span>
+
+            <span class="app-header__subject" id="headerSub">
+              {{SUBJECT}}
+            </span>
           </div>
         </div>
+
+        <!--
+          右上：
+          Theme toggle
+        -->
         <div class="app-header__right">
-          <div class="header-tabs">
-            <div class="tab-btns">
-              <button
-                class="tab-btn active"
-                id="tabSummary"
-                onclick="switchTab('summary')"
-              >
-                まとめ
-              </button>
-
-              <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
-                穴埋め
-              </button>
-            </div>
-
-            <button
-              class="unit-dropdown-trigger"
-              id="unitDropdownTrigger"
-              type="button"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-controls="unitNav"
-            >
-              <span class="unit-num" id="headerUnitNum">Unit —</span>
-
-              <svg
-                class="unit-dropdown-chevron"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-          </div>
-
           <div class="logo-switches">
-            <button id="theme-toggle" title="Toggle Theme">
+            <button id="theme-toggle" title="Toggle Theme" type="button">
+              <!-- Moon -->
               <svg
                 id="moon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -262,9 +412,12 @@
                 stroke-linejoin="round"
               >
                 <path
-                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                  d="M21 12.79A9 9 0 1 1 11.21 3
+                     7 7 0 0 0 21 12.79z"
                 ></path>
               </svg>
+
+              <!-- Sun -->
               <svg
                 id="sun"
                 xmlns="http://www.w3.org/2000/svg"
@@ -278,55 +431,142 @@
                 stroke-linejoin="round"
               >
                 <circle cx="12" cy="12" r="5"></circle>
+
                 <line x1="12" y1="1" x2="12" y2="3"></line>
+
                 <line x1="12" y1="21" x2="12" y2="23"></line>
+
                 <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+
                 <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+
                 <line x1="1" y1="12" x2="3" y2="12"></line>
+
                 <line x1="21" y1="12" x2="23" y2="12"></line>
+
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
               </svg>
             </button>
           </div>
         </div>
       </div>
+
+      <!--
+        2段目：
+        まとめ / 穴埋め / Unit
+      -->
+      <div class="header-tabs">
+        <div class="tab-btns">
+          <button
+            class="tab-btn active"
+            id="tabSummary"
+            onclick="switchTab('summary')"
+          >
+            まとめ
+          </button>
+
+          <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
+            穴埋め
+          </button>
+        </div>
+
+        <!-- Mobile Unit selector -->
+        <button
+          class="unit-dropdown-trigger"
+          id="unitDropdownTrigger"
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="unitNav"
+        >
+          <span class="unit-num" id="headerUnitNum"> Unit — </span>
+
+          <svg
+            class="unit-dropdown-chevron"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!--
+        Unit navigation
+      -->
       <nav class="unit-nav" id="unitNav">{{NAV_BUTTONS}}</nav>
     </header>
 
+    <!-- ══════════════════════════════════════
+         MAIN
+    ══════════════════════════════════════ -->
+
     <main class="main" id="main">
       {{UNIT_PANELS}}
+
+      <!-- Quiz controls -->
       <div id="quizChrome" style="display: none">
         <div class="quiz-header-row">
           <div class="quiz-score-display">
-            <strong id="quizScoreBig">— / —</strong>
-            <span>表示済み</span>
+            <strong id="quizScoreBig"> — / — </strong>
+
+            <span> 表示済み </span>
           </div>
         </div>
+
         <div class="quiz-progress-bar">
           <div class="quiz-progress-fill" id="quizProgressFill"></div>
         </div>
+
         <div class="quiz-controls">
           <button class="btn-primary" onclick="revealAll()">全て表示</button>
+
           <button class="btn-ghost" onclick="hideAll()">全て隠す</button>
+
           <button class="btn-ghost" onclick="resetQuiz()">リセット</button>
         </div>
+
         <p class="quiz-kb-hint">語句をクリックして表示 / 再クリックで隠す</p>
       </div>
     </main>
 
+    <!-- ══════════════════════════════════════
+         TOAST
+    ══════════════════════════════════════ -->
+
     <div class="toast" id="toast"></div>
+
+    <!-- ══════════════════════════════════════
+         DATA
+    ══════════════════════════════════════ -->
 
     <script type="application/json" id="noteUnitsData">
       {{UNITS_JSON}}
     </script>
+
+    <!-- ══════════════════════════════════════
+         SCRIPTS
+    ══════════════════════════════════════ -->
+
     <script src="/js/icons.js"></script>
     <script src="/js/theme-toggle.js"></script>
+
     <script>
       if (document.documentElement.classList.contains("dark")) {
         document.body.classList.add("dark");
       }
     </script>
+
     <script src="../js/note-static.js"></script>
   </body>
 </html>
