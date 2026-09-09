@@ -472,11 +472,21 @@
       -->
         <div class="header-tabs">
           <div class="tab-btns">
-            <button class="tab-btn active" type="button" data-mode="summary">
+            <button
+              class="tab-btn active"
+              id="tabSummary"
+              type="button"
+              onclick="switchTab('summary')"
+            >
               まとめ
             </button>
 
-            <button class="tab-btn" type="button" data-mode="quiz">
+            <button
+              class="tab-btn"
+              id="tabQuiz"
+              type="button"
+              onclick="switchTab('quiz')"
+            >
               穴埋め
             </button>
           </div>
