@@ -11,7 +11,7 @@
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.09);
 
-  --header-h: 56px;
+  --header-h: 64px; /* 56px → 64px（実測ヘッダー高に合わせて余裕を持たせる） */
   --nav-w: 220px;
   --content-max: 760px;
 }
