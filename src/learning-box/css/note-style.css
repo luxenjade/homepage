@@ -24,25 +24,8 @@ body.dark {
 /* Base resets handled by base.css */
 
 /* ══════════════════════════════════════
-   SIDEBAR
+   SIDEBAR (PC & モバイル共通の共通パーツ定義)
 ══════════════════════════════════════ */
-.unit-nav {
-  position: fixed;
-  top: var(--header-h);
-  bottom: 0;
-  left: 0;
-  width: var(--nav-w);
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
-  overflow-y: auto;
-  z-index: 50;
-  padding: 1rem 0.5rem 2rem;
-
-  transform: none;
-  opacity: 1;
-  pointer-events: auto;
-}
-
 .nav-section-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -106,6 +89,74 @@ body.dark .nav-unit-btn.active .nav-label {
 }
 .nav-quiz-dot.done {
   background: var(--color-accent);
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE (PC / Mobile で位置や構造を分離)
+══════════════════════════════════════ */
+
+/* 【PC表示】901px以上 */
+@media (min-width: 901px) {
+  .unit-nav {
+    position: fixed;
+    top: var(--header-h);
+    bottom: 0;
+    left: 0;
+    width: var(--nav-w);
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    overflow-y: auto;
+    z-index: 50;
+    padding: 1rem 0.5rem 2rem;
+
+    /* モバイル用のアニメーションや位置指定をリセット */
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+}
+
+/* 【モバイル表示】900px以下 */
+@media (max-width: 900px) {
+  .unit-nav {
+    position: absolute;
+    top: 100%;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: calc(100vh - var(--header-h) - 1rem);
+    background: var(--color-surface);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-right: none;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 0.5rem 0.5rem 1rem;
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease,
+      visibility 0.2s ease;
+    z-index: 49;
+  }
+
+  body.nav-open .unit-nav {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
 }
 
 /* ══════════════════════════════════════
@@ -358,65 +409,6 @@ body.dark .markdown-body code {
   border-bottom: 2px solid var(--unit-color, var(--color-accent));
   color: var(--unit-color, var(--color-accent));
   font-weight: 700;
-}
-
-/* ══════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════ */
-@media (max-width: 900px) {
-  /* Sidebar converts into a header-anchored dropdown on mobile.
-     The nav element itself is reused as the dropdown panel so that
-     the same nav buttons / quiz dots work in both layouts. */
-  .unit-nav {
-    position: absolute;
-    top: 100%;
-    bottom: auto; /* ★ここを追加（bottom: 0 を打ち消す） */
-    left: 0;
-    right: 0;
-    width: auto;
-    max-height: calc(100vh - var(--header-h) - 1rem);
-    overflow-y: auto; /* メニュー内のスクロールを確保 */
-    -webkit-overflow-scrolling: touch;
-    border-right: none;
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    padding: 0.5rem 0.5rem 1rem;
-    transform: translateY(-8px);
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden; /* フォーカス誤動作防止 */
-    transition:
-      transform 0.2s ease,
-      opacity 0.2s ease,
-      visibility 0.2s ease;
-    z-index: 49;
-  }
-
-  body.nav-open .unit-nav {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
-  }
-
-  .main {
-    margin-left: 0;
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 901px) {
-  .unit-nav {
-    position: fixed;
-    top: var(--header-h);
-    bottom: 0;
-    left: 0;
-    width: var(--nav-w);
-    transform: none !important; /* 強制的に位置ズレをリセット */
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
 }
 
 /* ══════════════════════════════════════
