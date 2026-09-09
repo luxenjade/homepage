@@ -14,7 +14,6 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#ffffff" />
 
-
     <script>
       (() => {
         try {
@@ -272,11 +271,6 @@
         border-color: var(--color-accent);
       }
 
-      .unit-dropdown-chevron {
-        font-size: 0.9rem;
-        line-height: 1;
-      }
-
       /* ==================================================
        THEME SWITCH
        ================================================== */
@@ -482,15 +476,13 @@
               まとめ
             </button>
 
-            <button class="tab-btn" type="button" data-mode="fill">
+            <button class="tab-btn" type="button" data-mode="quiz">
               穴埋め
             </button>
           </div>
 
           <!--
-          モバイル専用Unitドロップダウン
-          PCでは非表示。
-        -->
+          モバイル専用Unitドロップダウン PCでは非表示。-->
           <button
             class="unit-dropdown-trigger"
             id="unitDropdownTrigger"
@@ -500,7 +492,6 @@
             aria-controls="unitNav"
           >
             <span id="unitDropdownLabel">Unit</span>
-            <span class="unit-dropdown-chevron">⌄</span>
           </button>
         </div>
 
