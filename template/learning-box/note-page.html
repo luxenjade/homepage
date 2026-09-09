@@ -117,6 +117,78 @@
           display: inline-flex;
         }
       }
+
+      /* PC */
+      .header-tabs {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logo-switches {
+        flex-shrink: 0;
+      }
+
+      /* Mobile */
+      @media (max-width: 900px) {
+        .app-header {
+          padding: 0;
+        }
+
+        .app-header__inner {
+          min-height: 56px;
+          padding: 0 1rem;
+        }
+
+        .app-header__left {
+          min-width: 0;
+          flex: 1;
+          gap: 0.5rem;
+        }
+
+        .app-header__title-group {
+          min-width: 0;
+        }
+
+        .app-header__title,
+        .app-header__subject {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .app-header__right {
+          display: flex;
+          align-items: center;
+          gap: 0;
+        }
+
+        /* タブ＋Unitを2段目にする */
+        .header-tabs {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.4rem 1rem;
+          border-top: 1px solid var(--color-border);
+
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+        }
+
+        .tab-btns {
+          flex-shrink: 0;
+        }
+
+        .unit-dropdown-trigger {
+          display: inline-flex;
+          flex-shrink: 0;
+        }
+
+        .logo-switches {
+          flex-shrink: 0;
+        }
+      }
     </style>
   </head>
   <body data-subject="{{SUBJECT}}">
@@ -132,43 +204,49 @@
           </div>
         </div>
         <div class="app-header__right">
-          <div class="tab-btns">
+          <div class="header-tabs">
+            <div class="tab-btns">
+              <button
+                class="tab-btn active"
+                id="tabSummary"
+                onclick="switchTab('summary')"
+              >
+                まとめ
+              </button>
+
+              <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
+                穴埋め
+              </button>
+            </div>
+
             <button
-              class="tab-btn active"
-              id="tabSummary"
-              onclick="switchTab('summary')"
+              class="unit-dropdown-trigger"
+              id="unitDropdownTrigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="unitNav"
             >
-              まとめ
-            </button>
-            <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">
-              穴埋め
+              <span class="unit-num" id="headerUnitNum">Unit —</span>
+
+              <svg
+                class="unit-dropdown-chevron"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
           </div>
-          <button
-            class="unit-dropdown-trigger"
-            id="unitDropdownTrigger"
-            type="button"
-            aria-haspopup="listbox"
-            aria-expanded="false"
-            aria-controls="unitNav"
-          >
-            <span class="unit-num" id="headerUnitNum">Unit —</span>
-            <svg
-              class="unit-dropdown-chevron"
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
+
           <div class="logo-switches">
             <button id="theme-toggle" title="Toggle Theme">
               <svg
