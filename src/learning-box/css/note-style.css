@@ -406,6 +406,19 @@ body.dark .markdown-body code {
   }
 }
 
+@media (min-width: 901px) {
+  .unit-nav {
+    position: fixed;
+    top: var(--header-h);
+    bottom: 0;
+    left: 0;
+    width: var(--nav-w);
+    transform: none !important; /* 強制的に位置ズレをリセット */
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
 /* ══════════════════════════════════════
    TAB BUTTONS
 ══════════════════════════════════════ */

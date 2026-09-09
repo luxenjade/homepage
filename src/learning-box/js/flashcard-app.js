@@ -324,14 +324,6 @@ function transitionToCard(targetIdx, direction) {
     return;
 
   isTransitioning = true;
-
-  isFlipped = false;
-  const body = document.getElementById("cardBody");
-  if (body) {
-    body.classList.remove("flipped");
-  }
-  setMasteryActive(false);
-
   const scene = document.getElementById("cardScene");
   scene.classList.add("is-swapping");
 
@@ -340,10 +332,24 @@ function transitionToCard(targetIdx, direction) {
 
   scene.classList.add(outClass);
   setTimeout(() => {
-    if (!isTransitioning) return; // shuffle等でキャンセルされた場合はスキップ
+    if (!isTransitioning) return;
     scene.classList.remove(outClass);
-    deckIdx = targetIdx;
+
+    // ── [完全解決コード] 画面外で見えない間に、アニメーションなしで確実に表に戻す ──
+    const body = document.getElementById("cardBody");
+    if (body) {
+      body.classList.add("no-transition");
+      body.classList.remove("flipped");
+      void body.offsetWidth; // リフローを強制して即座に表向きを確定させる
+      body.classList.remove("no-transition");
+    }
+    isFlipped = false;
+    setMasteryActive(false);
+    // ─────────────────────────────────────────────────────────────
+
+    deckIdx = targetIdx; // 表に戻したあとにカードデータを切り替える
     renderCard();
+
     void scene.offsetWidth;
     scene.classList.add(inClass);
     setTimeout(() => {
@@ -352,7 +358,6 @@ function transitionToCard(targetIdx, direction) {
     }, SWAP_IN_MS);
   }, SWAP_OUT_MS);
 }
-
 // ══════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════
