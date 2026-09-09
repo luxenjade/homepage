@@ -363,17 +363,29 @@ function transitionToCard(targetIdx, direction) {
 // ══════════════════════════════════════════════
 function nextCard() {
   if (isTransitioning) return;
+
+  // 移動ボタンを押した瞬間に表に戻す
+  if (isFlipped) flipCard();
+
   if (deckIdx < deck.length - 1) transitionToCard(deckIdx + 1, 1);
   else showComplete();
 }
 
 function prevCard() {
   if (isTransitioning) return;
+
+  // 移動ボタンを押した瞬間に表に戻す
+  if (isFlipped) flipCard();
+
   if (deckIdx > 0) transitionToCard(deckIdx - 1, -1);
 }
 
 function jumpTo(idx) {
   if (isTransitioning || idx === deckIdx) return;
+
+  // カードをジャンプする瞬間に表に戻す
+  if (isFlipped) flipCard();
+
   transitionToCard(idx, idx > deckIdx ? 1 : -1);
   if (window.innerWidth < 640) toggleList();
 }
