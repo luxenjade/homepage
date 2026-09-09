@@ -37,6 +37,10 @@ body.dark {
   overflow-y: auto;
   z-index: 50;
   padding: 1rem 0.5rem 2rem;
+
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .nav-section-label {
@@ -272,13 +276,61 @@ body.dark .markdown-body code {
   background: var(--color-border);
   border-radius: 100px;
   overflow: hidden;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .quiz-progress-fill {
   height: 100%;
   width: 0%;
   background: var(--unit-color, var(--color-accent));
   transition: width 0.35s ease;
+}
+.quiz-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.btn-primary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.btn-primary {
+  background: var(--unit-color, var(--color-accent));
+  color: var(--color-on-accent, #fff);
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+.btn-ghost:hover {
+  background: var(--color-surface);
+  border-color: var(--color-text-secondary);
+}
+
+.quiz-kb-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .cloze-word {
@@ -318,10 +370,13 @@ body.dark .markdown-body code {
   .unit-nav {
     position: absolute;
     top: 100%;
+    bottom: auto; /* ★ここを追加（bottom: 0 を打ち消す） */
     left: 0;
     right: 0;
     width: auto;
     max-height: calc(100vh - var(--header-h) - 1rem);
+    overflow-y: auto; /* メニュー内のスクロールを確保 */
+    -webkit-overflow-scrolling: touch;
     border-right: none;
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
@@ -330,16 +385,21 @@ body.dark .markdown-body code {
     transform: translateY(-8px);
     opacity: 0;
     pointer-events: none;
+    visibility: hidden; /* フォーカス誤動作防止 */
     transition:
       transform 0.2s ease,
-      opacity 0.2s ease;
+      opacity 0.2s ease,
+      visibility 0.2s ease;
     z-index: 49;
   }
+
   body.nav-open .unit-nav {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
   }
+
   .main {
     margin-left: 0;
     padding: 1.5rem;

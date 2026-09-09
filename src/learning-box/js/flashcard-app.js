@@ -324,6 +324,14 @@ function transitionToCard(targetIdx, direction) {
     return;
 
   isTransitioning = true;
+
+  isFlipped = false;
+  const body = document.getElementById("cardBody");
+  if (body) {
+    body.classList.remove("flipped");
+  }
+  setMasteryActive(false);
+
   const scene = document.getElementById("cardScene");
   scene.classList.add("is-swapping");
 
